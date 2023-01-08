@@ -18,14 +18,14 @@ jobs:
         run: npm ci
       - name: 👀 Run linter
         run: npm run lint
-      - name: 🔨 Build project
-        run: npm run build
       - name: ⚙️ Configure app for target server
         run: |
           npm run switch:prod
           cd ./dist
           echo "challenge.mistergooddeal.org" > CNAME
           cd ..
+      - name: 🔨 Build project
+        run: npm run build
       - name: 🚀 Deploy to [prod] server
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
