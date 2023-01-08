@@ -1,35 +1,20 @@
-# vue-project
+# Semaine Challenge 1 — Front
 
-This template should help get you started developing with Vue 3 in Vite.
+[![💻 Deploy to dev](https://github.com/ESGI-MCAMUS/semaine-challenge-1-front/actions/workflows/deploy-developement.yml/badge.svg)](https://github.com/ESGI-MCAMUS/semaine-challenge-1-front/actions/workflows/deploy-developement.yml)
+[![🖥️ Deploy to prod](https://github.com/ESGI-MCAMUS/semaine-challenge-1-front/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/ESGI-MCAMUS/semaine-challenge-1-front/actions/workflows/deploy-production.yml)
 
-## Recommended IDE Setup
+## 🖥️ Run the project
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+### 📦 Install dependencies
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 🚀 Run the project
 
-```sh
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+The project will be available at [http://127.0.0.1:5173/](http://127.0.0.1:5173/)
