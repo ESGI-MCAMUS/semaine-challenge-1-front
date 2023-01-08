@@ -1,0 +1,26 @@
+name: 💻 Deploy to dev
+
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: 💾 Install dependencies
+        run: npm ci
+      - name: 👀 Run linter
+        run: npm run lint
+      - name: 🔨 Build project
+        run: npm run build
+      - name: 🚀 Deploy to [dev] server
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: "./dist/"
+          server-dir: "/front/dev/"
