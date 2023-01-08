@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
 import HelloWorld from "./components/HelloWorld.vue";
+import { API_URL } from "./environements/index";
 </script>
 
 <template>
@@ -25,6 +26,9 @@ import HelloWorld from "./components/HelloWorld.vue";
   </header>
 
   <RouterView />
+  <p>
+    Current API URL: <a href="#">{{ API_URL }}</a>
+  </p>
 </template>
 
 <style scoped>
