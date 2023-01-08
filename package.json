@@ -6,7 +6,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "switch:local": "cd ./src/environements && cp local.env.js index.js && cd ../../",
+    "switch:dev": "cd ./src/environements && cp dev.env.js index.js && cd ../../",
+    "switch:prod": "cd ./src/environements && cp prod.env.js index.js && cd ../../"
   },
   "dependencies": {
     "vue": "^3.2.45",
