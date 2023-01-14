@@ -12,6 +12,7 @@
     "switch:prod": "cd ./src/environements && cp prod.env.js index.js && cd ../../"
   },
   "dependencies": {
+    "ant-design-vue": "^3.2.15",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },
