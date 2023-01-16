@@ -1,11 +1,9 @@
 <template>
-  <h1 class="text-xl font-bold underline">Login !</h1>
-
   <a-form
     :model="formState"
     name="basic"
     :label-col="{ span: 8 }"
-    :wrapper-col="{ span: 16 }"
+    :wrapper-col="{ span: 8 }"
     autocomplete="off"
     @finish="onFinish"
     @finishFailed="onFinishFailed"
@@ -35,21 +33,26 @@
     </a-form-item>
   </a-form>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent, reactive } from "vue";
 
+interface FormState {
+  username: string;
+  password: string;
+  remember: boolean;
+}
 export default defineComponent({
   setup() {
-    const formState = reactive({
+    const formState = reactive<FormState>({
       username: "",
       password: "",
       remember: true,
     });
-    const onFinish = (values) => {
+    const onFinish = (values: any) => {
       console.log("Success:", values);
     };
 
-    const onFinishFailed = (errorInfo) => {
+    const onFinishFailed = (errorInfo: any) => {
       console.log("Failed:", errorInfo);
     };
     return {

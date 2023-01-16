@@ -1,5 +1,6 @@
 <script setup>
 import { RouterView } from "vue-router";
+import Footer from "./components/Footer.vue";
 import Navbar from "./components/Navbar.vue";
 import { API_URL } from "./environements/index";
 </script>
@@ -8,9 +9,18 @@ import { API_URL } from "./environements/index";
   <header>
     <Navbar />
   </header>
+  <main>
+    <RouterView />
+  </main>
+  Current API URL: <a href="#">{{ API_URL }}</a>
+  <Footer />
 
-  <RouterView />
-  <p>
-    Current API URL: <a href="#">{{ API_URL }}</a>
-  </p>
+  <p></p>
 </template>
+
+<style scoped>
+main {
+  padding: 1rem;
+  height: calc(100vh - 52px);
+}
+</style>
