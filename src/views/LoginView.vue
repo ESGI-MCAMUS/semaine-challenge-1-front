@@ -33,14 +33,9 @@
     </a-form-item>
   </a-form>
 </template>
-<script lang="ts">
+<script>
 import { defineComponent, reactive } from "vue";
 
-interface FormState {
-  username: string;
-  password: string;
-  remember: boolean;
-}
 export default defineComponent({
   setup() {
     const formState = reactive<FormState>({
@@ -48,11 +43,11 @@ export default defineComponent({
       password: "",
       remember: true,
     });
-    const onFinish = (values: any) => {
+    const onFinish = (values) => {
       console.log("Success:", values);
     };
 
-    const onFinishFailed = (errorInfo: any) => {
+    const onFinishFailed = (errorInfo) => {
       console.log("Failed:", errorInfo);
     };
     return {
