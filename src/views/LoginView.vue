@@ -38,7 +38,7 @@ import { defineComponent, reactive } from "vue";
 
 export default defineComponent({
   setup() {
-    const formState = reactive<FormState>({
+    const formState = reactive({
       username: "",
       password: "",
       remember: true,
