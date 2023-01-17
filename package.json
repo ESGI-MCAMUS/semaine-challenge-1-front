@@ -12,7 +12,12 @@
     "switch:prod": "cd ./src/environements && cp prod.env.js index.js && cd ../../"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.7",
+    "@heroicons/vue": "^2.0.13",
+    "@vueuse/core": "^9.10.0",
     "ant-design-vue": "^3.2.15",
+    "axios": "^1.2.2",
+    "flowbite": "^1.6.2",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },
@@ -20,9 +25,12 @@
     "@rushstack/eslint-patch": "^1.1.4",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-prettier": "^7.0.0",
+    "autoprefixer": "^10.4.13",
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",
+    "postcss": "^8.4.21",
     "prettier": "^2.7.1",
+    "tailwindcss": "^3.2.4",
     "vite": "^4.0.0"
   }
 }
