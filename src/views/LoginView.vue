@@ -35,7 +35,9 @@
   </a-col>
 </template>
 <script>
+import axios from "axios";
 import { defineComponent, reactive } from "vue";
+
 export default defineComponent({
   setup() {
     const formState = reactive({
@@ -45,6 +47,26 @@ export default defineComponent({
     });
     const onFinish = (values) => {
       console.log("Success:", values);
+
+      axios
+        .post("/auth", { email: values.username, password: values.password })
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            localStorage.setItem("user", JSON.stringify(res.data));
+
+            console.log(
+              "user added to local storage with value: ",
+              localStorage.getItem("user")
+            );
+          }
+          if (res.status === 401) {
+            console.log("unauthorized");
+          }
+          if (res.status === 500) {
+            console.log("server error");
+          }
+        });
     };
     const onFinishFailed = (errorInfo) => {
       console.log("Failed:", errorInfo);
