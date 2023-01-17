@@ -12,8 +12,11 @@
     "switch:prod": "cd ./src/environements && cp prod.env.js index.js && cd ../../"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.7",
+    "@heroicons/vue": "^2.0.13",
     "@vueuse/core": "^9.10.0",
     "ant-design-vue": "^3.2.15",
+    "axios": "^1.2.2",
     "flowbite": "^1.6.2",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
