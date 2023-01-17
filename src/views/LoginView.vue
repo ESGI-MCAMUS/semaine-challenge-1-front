@@ -37,6 +37,7 @@
 <script>
 import axios from "axios";
 import { defineComponent, reactive } from "vue";
+import router from "../router";
 
 export default defineComponent({
   setup() {
@@ -45,6 +46,9 @@ export default defineComponent({
       password: "",
       remember: true,
     });
+
+    // log le router actuel
+
     const onFinish = (values) => {
       console.log("Success:", values);
 
@@ -53,12 +57,12 @@ export default defineComponent({
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
-            localStorage.setItem("user", JSON.stringify(res.data));
+            //add user to localStorage
+            const token = res.data.token;
+            const user = JSON.parse(atob(token.split(".")[1]));
+            localStorage.setItem("user", JSON.stringify(user));
 
-            console.log(
-              "user added to local storage with value: ",
-              localStorage.getItem("user")
-            );
+            router.push("/");
           }
           if (res.status === 401) {
             console.log("unauthorized");

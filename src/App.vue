@@ -1,7 +1,7 @@
 <script setup>
 import { RouterView } from "vue-router";
 import Footer from "./components/Footer.vue";
-import Navbar from "./components/Navbar.vue";
+import Navbar from "./components/navbar/Navbar.vue";
 import { API_URL } from "./environements/index";
 </script>
 
