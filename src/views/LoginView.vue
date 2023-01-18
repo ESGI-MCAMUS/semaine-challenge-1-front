@@ -64,6 +64,9 @@ export default defineComponent({
 
             router.push("/");
           }
+        })
+        .catch((err) => {
+          const res = err.response;
           if (res.status === 401) {
             console.log("unauthorized");
           }
