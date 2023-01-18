@@ -30,7 +30,7 @@ import { RouterLink } from "vue-router";
           <span class="sr-only">Open user menu</span>
           <img
             class="w-8 h-8 rounded-full"
-            src="https://media.licdn.com/dms/image/C4E03AQExgpD_msMUng/profile-displayphoto-shrink_400_400/0/1668031448312?e=1679529600&v=beta&t=IHpDtS1ejAjFafFSc_YFw_GxWQcpAznac8KsfoFNjaI"
+            src="https://media.tenor.com/587AABroBfwAAAAS/dance-skeleton.gif"
             alt="user photo"
           />
         </button>
