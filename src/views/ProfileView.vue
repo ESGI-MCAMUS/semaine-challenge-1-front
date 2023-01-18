@@ -1,3 +1,11 @@
+<script setup>
+import { useGlobalStore } from "../stores/globalStore";
+const store = useGlobalStore();
+
+console.log(store);
+console.log(store.name);
+</script>
+
 <template>
   <div class="container">
     <div
