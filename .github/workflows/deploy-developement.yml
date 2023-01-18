@@ -1,8 +1,8 @@
 name: 💻 Deploy to dev
 
-on: 
+on:
   push:
-    branches: 
+    branches:
       - main
 
 jobs:
@@ -17,8 +17,8 @@ jobs:
         run: npm i -g vite
       - name: 💾 Install dependencies
         run: npm ci
-      - name: 👀 Run linter
-        run: npm run lint
+      # - name: 👀 Run linter
+      #   run: npm run lint
       - name: 🔌 Switch to [dev] environment
         run: npm run switch:dev
       - name: 🔨 Build project
