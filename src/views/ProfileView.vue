@@ -4,6 +4,8 @@ const store = useGlobalStore();
 
 console.log(store);
 console.log(store.name);
+store.updateName("Tartipouette");
+console.log(store.name);
 </script>
 
 <template>

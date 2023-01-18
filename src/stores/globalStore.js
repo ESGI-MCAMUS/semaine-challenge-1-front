@@ -12,5 +12,9 @@ export const useGlobalStore = defineStore("global", () => {
   //   count.value++;
   // }
 
-  return { name };
+  const updateName = (newName) => {
+    name.value = newName;
+  };
+
+  return { name, updateName };
 });
