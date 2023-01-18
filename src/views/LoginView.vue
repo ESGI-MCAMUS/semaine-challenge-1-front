@@ -14,7 +14,9 @@
         <a-form-item
           label="Username"
           name="username"
-          :rules="[{ required: true, message: 'Please input your username!' }]"
+          :rules="[
+            { required: true, message: 'Veuillez saisir votre adresse mail!' },
+          ]"
         >
           <a-input v-model:value="formState.username" />
         </a-form-item>
@@ -22,13 +24,15 @@
         <a-form-item
           label="Password"
           name="password"
-          :rules="[{ required: true, message: 'Please input your password!' }]"
+          :rules="[
+            { required: true, message: 'Veuillez saisir votre mot de passe!' },
+          ]"
         >
           <a-input-password v-model:value="formState.password" />
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-          <a-button type="primary" html-type="submit">Submit</a-button>
+          <a-button type="primary" html-type="submit">Se connecter</a-button>
         </a-form-item>
       </a-form>
     </a-card>
