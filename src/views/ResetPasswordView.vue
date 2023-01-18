@@ -1,7 +1,7 @@
 <template>
   <!-- add antd col -->
   <a-col :span="8" :offset="8">
-    <a-card title="Login">
+    <a-card title="Réinitialiser mon mot de passe">
       <a-form
         :model="formState"
         name="basic"
@@ -11,31 +11,24 @@
         @finish="onFinish"
         @finishFailed="onFinishFailed"
       >
+        <a-typography-text
+          >Pour réinitialiser votre mot de passe, veuillez saisir votre adresse
+          email. Vous recevrez un mail avec les instructions pour le
+          réintialiser.</a-typography-text
+        >
+
         <a-form-item
-          label="Username"
-          name="username"
+          label="Adresse mail"
+          name="email"
           :rules="[
             { required: true, message: 'Veuillez saisir votre adresse mail!' },
           ]"
         >
-          <a-input v-model:value="formState.username" />
-        </a-form-item>
-
-        <a-form-item
-          label="Password"
-          name="password"
-          :rules="[
-            { required: true, message: 'Veuillez saisir votre mot de passe!' },
-          ]"
-        >
-          <a-input-password v-model:value="formState.password" />
+          <a-input v-model:value="formState.email" />
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-          <a-button type="primary" html-type="submit">Se connecter</a-button>
-          <a-button type="link" @click="this.navToResetPwd"
-            >Mot de passe oublié ?</a-button
-          >
+          <a-button type="primary" html-type="submit">Envoyer un mail</a-button>
         </a-form-item>
       </a-form>
     </a-card>
