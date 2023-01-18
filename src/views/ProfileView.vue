@@ -6,6 +6,10 @@ console.log(store);
 console.log(store.name);
 store.updateName("Tartipouette");
 console.log(store.name);
+
+const onUpdateName = () => {
+  store.updateName("OLEL");
+};
 </script>
 
 <template>
@@ -30,7 +34,7 @@ console.log(store.name);
           alt="Bonnie image"
         />
         <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-          NOM PRENOM
+          {{ store.name }}
         </h5>
         <span class="text-sm text-gray-500 dark:text-gray-400">ROLE</span>
         <div class="flex mt-4 space-x-3 md:mt-6"></div>
@@ -42,6 +46,13 @@ console.log(store.name);
         class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         Some action
+      </button>
+      <button
+        @click="onUpdateName"
+        href="#"
+        class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >
+        Change le nom
       </button>
     </div>
   </div>
