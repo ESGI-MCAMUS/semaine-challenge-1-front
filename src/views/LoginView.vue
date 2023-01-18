@@ -1,3 +1,46 @@
+<script>
+import { defineComponent, reactive } from "vue";
+import { clientWithoutAuth } from "../services";
+import { token } from "../utils/localStorage";
+
+export default defineComponent({
+  setup() {
+    const formState = reactive({
+      username: "",
+      password: "",
+      remember: true,
+    });
+
+    // log le router actuel
+
+    const onFinish = async (values) => {
+      try {
+        const res = await clientWithoutAuth.post("/auth", {
+          email: values.username,
+          password: values.password,
+        });
+        console.log(res.data);
+
+        token.value = res.data.token;
+      } catch (error) {
+        console.error("error", error);
+      }
+
+      // axios
+      //   .post("/auth", { email: values.username, password: values.password })
+    };
+    const onFinishFailed = (errorInfo) => {
+      console.log("Failed:", errorInfo);
+    };
+    return {
+      formState,
+      onFinish,
+      onFinishFailed,
+    };
+  },
+});
+</script>
+
 <template>
   <!-- add antd col -->
   <a-col :span="8" :offset="8">
@@ -34,52 +77,3 @@
     </a-card>
   </a-col>
 </template>
-<script>
-import axios from "axios";
-import { defineComponent, reactive } from "vue";
-import router from "../router";
-
-export default defineComponent({
-  setup() {
-    const formState = reactive({
-      username: "",
-      password: "",
-      remember: true,
-    });
-
-    // log le router actuel
-
-    const onFinish = (values) => {
-      console.log("Success:", values);
-
-      axios
-        .post("/auth", { email: values.username, password: values.password })
-        .then((res) => {
-          console.log(res);
-          if (res.status === 200) {
-            //add user to localStorage
-            const token = res.data.token;
-            const user = JSON.parse(atob(token.split(".")[1]));
-            localStorage.setItem("user", JSON.stringify(user));
-
-            router.push("/");
-          }
-          if (res.status === 401) {
-            console.log("unauthorized");
-          }
-          if (res.status === 500) {
-            console.log("server error");
-          }
-        });
-    };
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
-    return {
-      formState,
-      onFinish,
-      onFinishFailed,
-    };
-  },
-});
-</script>
