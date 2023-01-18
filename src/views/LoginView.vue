@@ -72,7 +72,7 @@ export default defineComponent({
             const token = res.data.token;
             const user = JSON.parse(atob(token.split(".")[1]));
             localStorage.setItem("user", JSON.stringify(user));
-
+            console.log(user);
             router.push("/");
           }
         })
