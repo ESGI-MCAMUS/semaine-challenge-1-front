@@ -1,17 +1,26 @@
 <script setup>
+import { API_URL } from "../environements";
 import { useGlobalStore } from "../stores/globalStore";
 const store = useGlobalStore();
 
-console.log(store);
-console.log(store.name);
 store.updateName("Tartipouette");
-console.log(store.name);
 
 const onUpdateName = () => {
   store.updateName("OLEL");
 };
-</script>
 
+const getuser = async () => {
+  console.log("test requete :");
+  const res = await fetch(`${API_URL}/users/3`, {
+    method: "GET",
+    headers: {
+      Authorization:
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NzQwNDcyNTMsImV4cCI6MTY3NDA1MDg1Mywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQGV4YW1wbGUuY29tIn0.RCX71yeNsi5xj0t1r-2k8aDv-958RyujbGMxeEgNgiCTEfpyUOOd5yEjofqxuL8hgrXibXEzxU07yfcw7sG4GhVI5CcKf7lN0YkdvqxBrWCKXR2zrK74sm2aqs4T7Uz4KoPP-k18bR6xKtKwWVNQulXlOL-pyqKSc8-KCVmYNbAJ8eBocN8iIytaXMfoLtlkqnEIbpogJNkwUokc6pa-8enzGrCzt92BlUI_PPGi-MCdiMTzuxsSJVpUdScYMc8SpT3v8ISfT20pL7LdWSr8Ep7tRYHz8bp8bxNf5H_b2qmbyh4WKDuJWIiu0HRI56Ls7D5oIHcVjuZJFOZuR90hLD_KK4TYn3jwkv9lNqfJjmwfPKOh_gd4midDr7nLm5iKciDKFn90dyjGHSrb0zhmAmZpOIBunQK9qPRdjQOkYxf1R-thVOJLNztwmJNjBVLplGty32GAa-_FIeW05zzcP4z3IVA-13URfIYtN7FwnWMmvWtF6pmVRjoJTJoH9ImDGwhX684Y9tnzZo5f-maTZnvHHCqCr_y6KeOJdZeeteV21iiJobmVFDKB2OZH-EqiddL5Vwbqyw8tOZnoFwvQLxOSzN4I901OqP11qSyzyyNSj0M0KgsmA7gUQOfFa3l5oczHv8Jr9FFDaZ2TLLq2njB3uiogBveq3j7DwtIqJbg",
+    },
+  }).then((res) => res.json().then((data) => console.log(data)));
+};
+</script>
+s
 <template>
   <div class="container">
     <div
@@ -53,6 +62,13 @@ const onUpdateName = () => {
         class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         Change le nom
+      </button>
+      <button
+        @click="getuser"
+        href="#"
+        class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >
+        Get user
       </button>
     </div>
   </div>
