@@ -1,8 +1,8 @@
 <script>
 import axios from "axios";
 import { defineComponent, reactive } from "vue";
-import router from "../router";
 import Footer from "../components/Footer.vue";
+import router from "../router";
 
 export default defineComponent({
   setup() {
@@ -86,20 +86,20 @@ export default defineComponent({
         width: 100%;
       "
     >
-      <a-pagination
-        v-model:current="state.page"
-        v-model:pageSize="state.itemPerPage"
-        :total="state.totalItems"
-        :showSizeChanger="false"
-        :responsive="true"
-        @change="
-          (page, pageSize) => {
-            state.page = page;
-            getAds();
-            this.window.scrollTo(0, 0);
-          }
-        "
-      />
+      <div class="fixed bottom-0 pb-3">
+        <a-pagination
+          v-model:current="state.page"
+          :total="state.totalItems"
+          :show-less-items="false"
+          :show-size-changer="false"
+          @change="
+            (page, pageSize) => {
+              state.page = page;
+              getAds();
+            }
+          "
+        />
+      </div>
     </div>
   </main>
   <Footer />
@@ -113,6 +113,8 @@ export default defineComponent({
   align-items: center;
   width: 90%;
   margin-left: 5%;
+  max-height: calc(100vh - 150px);
+  overflow-y: scroll;
 }
 
 .adsBox {
