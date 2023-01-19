@@ -1,7 +1,6 @@
 <template>
   <DisconnectedNavbar v-if="!isUserLoggedIn" />
   <UserNavbar v-if="isUserLoggedIn" @logout="logout" />
-  <p>{{ role }}</p>
 </template>
 
 <script>
