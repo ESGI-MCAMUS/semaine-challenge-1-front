@@ -6,6 +6,7 @@
 
 <script>
 import { ref, watchEffect } from "vue";
+import router from "../../router";
 import { token } from "../../utils/localStorage";
 import DisconnectedNavbar from "./disconnectedNavbar.vue";
 import UserNavbar from "./userNavbar.vue";
@@ -15,6 +16,7 @@ export default {
     logout() {
       token.value = null;
       this.isUserLoggedIn = false;
+      router.push("/login");
     },
   },
   setup() {

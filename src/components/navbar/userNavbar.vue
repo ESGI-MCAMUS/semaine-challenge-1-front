@@ -146,7 +146,6 @@ import { RouterLink } from "vue-router";
 export default {
   methods: {
     logout() {
-      console.log("logout");
       this.$emit("logout");
     },
   },
