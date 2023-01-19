@@ -55,7 +55,6 @@ export default defineComponent({
 
 <template>
   <main>
-    <h1>test</h1>
     <div class="adsContainer">
       <div class="adsBox" v-for="ad in state.ads" :key="ad.id">
         <a-card hoverable style="width: 100%">
