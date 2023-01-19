@@ -6,6 +6,7 @@ import Navbar from "./components/navbar/Navbar.vue";
 <template>
   <header>
     <Navbar />
+    Current API URL: <a href="#">{{ API_URL }}</a>
   </header>
   <main>
     <RouterView />

@@ -1,5 +1,6 @@
 <script>
 import { defineComponent, reactive } from "vue";
+import router from "../router";
 import { clientWithoutAuth } from "../services";
 import { token } from "../utils/localStorage";
 
@@ -16,7 +17,6 @@ export default defineComponent({
           email: values.username,
           password: values.password,
         });
-        console.log(res.data);
 
         const user = JSON.parse(atob(res.data.token.split(".")[1]));
 
@@ -30,6 +30,8 @@ export default defineComponent({
         };
 
         token.value = userToken;
+
+        router.push("/");
       } catch (error) {
         console.error("error", error);
       }
@@ -79,7 +81,7 @@ export default defineComponent({
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-          <a-button type="primary" html-type="submit">Se connecter</a-button>
+          <a-button type="default" html-type="submit">Se connecter</a-button>
           <a-button type="link" @click="this.navToResetPwd"
             >Mot de passe oublié ?</a-button
           >
