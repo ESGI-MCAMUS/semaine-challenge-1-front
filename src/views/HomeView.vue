@@ -3,6 +3,12 @@ import axios from "axios";
 import { defineComponent, reactive } from "vue";
 import Footer from "../components/Footer.vue";
 import router from "../router";
+import { formatPrice } from "../utils/ads.utils";
+import { token } from "../utils/localStorage";
+import { client } from "../services";
+import { notification } from "ant-design-vue";
+import { refetchFavorites, isFavorite } from "../utils/favorites";
+import { favorites } from "../utils/localStorage";
 
 export default defineComponent({
   setup() {
@@ -15,30 +21,67 @@ export default defineComponent({
     });
 
     const getAds = () => {
-      axios
+      client
         .get(`/real_estate_ads?page=${state.page}`)
         .then((res) => {
           const data = res.data;
-          console.log(data);
           state.totalItems = data["hydra:totalItems"];
           state.ads = data["hydra:member"];
           state.itemPerPage = state.ads.length;
           state.totalPages = Number(data["hydra:view"]["hydra:last"].slice(-1));
-
-          console.log({
-            page: state.page,
-            ads: state.ads,
-            totalItems: state.totalItems,
-            totalPages: state.totalPages,
-            itemPerPage: state.itemPerPage,
-          });
+          refetchFavorites();
         })
         .catch((err) => {
           console.log(err);
         });
     };
 
-    const navigateToAd = (id) => {
+    const addFavortiteAd = (adId) => {
+      client
+        .post(`/favorite_ads`, {
+          realEstateAd: adId,
+          fkUser: `/users/${token.value.id}`,
+        })
+        .then((res) => {
+          notification["success"]({
+            message: "Favoris ajouté",
+            description: "Cette annonce a bien été ajoutée à vos favoris !",
+          });
+          refetchFavorites();
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de l'ajout du favoris !",
+          });
+        });
+    };
+
+    const removeFavoriteAd = (adId) => {
+      const favoriteId = favorites.value.find(
+        (favorite) => favorite.realEstateAd === adId
+      ).id;
+      client
+        .delete(`/favorite_ads/${favoriteId}`)
+        .then((res) => {
+          notification["success"]({
+            message: "Favoris supprimé",
+            description: "Cette annonce a bien été supprimée de vos favoris !",
+          });
+          refetchFavorites();
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description:
+              "Une erreur est survenue lors de la suppression du favoris !",
+          });
+        });
+    };
+
+    const navigate = (id) => {
       router.push(`${id}`);
     };
 
@@ -47,7 +90,12 @@ export default defineComponent({
     return {
       state,
       getAds,
-      navigateToAd,
+      navigate,
+      formatPrice,
+      token,
+      addFavortiteAd,
+      removeFavoriteAd,
+      isFavorite,
     };
   },
 });
@@ -66,8 +114,20 @@ export default defineComponent({
             />
           </template>
           <template #actions>
-            <a-button type="primary" @click="this.navigateToAd(ad['@id'])"
+            <a-button type="primary" @click="this.navigate(ad['@id'])"
               >Voir l'annonce</a-button
+            >
+            <a-button
+              v-if="token.id && !this.isFavorite(ad['@id'])"
+              type="danger"
+              @click="this.addFavortiteAd(ad['@id'])"
+              >Ajouter aux favoris</a-button
+            >
+            <a-button
+              v-if="token.id && this.isFavorite(ad['@id'])"
+              type="danger"
+              @click="this.removeFavoriteAd(ad['@id'])"
+              >Retirer des favoris</a-button
             >
           </template>
           <a-card-meta
@@ -75,6 +135,12 @@ export default defineComponent({
             :description="ad.description.slice(0, 200) + '...'"
           >
           </a-card-meta>
+          <br />
+          <a-typography-text>{{
+            `Prix: ${formatPrice(ad.price)} ${
+              ad.type === "sale" ? "€" : "€/mois"
+            }`
+          }}</a-typography-text>
         </a-card>
       </div>
     </div>
