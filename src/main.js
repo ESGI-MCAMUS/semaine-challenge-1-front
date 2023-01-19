@@ -7,12 +7,9 @@ import router from "./router";
 import "ant-design-vue/dist/antd.css";
 import "./assets/main.css";
 import { API_URL } from "./environements";
-import axios from "axios";
 
 const pinia = createPinia();
 const app = createApp(App);
-
-axios.defaults.baseURL = API_URL;
 
 app.use(pinia);
 app.use(router);
