@@ -1,5 +1,52 @@
+<script>
+import { defineComponent, reactive } from "vue";
+import { clientWithoutAuth } from "../services";
+import { token } from "../utils/localStorage";
+
+export default defineComponent({
+  setup() {
+    const formState = reactive({
+      username: "",
+      password: "",
+    });
+
+    const onFinish = async (values) => {
+      try {
+        const res = await clientWithoutAuth.post("/auth", {
+          email: values.username,
+          password: values.password,
+        });
+        console.log(res.data);
+
+        const user = JSON.parse(atob(res.data.token.split(".")[1]));
+
+        const userToken = {
+          token: res.data.token,
+          id: user.id,
+          email: user.username,
+          role: user.role,
+          firstname: user.firstname,
+          lastname: user.lastname,
+        };
+
+        token.value = userToken;
+      } catch (error) {
+        console.error("error", error);
+      }
+    };
+    const onFinishFailed = (errorInfo) => {
+      console.log("Failed:", errorInfo);
+    };
+    return {
+      formState,
+      onFinish,
+      onFinishFailed,
+    };
+  },
+});
+</script>
+
 <template>
-  <!-- add antd col -->
   <a-col :span="8" :offset="8">
     <a-card title="Login">
       <a-form
@@ -41,66 +88,3 @@
     </a-card>
   </a-col>
 </template>
-<script>
-import axios from "axios";
-import { defineComponent, reactive } from "vue";
-import router from "../router";
-
-export default defineComponent({
-  setup() {
-    const formState = reactive({
-      username: "",
-      password: "",
-      remember: true,
-      navToResetPassword: () => {
-        console.log("navToResetPassword");
-        router.push("/reset-password");
-      },
-    });
-
-    // log le router actuel
-
-    const onFinish = (values) => {
-      console.log("Success:", values);
-
-      axios
-        .post("/auth", { email: values.username, password: values.password })
-        .then((res) => {
-          console.log(res);
-          if (res.status === 200) {
-            //add user to localStorage
-            const token = res.data.token;
-            const user = JSON.parse(atob(token.split(".")[1]));
-            localStorage.setItem("user", JSON.stringify(user));
-            console.log(user);
-            router.push("/");
-          }
-        })
-        .catch((err) => {
-          const res = err.response;
-          if (res.status === 401) {
-            console.log("unauthorized");
-          }
-          if (res.status === 500) {
-            console.log("server error");
-          }
-        });
-    };
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
-
-    const navToResetPwd = () => {
-      console.log("navToResetPwd");
-      router.push("/reset-password");
-    };
-
-    return {
-      formState,
-      onFinish,
-      onFinishFailed,
-      navToResetPwd,
-    };
-  },
-});
-</script>
