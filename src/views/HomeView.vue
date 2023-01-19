@@ -3,6 +3,11 @@ import axios from "axios";
 import { defineComponent, reactive } from "vue";
 import Footer from "../components/Footer.vue";
 import router from "../router";
+import Footer from "../components/Footer.vue";
+import { formatPrice } from "../utils/ads.utils";
+import { token } from "../utils/localStorage";
+import { client } from "../services";
+import { notification } from "ant-design-vue";
 
 export default defineComponent({
   setup() {
@@ -15,7 +20,7 @@ export default defineComponent({
     });
 
     const getAds = () => {
-      axios
+      client
         .get(`/real_estate_ads?page=${state.page}`)
         .then((res) => {
           const data = res.data;
@@ -24,21 +29,35 @@ export default defineComponent({
           state.ads = data["hydra:member"];
           state.itemPerPage = state.ads.length;
           state.totalPages = Number(data["hydra:view"]["hydra:last"].slice(-1));
-
-          console.log({
-            page: state.page,
-            ads: state.ads,
-            totalItems: state.totalItems,
-            totalPages: state.totalPages,
-            itemPerPage: state.itemPerPage,
-          });
         })
         .catch((err) => {
           console.log(err);
         });
     };
 
-    const navigateToAd = (id) => {
+    const addFavortiteAd = (adId) => {
+      client
+        .post(`/favorite_ads`, {
+          realEstateAd: adId,
+          fkUser: `/users/${token.value.id}`,
+        })
+        .then((res) => {
+          console.log(res);
+          notification["success"]({
+            message: "Favoris ajouté",
+            description: "Cette annonce a bien été ajoutée à vos favoris !",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de l'ajout du favoris !",
+          });
+        });
+    };
+
+    const navigate = (id) => {
       router.push(`${id}`);
     };
 
@@ -47,7 +66,10 @@ export default defineComponent({
     return {
       state,
       getAds,
-      navigateToAd,
+      navigate,
+      formatPrice,
+      token,
+      addFavortiteAd,
     };
   },
 });
@@ -66,8 +88,14 @@ export default defineComponent({
             />
           </template>
           <template #actions>
-            <a-button type="primary" @click="this.navigateToAd(ad['@id'])"
+            <a-button type="primary" @click="this.navigate(ad['@id'])"
               >Voir l'annonce</a-button
+            >
+            <a-button
+              v-if="token.id"
+              type="danger"
+              @click="this.addFavortiteAd(ad['@id'])"
+              >Ajouter aux favoris</a-button
             >
           </template>
           <a-card-meta
@@ -75,6 +103,12 @@ export default defineComponent({
             :description="ad.description.slice(0, 200) + '...'"
           >
           </a-card-meta>
+          <br />
+          <a-typography-text>{{
+            `Prix: ${formatPrice(ad.price)} ${
+              ad.type === "sale" ? "€" : "€/mois"
+            }`
+          }}</a-typography-text>
         </a-card>
       </div>
     </div>

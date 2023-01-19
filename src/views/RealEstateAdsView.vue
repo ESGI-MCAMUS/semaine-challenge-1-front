@@ -1,7 +1,105 @@
+<script>
+import { defineComponent, reactive } from "vue";
+import router from "../router";
+import { LeftCircleOutlined, RightCircleOutlined } from "@ant-design/icons-vue";
+import { formatPrice } from "../utils/ads.utils";
+import { client } from "../services";
+import { token } from "../utils/localStorage";
+import { notification } from "ant-design-vue";
+
+export default defineComponent({
+  components: {
+    LeftCircleOutlined,
+    RightCircleOutlined,
+  },
+  setup() {
+    const state = reactive({
+      ad: {},
+      housing: {},
+      housingProperties: {},
+    });
+
+    const id = router.currentRoute.value.params.id;
+
+    client
+      .get(`/real_estate_ads/${id}`)
+      .then((resAd) => {
+        if (resAd.status === 200) {
+          const dataAd = resAd.data;
+          state.ad = dataAd;
+
+          client
+            .get(`${dataAd.housing}`)
+            .then((resHousing) => {
+              if (resHousing.status === 200) {
+                const dataHousing = resHousing.data;
+                state.housing = dataHousing;
+
+                client
+                  .get(`${dataHousing.properties}`)
+                  .then((resHousingProperties) => {
+                    if (resHousingProperties.status === 200) {
+                      const dataHousingProperties = resHousingProperties.data;
+                      state.housingProperties = dataHousingProperties;
+                    }
+                  })
+                  .catch((err) => {
+                    router.push("/");
+                  });
+              }
+            })
+            .catch((err) => {
+              router.push("/");
+            });
+        }
+      })
+      .catch((err) => {
+        router.push("/");
+      });
+
+    const addFavortiteAd = (adId) => {
+      client
+        .post(`/favorite_ads`, {
+          realEstateAd: adId,
+          fkUser: `/users/${token.value.id}`,
+        })
+        .then((res) => {
+          console.log(res);
+          notification["success"]({
+            message: "Favoris ajouté",
+            description: "Cette annonce a bien été ajoutée à vos favoris !",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de l'ajout du favoris !",
+          });
+        });
+    };
+
+    return {
+      state,
+      formatPrice,
+      addFavortiteAd,
+      token,
+    };
+  },
+});
+</script>
 <template>
   <!-- add antd col -->
   <a-col :span="12" :offset="6">
     <a-card>
+      <template #actions>
+        <a-button
+          v-if="token"
+          type="danger"
+          @click="this.addFavortiteAd(state.ad['@id'])"
+          >Ajouter aux favoris</a-button
+        >
+      </template>
       <a-carousel arrows autoplay>
         <template #prevArrow>
           <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
@@ -23,7 +121,9 @@
       <br />
       <br />
       <a-typography-title :level="3">{{
-        `Prix: ${state.ad.price} ${state.ad.type === "sale" ? "€" : "€/mois"}`
+        `Prix: ${this.formatPrice(state.ad.price)} ${
+          state.ad.type === "sale" ? "€" : "€/mois"
+        }`
       }}</a-typography-title
       ><br />
       <br />
@@ -133,71 +233,3 @@
   border-radius: 15px;
 }
 </style>
-
-<script>
-import axios from "axios";
-import { defineComponent, reactive } from "vue";
-import router from "../router";
-import { LeftCircleOutlined, RightCircleOutlined } from "@ant-design/icons-vue";
-
-export default defineComponent({
-  components: {
-    LeftCircleOutlined,
-    RightCircleOutlined,
-  },
-  setup() {
-    const state = reactive({
-      ad: {},
-      housing: {},
-      housingProperties: {},
-    });
-
-    const id = router.currentRoute.value.params.id;
-
-    axios
-      .get(`/real_estate_ads/${id}`)
-      .then((resAd) => {
-        if (resAd.status === 200) {
-          const dataAd = resAd.data;
-          state.ad = dataAd;
-
-          axios
-            .get(`${dataAd.housing}`)
-            .then((resHousing) => {
-              if (resHousing.status === 200) {
-                const dataHousing = resHousing.data;
-                state.housing = dataHousing;
-
-                axios
-                  .get(`${dataHousing.properties}`)
-                  .then((resHousingProperties) => {
-                    if (resHousingProperties.status === 200) {
-                      const dataHousingProperties = resHousingProperties.data;
-                      state.housingProperties = dataHousingProperties;
-                    }
-                  })
-                  .catch((err) => {
-                    router.push("/");
-                  });
-              }
-            })
-            .catch((err) => {
-              router.push("/");
-            });
-        }
-        console.log({
-          ad: state.ad,
-          housing: state.housing,
-          housingProperties: state.housingProperties,
-        });
-      })
-      .catch((err) => {
-        router.push("/");
-      });
-
-    return {
-      state,
-    };
-  },
-});
-</script>
