@@ -8,10 +8,7 @@ export default defineComponent({
     const formState = reactive({
       username: "",
       password: "",
-      remember: true,
     });
-
-    // log le router actuel
 
     const onFinish = async (values) => {
       try {
@@ -21,13 +18,21 @@ export default defineComponent({
         });
         console.log(res.data);
 
-        token.value = res.data.token;
+        const user = JSON.parse(atob(res.data.token.split(".")[1]));
+
+        const userToken = {
+          token: res.data.token,
+          id: user.id,
+          email: user.username,
+          role: user.role,
+          firstname: user.firstname,
+          lastname: user.lastname,
+        };
+
+        token.value = userToken;
       } catch (error) {
         console.error("error", error);
       }
-
-      // axios
-      //   .post("/auth", { email: values.username, password: values.password })
     };
     const onFinishFailed = (errorInfo) => {
       console.log("Failed:", errorInfo);
@@ -42,7 +47,6 @@ export default defineComponent({
 </script>
 
 <template>
-  <!-- add antd col -->
   <a-col :span="8" :offset="8">
     <a-card title="Login">
       <a-form

@@ -4,8 +4,9 @@ import DisconnectedNavbar from "./disconnectedNavbar.vue";
 
 import UserNavbar from "./userNavbar.vue";
 
-// const user = JSON.parse(localStorage.getItem("user"));
-const userRole = ref("");
+const user = JSON.parse(localStorage.getItem("user"));
+const userRole = ref(user?.role[0]);
+console.log(userRole?.value);
 
 const isUserLoggedIn = () => {
   return userRole.value !== undefined;
