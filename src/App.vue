@@ -8,11 +8,12 @@ import { API_URL } from "./environements/index";
 <template>
   <header>
     <Navbar />
+    Current API URL: <a href="#">{{ API_URL }}</a>
   </header>
   <main>
     <RouterView />
   </main>
-  Current API URL: <a href="#">{{ API_URL }}</a>
+
   <Footer />
 
   <p></p>

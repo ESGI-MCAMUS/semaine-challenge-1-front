@@ -2,6 +2,6 @@
 
 <template>
   <main>
-    <h1>test</h1>
+    <h1 class="text-3xl font-medium">HOME</h1>
   </main>
 </template>
