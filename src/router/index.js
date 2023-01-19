@@ -6,6 +6,7 @@ import RegisterView from "../views/RegisterView.vue";
 import ConfirmEmail from "../views/ConfirmEmailView.vue";
 import ResetPassword from "../views/ResetPasswordView.vue";
 import NewPassword from "../views/NewPasswordView.vue";
+import RealEstateAdsView from "../views/RealEstateAdsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,11 @@ const router = createRouter({
       path: "/new-password/:token",
       name: "new-password",
       component: NewPassword,
+    },
+    {
+      path: "/real_estate_ads/:id",
+      name: "real_estate_ads",
+      component: RealEstateAdsView,
     },
   ],
 });
