@@ -6,6 +6,8 @@ import { formatPrice } from "../utils/ads.utils";
 import { client } from "../services";
 import { token } from "../utils/localStorage";
 import { notification } from "ant-design-vue";
+import { refetchFavorites, isFavorite } from "../utils/favorites";
+import { favorites } from "../utils/localStorage";
 
 export default defineComponent({
   components: {
@@ -41,6 +43,7 @@ export default defineComponent({
                     if (resHousingProperties.status === 200) {
                       const dataHousingProperties = resHousingProperties.data;
                       state.housingProperties = dataHousingProperties;
+                      refetchFavorites();
                     }
                   })
                   .catch((err) => {
@@ -64,11 +67,11 @@ export default defineComponent({
           fkUser: `/users/${token.value.id}`,
         })
         .then((res) => {
-          console.log(res);
           notification["success"]({
             message: "Favoris ajouté",
             description: "Cette annonce a bien été ajoutée à vos favoris !",
           });
+          refetchFavorites();
         })
         .catch((err) => {
           console.log(err);
@@ -79,10 +82,35 @@ export default defineComponent({
         });
     };
 
+    const removeFavoriteAd = (adId) => {
+      const favoriteId = favorites.value.find(
+        (favorite) => favorite.realEstateAd === adId
+      ).id;
+      client
+        .delete(`/favorite_ads/${favoriteId}`)
+        .then((res) => {
+          notification["success"]({
+            message: "Favoris supprimé",
+            description: "Cette annonce a bien été supprimée de vos favoris !",
+          });
+          refetchFavorites();
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description:
+              "Une erreur est survenue lors de la suppression du favoris !",
+          });
+        });
+    };
+
     return {
       state,
       formatPrice,
       addFavortiteAd,
+      removeFavoriteAd,
+      isFavorite,
       token,
     };
   },
@@ -94,10 +122,16 @@ export default defineComponent({
     <a-card>
       <template #actions>
         <a-button
-          v-if="token"
+          v-if="token && !this.isFavorite(state.ad['@id'])"
           type="danger"
           @click="this.addFavortiteAd(state.ad['@id'])"
           >Ajouter aux favoris</a-button
+        >
+        <a-button
+          v-if="token.id && this.isFavorite(state.ad['@id'])"
+          type="danger"
+          @click="this.removeFavoriteAd(state.ad['@id'])"
+          >Retirer des favoris</a-button
         >
       </template>
       <a-carousel arrows autoplay>
