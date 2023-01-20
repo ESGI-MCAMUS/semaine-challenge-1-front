@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watchEffect } from "vue";
 import router from "../../router";
-import { token } from "../../utils/localStorage";
+import { favorites, token } from "../../utils/localStorage";
 import DisconnectedNavbar from "./disconnectedNavbar.vue";
 import UserNavbar from "./userNavbar.vue";
 

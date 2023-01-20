@@ -108,7 +108,7 @@ export default defineComponent({
   <main>
     <div class="adsContainer">
       <div class="adsBox" v-for="ad in state.ads" :key="ad.id">
-        <a-card hoverable style="width: 400px" bodyStyle="padding: 20px">
+        <a-card style="width: 400px" bodyStyle="padding: 20px">
           <template #cover>
             <img
               alt="example"
@@ -122,7 +122,7 @@ export default defineComponent({
             >
             <a-button
               shape="circle"
-              v-if="token.id && !this.isFavorite(ad['@id'])"
+              v-if="token?.id && !this.isFavorite(ad['@id'])"
               danger
               @click="this.addFavortiteAd(ad['@id'])"
             >
@@ -131,7 +131,7 @@ export default defineComponent({
 
             <a-button
               shape="circle"
-              v-if="token.id && this.isFavorite(ad['@id'])"
+              v-if="token?.id && this.isFavorite(ad['@id'])"
               danger
               @click="this.removeFavoriteAd(ad['@id'])"
             >
@@ -194,10 +194,5 @@ export default defineComponent({
   padding-right: 20px;
   margin-top: 20px;
   margin-bottom: 20px;
-}
-
-.ant-card-meta-description {
-  height: 100px;
-  overflow: hidden;
 }
 </style>
