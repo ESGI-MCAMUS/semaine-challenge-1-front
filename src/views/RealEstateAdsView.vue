@@ -8,11 +8,14 @@ import { token } from "../utils/localStorage";
 import { notification } from "ant-design-vue";
 import { refetchFavorites, isFavorite } from "../utils/favorites";
 import { favorites } from "../utils/localStorage";
+import { GmapMap, GmapMarker } from "vuejs3-google-maps";
 
 export default defineComponent({
   components: {
     LeftCircleOutlined,
     RightCircleOutlined,
+    GmapMap,
+    GmapMarker,
   },
   setup() {
     const state = reactive({
@@ -112,6 +115,7 @@ export default defineComponent({
       removeFavoriteAd,
       isFavorite,
       token,
+      GoogleMaps,
     };
   },
 });
@@ -155,93 +159,118 @@ export default defineComponent({
       <br />
       <br />
       <a-typography-title :level="3">{{
-      <PlaceSearch v-bind:ready="ready" placeholder="Enter a location" loading="Map is loading..."
-        v-bind:fallbackProcedure="fallbackProcedure" v-bind:zoom="zoom" v-bind:geolocation="geolocation"
-        v-bind:gps_timeout="3000" v-bind:address="address" @changed="getMapData">
-      </PlaceSearch>
+        `Prix: ${this.formatPrice(state.ad.price)} ${
+          state.ad.type === "sale" ? "€" : "€/mois"
+        }`
+      }}</a-typography-title>
+      <div>
+        <GmapMap
+          :center="{
+            lat: state.ad.location.latitude,
+            lng: state.ad.location.longitude,
+          }"
+          :zoom="14"
+          :map-options="{ zoomControl: false }"
+          style="width: 100%; height: 500px"
+        >
+          <GmapMarker
+            :position="{
+              lat: state.ad.location.latitude,
+              lng: state.ad.location.longitude,
+            }"
+          >
+          </GmapMarker>
+        </GmapMap>
+      </div>
       <br />
       <br />
-      <a-typography-title :level="4">Caracteristiques du bien</a-typography-title>
-      <a-list item-layout="horizontal" :data-source="[
-        {
-          description: 'Type de bien',
-          title:
-            state.housingProperties.type === 'house'
-              ? 'Maison'
-              : 'Appartement',
-          image:
-            state.housingProperties.type === 'house'
-              ? 'https://img.icons8.com/fluency/512/home.png'
-              : 'https://img.icons8.com/fluency/512/link-company-child.png',
-        },
-        {
-          description: 'Classification du logement',
-          title:
-            state.housingProperties.classification === 'excellent'
-              ? 'Excellent'
-              : state.housingProperties.classification === 'good'
+      <a-typography-title :level="4"
+        >Caracteristiques du bien</a-typography-title
+      >
+      <a-list
+        item-layout="horizontal"
+        :data-source="[
+          {
+            description: 'Type de bien',
+            title:
+              state.housingProperties.type === 'house'
+                ? 'Maison'
+                : 'Appartement',
+            image:
+              state.housingProperties.type === 'house'
+                ? 'https://img.icons8.com/fluency/512/home.png'
+                : 'https://img.icons8.com/fluency/512/link-company-child.png',
+          },
+          {
+            description: 'Classification du logement',
+            title:
+              state.housingProperties.classification === 'excellent'
+                ? 'Excellent'
+                : state.housingProperties.classification === 'good'
                 ? 'Bon'
                 : state.housingProperties.classification === 'average'
-                  ? 'Moyen'
-                  : state.housingProperties.classification === 'bad'
-                    ? 'Mauvais'
-                    : 'Insalubre',
-          image: 'https://img.icons8.com/fluency/512/housekeeping.png',
-        },
-        {
-          description: 'Surface habitable',
-          title: `${state.housingProperties.surface} m²`,
-          image: 'https://img.icons8.com/fluency/512/room.png',
-        },
-        {
-          description: 'Nombre de pièces',
-          title: `${state.housingProperties.rooms} pièces`,
-          image: 'https://img.icons8.com/fluency/512/four-beds.png',
-        },
-        {
-          description: 'Le bien possède-t-il un jardin ?',
-          title: state.housingProperties.hasGarden ? 'Oui' : 'Non',
-          image: 'https://img.icons8.com/fluency/512/house-with-a-garden.png',
-        },
-        {
-          description: 'Le bien possède-t-il un parking ?',
-          title: state.housingProperties.hasParking ? 'Oui' : 'Non',
-          image:
-            'https://img.icons8.com/fluency/512/garage-door-part-open.png',
-        },
-        {
-          description: 'Le bien possède-t-il une piscine ?',
-          title: state.housingProperties.hasPool ? 'Oui' : 'Non',
-          image: 'https://img.icons8.com/fluency/2x/kids-pool.png',
-        },
-        {
-          description: 'Le bien possède-t-il une grotte ?',
-          title: state.housingProperties.hasCave ? 'Oui' : 'Non',
-          image: 'https://img.icons8.com/fluency/512/cave.png',
-        },
-        {
-          description: 'Le bien possède-t-il un grenier ?',
-          title: state.housingProperties.hasAttic ? 'Oui' : 'Non',
-          image: 'https://img.icons8.com/fluency/512/roofing.png',
-        },
-        {
-          description: 'Le bien possède-t-il une terrasse/balcon ?',
-          title: state.housingProperties.hasBalcony ? 'Oui' : 'Non',
-          image: 'https://img.icons8.com/fluency/512/balcony.png',
-        },
-        {
-          description: 'Y-a-t-il des transporter en commun à proximité ?',
-          title: state.housingProperties.nearPublicTransport ? 'Oui' : 'Non',
-          image: 'https://img.icons8.com/fluency/512/railway-station.png',
-        },
-      ]">
+                ? 'Moyen'
+                : state.housingProperties.classification === 'bad'
+                ? 'Mauvais'
+                : 'Insalubre',
+            image: 'https://img.icons8.com/fluency/512/housekeeping.png',
+          },
+          {
+            description: 'Surface habitable',
+            title: `${state.housingProperties.surface} m²`,
+            image: 'https://img.icons8.com/fluency/512/room.png',
+          },
+          {
+            description: 'Nombre de pièces',
+            title: `${state.housingProperties.rooms} pièces`,
+            image: 'https://img.icons8.com/fluency/512/four-beds.png',
+          },
+          {
+            description: 'Le bien possède-t-il un jardin ?',
+            title: state.housingProperties.hasGarden ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/house-with-a-garden.png',
+          },
+          {
+            description: 'Le bien possède-t-il un parking ?',
+            title: state.housingProperties.hasParking ? 'Oui' : 'Non',
+            image:
+              'https://img.icons8.com/fluency/512/garage-door-part-open.png',
+          },
+          {
+            description: 'Le bien possède-t-il une piscine ?',
+            title: state.housingProperties.hasPool ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/2x/kids-pool.png',
+          },
+          {
+            description: 'Le bien possède-t-il une grotte ?',
+            title: state.housingProperties.hasCave ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/cave.png',
+          },
+          {
+            description: 'Le bien possède-t-il un grenier ?',
+            title: state.housingProperties.hasAttic ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/roofing.png',
+          },
+          {
+            description: 'Le bien possède-t-il une terrasse/balcon ?',
+            title: state.housingProperties.hasBalcony ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/balcony.png',
+          },
+          {
+            description: 'Y-a-t-il des transporter en commun à proximité ?',
+            title: state.housingProperties.nearPublicTransport ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/railway-station.png',
+          },
+        ]"
+      >
         <template #renderItem="{ item }">
           <a-list-item>
             <a-list-item-meta :description="item.description">
               <template #title>
-                <p>
-                  <b>{{ item.title }}</b>
-                </p>
+                <p></p>
+                <div>
+                  {{ item.title }}
+                </div>
               </template>
               <template #avatar>
                 <a-avatar :src="item.image" />
