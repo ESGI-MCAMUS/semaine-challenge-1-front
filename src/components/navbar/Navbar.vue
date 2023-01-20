@@ -2,9 +2,9 @@
 import { ref, watchEffect } from "vue";
 import router from "../../router";
 import { token } from "../../utils/localStorage";
-import AdminNavbar from "./adminNavbar.vue";
-import DisconnectedNavbar from "./disconnectedNavbar.vue";
-import UserNavbar from "./userNavbar.vue";
+import AdminNavbar from "./AdminNavbar.vue";
+import DisconnectedNavbar from "./DisconnectedNavbar.vue";
+import UserNavbar from "./UserNavbar.vue";
 
 let role = ref(token.value.role);
 let isUserLoggedIn = ref(false);
