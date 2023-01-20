@@ -17,6 +17,7 @@ const state = reactive({
   itemPerPage: 0,
 });
 
+console.log(state.estate);
 const getLikes = async () => {
   client
     .get(`/favorite_ads?page=${state.page}`)
@@ -82,6 +83,8 @@ const removeFavoriteAd = (adId) => {
         description: "Cette annonce a bien été supprimée de vos favoris !",
       });
       refetchFavorites();
+      const id = parseInt(adId.slice(17));
+      state.estate = state.estate.filter((estate) => estate.id !== id);
     })
     .catch((err) => {
       console.log(err);
