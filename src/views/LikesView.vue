@@ -1,14 +1,40 @@
 <script setup>
+import { reactive } from "vue";
 import { client } from "../services";
 
+const state = reactive({
+  likes: [],
+  page: 1,
+  totalPages: 0,
+  totalItems: 0,
+  itemPerPage: 0,
+});
+
 const getLikes = async () => {
-  try {
-    const res = await client.get("/favorite_ads");
-    return res.data;
-  } catch (error) {
-    console.error("error", error);
-  }
+  client
+    .get(`/favorite_ads?page=${state.page}`)
+    .then((res) => {
+      const data = res.data;
+      state.totalItems = data["hydra:totalItems"];
+      state.likes = data["hydra:member"];
+      state.itemPerPage = state.likes.length;
+      //   state.totalPages = Number(data["hydra:view"]["hydra:last"].slice(-1));
+      //   console.table({
+      //     data,
+      //     totalItems: state.totalItems,
+      //     likes: state.likes,
+      //     itemPerPage: state.itemPerPage,
+      //     // totalPages: state.totalPages,
+      //   });
+
+      console.log("state.likes", state.likes);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
+
+getLikes();
 </script>
 
 <template>
@@ -16,35 +42,11 @@ const getLikes = async () => {
     <h1>My Favorites</h1>
 
     <div>
-      <div v-for="like in likes" :key="like.id">
-        <div>
-          <img :src="like.image" alt="ad image" />
-        </div>
-        <div>
-          <h2>{{ like.title }}</h2>
-          <p>{{ like.description }}</p>
-          <p>{{ like.price }} €</p>
-          <button @click="removeFavoriteAd(like.id)">
-            Remove from favorites
-          </button>
-        </div>
+      <div v-for="like in state.likes" :key="like.id">
+        <p>{{ like.id }}</p>
+        <p>{{ like.realEstateAd }}</p>
+        <p>{{ like.fkUser }}</p>
       </div>
     </div>
-
-    <!-- <div class="ads">
-      <div class="ad" v-for="ad in ads" :key="ad.id">
-        <div class="ad__image">
-          <img :src="ad.image" alt="ad image" />
-        </div>
-        <div class="ad__content">
-          <h2>{{ ad.title }}</h2>
-          <p>{{ ad.description }}</p>
-          <p>{{ ad.price }} €</p>
-          <button @click="removeFavoriteAd(ad.id)">
-            Remove from favorites
-          </button>
-        </div>
-      </div>
-    </div> -->
   </main>
 </template>
