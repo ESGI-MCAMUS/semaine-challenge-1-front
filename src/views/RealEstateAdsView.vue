@@ -1,18 +1,24 @@
 <script>
+import {
+  HeartFilled,
+  HeartOutlined,
+  LeftCircleOutlined,
+  RightCircleOutlined,
+} from "@ant-design/icons-vue";
+import { notification } from "ant-design-vue";
 import { defineComponent, reactive } from "vue";
 import router from "../router";
-import { LeftCircleOutlined, RightCircleOutlined } from "@ant-design/icons-vue";
-import { formatPrice } from "../utils/ads.utils";
 import { client } from "../services";
-import { token } from "../utils/localStorage";
-import { notification } from "ant-design-vue";
-import { refetchFavorites, isFavorite } from "../utils/favorites";
-import { favorites } from "../utils/localStorage";
+import { formatPrice } from "../utils/ads.utils";
+import { isFavorite, refetchFavorites } from "../utils/favorites";
+import { favorites, token } from "../utils/localStorage";
 
 export default defineComponent({
   components: {
     LeftCircleOutlined,
     RightCircleOutlined,
+    HeartFilled,
+    HeartOutlined,
   },
   setup() {
     const state = reactive({
@@ -122,17 +128,22 @@ export default defineComponent({
     <a-card>
       <template #actions>
         <a-button
-          v-if="token && !this.isFavorite(state.ad['@id'])"
-          type="danger"
+          shape="circle"
+          v-if="token.id && !this.isFavorite(state.ad['@id'])"
+          danger
           @click="this.addFavortiteAd(state.ad['@id'])"
-          >Ajouter aux favoris</a-button
         >
+          <template #icon><HeartOutlined /></template>
+        </a-button>
+
         <a-button
+          shape="circle"
           v-if="token.id && this.isFavorite(state.ad['@id'])"
-          type="danger"
+          danger
           @click="this.removeFavoriteAd(state.ad['@id'])"
-          >Retirer des favoris</a-button
         >
+          <template #icon><HeartFilled /></template>
+        </a-button>
       </template>
       <a-carousel arrows autoplay>
         <template #prevArrow>

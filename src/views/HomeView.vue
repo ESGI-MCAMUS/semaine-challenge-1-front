@@ -1,16 +1,19 @@
 <script>
-import axios from "axios";
+import { HeartFilled, HeartOutlined } from "@ant-design/icons-vue";
+import { notification } from "ant-design-vue";
 import { defineComponent, reactive } from "vue";
 import Footer from "../components/Footer.vue";
 import router from "../router";
-import { formatPrice } from "../utils/ads.utils";
-import { token } from "../utils/localStorage";
 import { client } from "../services";
-import { notification } from "ant-design-vue";
-import { refetchFavorites, isFavorite } from "../utils/favorites";
-import { favorites } from "../utils/localStorage";
+import { formatPrice } from "../utils/ads.utils";
+import { isFavorite, refetchFavorites } from "../utils/favorites";
+import { favorites, token } from "../utils/localStorage";
 
 export default defineComponent({
+  components: {
+    HeartOutlined,
+    HeartFilled,
+  },
   setup() {
     const state = reactive({
       ads: [],
@@ -105,7 +108,7 @@ export default defineComponent({
   <main>
     <div class="adsContainer">
       <div class="adsBox" v-for="ad in state.ads" :key="ad.id">
-        <a-card hoverable style="width: 100%">
+        <a-card hoverable style="width: 400px" bodyStyle="padding: 20px">
           <template #cover>
             <img
               alt="example"
@@ -114,21 +117,26 @@ export default defineComponent({
             />
           </template>
           <template #actions>
-            <a-button type="primary" @click="this.navigate(ad['@id'])"
+            <a-button type="default" @click="this.navigate(ad['@id'])"
               >Voir l'annonce</a-button
             >
             <a-button
+              shape="circle"
               v-if="token.id && !this.isFavorite(ad['@id'])"
-              type="danger"
+              danger
               @click="this.addFavortiteAd(ad['@id'])"
-              >Ajouter aux favoris</a-button
             >
+              <template #icon><HeartOutlined /></template>
+            </a-button>
+
             <a-button
+              shape="circle"
               v-if="token.id && this.isFavorite(ad['@id'])"
-              type="danger"
+              danger
               @click="this.removeFavoriteAd(ad['@id'])"
-              >Retirer des favoris</a-button
             >
+              <template #icon><HeartFilled /></template>
+            </a-button>
           </template>
           <a-card-meta
             :title="ad.title"
@@ -175,20 +183,21 @@ export default defineComponent({
 .adsContainer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  width: 90%;
-  margin-left: 5%;
   max-height: calc(100vh - 150px);
   overflow-y: scroll;
 }
 
 .adsBox {
-  flex-basis: 33.33%;
   padding-left: 20px;
   padding-right: 20px;
   margin-top: 20px;
   margin-bottom: 20px;
-  background-color: "red";
+}
+
+.ant-card-meta-description {
+  height: 100px;
+  overflow: hidden;
 }
 </style>
