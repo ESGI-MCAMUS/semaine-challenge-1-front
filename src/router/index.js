@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import LoginView from "../views/LoginView.vue";
-import ProfileView from "../views/ProfileView.vue";
-import RegisterView from "../views/RegisterView.vue";
 import ConfirmEmail from "../views/ConfirmEmailView.vue";
-import ResetPassword from "../views/ResetPasswordView.vue";
+import HomeView from "../views/HomeView.vue";
+import LikesView from "../views/LikesView.vue";
+import LoginView from "../views/LoginView.vue";
 import NewPassword from "../views/NewPasswordView.vue";
+import ProfileView from "../views/ProfileView.vue";
 import RealEstateAdsView from "../views/RealEstateAdsView.vue";
+import RegisterView from "../views/RegisterView.vue";
+import ResetPassword from "../views/ResetPasswordView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,11 @@ const router = createRouter({
       path: "/profile",
       name: "profile",
       component: ProfileView,
+    },
+    {
+      path: "/likes",
+      name: "likes",
+      component: LikesView,
     },
     {
       path: "/confirm/:token",
