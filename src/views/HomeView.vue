@@ -195,9 +195,4 @@ export default defineComponent({
   margin-top: 20px;
   margin-bottom: 20px;
 }
-
-.ant-card-meta-description {
-  height: 100px;
-  overflow: hidden;
-}
 </style>

@@ -1,6 +1,12 @@
 <script setup>
+import { HeartFilled, HeartOutlined } from "@ant-design/icons-vue";
+import { notification } from "ant-design-vue";
 import { reactive } from "vue";
+import router from "../router";
 import { client } from "../services";
+import { formatPrice } from "../utils/ads.utils";
+import { isFavorite, refetchFavorites } from "../utils/favorites";
+import { favorites, token } from "../utils/localStorage";
 
 const state = reactive({
   likes: [],
@@ -10,8 +16,6 @@ const state = reactive({
   totalItems: 0,
   itemPerPage: 0,
 });
-
-console.log(state.estate);
 
 const getLikes = async () => {
   client
@@ -44,6 +48,59 @@ const getEstate = async (route) => {
     });
 };
 
+const addFavortiteAd = (adId) => {
+  client
+    .post(`/favorite_ads`, {
+      realEstateAd: adId,
+      fkUser: `/users/${token.value.id}`,
+    })
+    .then((res) => {
+      notification["success"]({
+        message: "Favoris ajouté",
+        description: "Cette annonce a bien été ajoutée à vos favoris !",
+      });
+      refetchFavorites();
+    })
+    .catch((err) => {
+      console.log(err);
+      notification["error"]({
+        message: "Oups !",
+        description: "Une erreur est survenue lors de l'ajout du favoris !",
+      });
+    });
+};
+
+const removeFavoriteAd = (adId) => {
+  const favoriteId = favorites.value.find(
+    (favorite) => favorite.realEstateAd === adId
+  ).id;
+  client
+    .delete(`/favorite_ads/${favoriteId}`)
+    .then((res) => {
+      notification["success"]({
+        message: "Favoris supprimé",
+        description: "Cette annonce a bien été supprimée de vos favoris !",
+      });
+      refetchFavorites();
+    })
+    .catch((err) => {
+      console.log(err);
+      notification["error"]({
+        message: "Oups !",
+        description:
+          "Une erreur est survenue lors de la suppression du favoris !",
+      });
+    });
+};
+
+const navigate = (id) => {
+  router.push(`${id}`);
+};
+
+const isFavorites = (id) => {
+  return isFavorite(id);
+};
+
 getLikes();
 </script>
 
@@ -51,20 +108,74 @@ getLikes();
   <main>
     <h1>My Favorites</h1>
 
-    <div>
-      <!-- <div v-for="like in state.likes" :key="like.id">
-        <p>{{ like.id }}</p>
-        <p>{{ like.realEstateAd }}</p>
-        <p>{{ like.fkUser }}</p>
-      </div> -->
+    <div class="adsContainer">
+      <div class="adsBox" v-for="estate in state.estate" :key="estate.id">
+        <a-card style="width: 400px" bodyStyle="padding: 20px">
+          <template #cover>
+            <img
+              alt="example"
+              :src="estate.photos[0]"
+              style="width: 100%; height: 300px; object-fit: cover"
+            />
+          </template>
 
-      <div v-for="estate in state.estate" :key="estate.id">
-        <p>{{ estate.id }}</p>
-        <p>{{ estate.title }}</p>
-        <p>{{ estate.description }}</p>
+          <template #actions>
+            <a-button type="default" @click="navigate(estate['@id'])"
+              >Voir l'annonce</a-button
+            >
+
+            <a-button
+              shape="circle"
+              v-if="token?.id && !isFavorites(estate['@id'])"
+              danger
+              @click="addFavortiteAd(estate['@id'])"
+            >
+              <template #icon><HeartOutlined /></template>
+            </a-button>
+
+            <a-button
+              shape="circle"
+              v-if="token?.id && isFavorites(estate['@id'])"
+              danger
+              @click="removeFavoriteAd(estate['@id'])"
+            >
+              <template #icon><HeartFilled /></template>
+            </a-button>
+          </template>
+
+          <a-card-meta
+            :title="estate.title"
+            :description="estate.description.slice(0, 200) + '...'"
+          >
+          </a-card-meta>
+          <br />
+          <a-typography-text>{{
+            `Prix: ${formatPrice(estate.price)} ${
+              estate.type === "sale" ? "€" : "€/mois"
+            }`
+          }}</a-typography-text>
+        </a-card>
       </div>
     </div>
 
     <div></div>
   </main>
 </template>
+
+<style scoped>
+.adsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  max-height: calc(100vh - 150px);
+  overflow-y: scroll;
+}
+
+.adsBox {
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+</style>
