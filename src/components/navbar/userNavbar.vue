@@ -47,6 +47,7 @@ import { RouterLink } from "vue-router";
 
               <a-menu-item key="1">
                 <a
+                  @click="profile"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >Profile</a
                 >
@@ -61,7 +62,7 @@ import { RouterLink } from "vue-router";
 
               <a-menu-item key="3">
                 <a
-                  @click="logout"
+                  @click="$emit('logout')"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >Déconnexion</a
                 >
@@ -158,13 +159,3 @@ import { RouterLink } from "vue-router";
     </div>
   </nav>
 </template>
-
-<script>
-export default {
-  methods: {
-    logout() {
-      this.$emit("logout");
-    },
-  },
-};
-</script>
