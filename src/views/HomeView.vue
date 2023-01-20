@@ -108,12 +108,7 @@ export default defineComponent({
   <main>
     <div class="adsContainer">
       <div class="adsBox" v-for="ad in state.ads" :key="ad.id">
-        <a-card
-          hoverable
-          style="width: 400px"
-          bodyStyle="padding: 20px"
-          @click="this.navigate(ad['@id'])"
-        >
+        <a-card style="width: 400px" bodyStyle="padding: 20px">
           <template #cover>
             <img
               alt="example"

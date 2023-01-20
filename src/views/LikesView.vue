@@ -4,11 +4,14 @@ import { client } from "../services";
 
 const state = reactive({
   likes: [],
+  estate: [],
   page: 1,
   totalPages: 0,
   totalItems: 0,
   itemPerPage: 0,
 });
+
+console.log(state.estate);
 
 const getLikes = async () => {
   client
@@ -18,17 +21,24 @@ const getLikes = async () => {
       state.totalItems = data["hydra:totalItems"];
       state.likes = data["hydra:member"];
       state.itemPerPage = state.likes.length;
-      //   state.totalPages = Number(data["hydra:view"]["hydra:last"].slice(-1));
-      //   console.table({
-      //     data,
-      //     totalItems: state.totalItems,
-      //     likes: state.likes,
-      //     itemPerPage: state.itemPerPage,
-      //     // totalPages: state.totalPages,
-      //   });
 
-      console.log("state.likes", state.likes);
+      for (const like of state.likes) {
+        getEstate(like.realEstateAd);
+      }
     })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getEstate = async (route) => {
+  client
+    .get(`${route}`)
+    .then((res) => {
+      const data = res.data;
+      state.estate.push(data);
+    })
+
     .catch((err) => {
       console.log(err);
     });
@@ -42,11 +52,19 @@ getLikes();
     <h1>My Favorites</h1>
 
     <div>
-      <div v-for="like in state.likes" :key="like.id">
+      <!-- <div v-for="like in state.likes" :key="like.id">
         <p>{{ like.id }}</p>
         <p>{{ like.realEstateAd }}</p>
         <p>{{ like.fkUser }}</p>
+      </div> -->
+
+      <div v-for="estate in state.estate" :key="estate.id">
+        <p>{{ estate.id }}</p>
+        <p>{{ estate.title }}</p>
+        <p>{{ estate.description }}</p>
       </div>
     </div>
+
+    <div></div>
   </main>
 </template>
