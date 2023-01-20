@@ -149,7 +149,7 @@ export default defineComponent({
         hasCave: state.checkedList.includes("Grotte") ? true : undefined,
         hasAttic: state.checkedList.includes("Grenier") ? true : undefined,
         hasBalcony: state.checkedList.includes("Balcon") ? true : undefined,
-        hasPublicTransport: state.checkedList.includes("Transport en commun")
+        nearPublicTransport: state.checkedList.includes("Transport en commun")
           ? true
           : undefined,
         type: state.typeOptions !== "all" ? state.typeOptions : undefined,
