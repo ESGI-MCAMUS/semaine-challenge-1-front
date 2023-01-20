@@ -1,5 +1,7 @@
 <script setup>
+import Button from "../components/UI/Button.vue";
 import Card from "../components/UI/Card.vue";
+import Heading from "../components/UI/Heading.vue";
 import { client } from "../services";
 import { useGlobalStore } from "../stores/globalStore";
 import { token } from "../utils/localStorage";
@@ -43,27 +45,25 @@ const getuser = async () => {
         <div class="flex mt-4 space-x-3 md:mt-6"></div>
       </div>
     </div>
-    <Card class="w-[100%]">
-      <button
-        href="#"
-        class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        Some action
-      </button>
-      <button
-        @click="onUpdateName"
-        href="#"
-        class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        Change le nom
-      </button>
-      <button
-        @click="getuser"
-        href="#"
-        class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        Get user
-      </button>
+    <Card class="w-[100%] ml-4">
+      <div class="flex flex-col">
+        <Heading>Mes derniers paiements</Heading>
+
+        <Button>Some action</Button>
+        <Button @click="onUpdateName">Change le nom</Button>
+        <Button @click="getuser">Change le nom</Button>
+      </div>
+    </Card>
+  </div>
+  <Card class="w-[100%] h-80 mt-4">
+    <Heading>Mes biens</Heading>
+  </Card>
+  <div class="flex">
+    <Card class="w-[100%] h-80 mt-4">
+      <Heading>Mes derniers paiements</Heading>
+    </Card>
+    <Card class="w-[100%] h-80 mt-4 ml-4">
+      <Heading>Mes derniers paiements</Heading>
     </Card>
   </div>
 </template>
