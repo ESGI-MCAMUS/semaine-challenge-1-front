@@ -15,6 +15,11 @@ const app = createApp(App);
 
 console.log(import.meta.env.VITE_API_GOOGLE_MAPS_KEY);
 
+app.use(GMaps, {
+  load: {
+    apiKey: API_GOOGLE_MAP_KEY,
+  },
+});
 app.use(pinia);
 app.use(router);
 app.use(Antd).mount("#app");
