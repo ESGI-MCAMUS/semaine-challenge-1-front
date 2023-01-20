@@ -1,7 +1,24 @@
-<script setup>
+<script>
+import { token } from "../../utils/localStorage";
 import { RouterLink } from "vue-router";
-</script>
+import { defineComponent } from "vue";
 
+export default defineComponent({
+  methods: {},
+  setup() {
+    const logout = () => {
+      this.$emit("logout");
+    };
+
+    console.log(token.value);
+
+    return {
+      token,
+      logout,
+    };
+  },
+});
+</script>
 <template>
   <nav
     class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900"
@@ -35,11 +52,11 @@ import { RouterLink } from "vue-router";
               <a-menu-item key="0" disabled>
                 <div class="px-4 py-3">
                   <span class="block text-sm text-gray-900 dark:text-white"
-                    >Bonnie Green</span
+                    >{{ token.firstname }} {{ token.lastname }}</span
                   >
                   <span
                     class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400"
-                    >name@flowbite.com</span
+                    >{{ token.email }}</span
                   >
                 </div>
               </a-menu-item>
@@ -158,13 +175,3 @@ import { RouterLink } from "vue-router";
     </div>
   </nav>
 </template>
-
-<script>
-export default {
-  methods: {
-    logout() {
-      this.$emit("logout");
-    },
-  },
-};
-</script>
