@@ -4,12 +4,16 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 
+//import * as dotenv from "dotenv";
+
 import "ant-design-vue/dist/antd.css";
 import "./assets/main.css";
-import { API_URL, API_GOOGLE_MAP_KEY } from "./environements";
 
 const pinia = createPinia();
 const app = createApp(App);
+//dotenv.config();
+
+console.log(import.meta.env.VITE_API_GOOGLE_MAPS_KEY);
 
 app.use(pinia);
 app.use(router);

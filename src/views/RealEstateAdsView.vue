@@ -8,24 +8,21 @@ import { token } from "../utils/localStorage";
 import { notification } from "ant-design-vue";
 import { refetchFavorites, isFavorite } from "../utils/favorites";
 import { favorites } from "../utils/localStorage";
-import { GmapMap, GmapMarker } from "vuejs3-google-maps";
 
 export default defineComponent({
   components: {
     LeftCircleOutlined,
     RightCircleOutlined,
-    GmapMap,
-    GmapMarker,
   },
   setup() {
     const state = reactive({
       ad: {},
       housing: {},
       housingProperties: {},
+      mapsUrl: "",
     });
 
     const id = router.currentRoute.value.params.id;
-
     client
       .get(`/real_estate_ads/${id}`)
       .then((resAd) => {
@@ -46,6 +43,8 @@ export default defineComponent({
                     if (resHousingProperties.status === 200) {
                       const dataHousingProperties = resHousingProperties.data;
                       state.housingProperties = dataHousingProperties;
+                      state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_API_GOOGLE_MAP_KEY}&q=${state.housing.lat},${state.housing.lng}`;
+                      console.log(import.meta.env);
                       refetchFavorites();
                     }
                   })
@@ -115,7 +114,6 @@ export default defineComponent({
       removeFavoriteAd,
       isFavorite,
       token,
-      GoogleMaps,
     };
   },
 });
@@ -164,23 +162,17 @@ export default defineComponent({
         }`
       }}</a-typography-title>
       <div>
-        <GmapMap
-          :center="{
-            lat: state.ad.location.latitude,
-            lng: state.ad.location.longitude,
-          }"
-          :zoom="14"
-          :map-options="{ zoomControl: false }"
-          style="width: 100%; height: 500px"
+        <iframe
+          title="maps"
+          width="600"
+          height="450"
+          style="border: 0"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          :src="state.mapsUrl"
         >
-          <GmapMarker
-            :position="{
-              lat: state.ad.location.latitude,
-              lng: state.ad.location.longitude,
-            }"
-          >
-          </GmapMarker>
-        </GmapMap>
+        </iframe>
       </div>
       <br />
       <br />
@@ -291,3 +283,7 @@ export default defineComponent({
   border-radius: 15px;
 }
 </style>
+
+<script setup>
+console.log(import.meta.env);
+</script>
