@@ -1,12 +1,19 @@
-<script>
-import { token } from "../../utils/localStorage";
+<script setup>
 import { RouterLink } from "vue-router";
 import router from "../../router";
+import { token } from "../../utils/localStorage";
+
+console.log("token", token.value.firstname);
+
+const { email, firtname, lastname } = token.value;
+
+console.log("token", email);
 
 const onProfile = () => {
   router.push("/profile");
 };
 </script>
+
 <template>
   <nav
     class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900"
@@ -40,11 +47,11 @@ const onProfile = () => {
               <a-menu-item key="0" disabled>
                 <div class="px-4 py-3">
                   <span class="block text-sm text-gray-900 dark:text-white"
-                    >{{ token.firstname }} {{ token.lastname }}</span
+                    >{{ firtname }} {{ lastname }}</span
                   >
                   <span
                     class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400"
-                    >{{ token.email }}</span
+                    >{{ email }}</span
                   >
                 </div>
               </a-menu-item>
