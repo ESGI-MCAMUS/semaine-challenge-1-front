@@ -3,11 +3,7 @@ import { RouterLink } from "vue-router";
 import router from "../../router";
 import { token } from "../../utils/localStorage";
 
-console.log("token", token.value.firstname);
-
 const { email, firtname, lastname } = token.value;
-
-console.log("token", email);
 
 const onProfile = () => {
   router.push("/profile");
