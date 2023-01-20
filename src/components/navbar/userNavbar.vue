@@ -1,23 +1,11 @@
 <script>
 import { token } from "../../utils/localStorage";
 import { RouterLink } from "vue-router";
-import { defineComponent } from "vue";
+import router from "../../router";
 
-export default defineComponent({
-  methods: {},
-  setup() {
-    const logout = () => {
-      this.$emit("logout");
-    };
-
-    console.log(token.value);
-
-    return {
-      token,
-      logout,
-    };
-  },
-});
+const onProfile = () => {
+  router.push("/profile");
+};
 </script>
 <template>
   <nav
@@ -64,6 +52,7 @@ export default defineComponent({
 
               <a-menu-item key="1">
                 <a
+                  @click="onProfile"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >Profile</a
                 >
@@ -78,7 +67,7 @@ export default defineComponent({
 
               <a-menu-item key="3">
                 <a
-                  @click="logout"
+                  @click="$emit('logout')"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >Déconnexion</a
                 >
