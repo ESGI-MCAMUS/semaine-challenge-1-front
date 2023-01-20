@@ -1,13 +1,13 @@
 <script>
 import { HeartFilled, HeartOutlined } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive } from "vue";
 import Footer from "../components/Footer.vue";
 import router from "../router";
 import { client } from "../services";
 import { formatPrice } from "../utils/ads.utils";
-import { buildQueryString } from "../utils/filters.utils";
 import { isFavorite, refetchFavorites } from "../utils/favorites";
+import { buildQueryString } from "../utils/filters.utils";
 import { favorites, token } from "../utils/localStorage";
 
 export default defineComponent({
@@ -337,7 +337,7 @@ export default defineComponent({
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  max-height: calc(100vh - 150px);
+  max-height: calc(100vh - 180px);
   overflow-y: scroll;
 }
 
