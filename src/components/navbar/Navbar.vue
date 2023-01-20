@@ -1,7 +1,8 @@
 <script setup>
 import { ref, watchEffect } from "vue";
 import router from "../../router";
-import { favorites, token } from "../../utils/localStorage";
+import { token } from "../../utils/localStorage";
+import AdminNavbar from "./adminNavbar.vue";
 import DisconnectedNavbar from "./disconnectedNavbar.vue";
 import UserNavbar from "./userNavbar.vue";
 
@@ -18,28 +19,24 @@ const logout = () => {
 
 watchEffect(
   () => {
-    if (token.value === null) {
-      role.value = undefined;
-    } else {
-      role.value = token.value.role;
-    }
+    token.value === null
+      ? (role.value = undefined)
+      : (role.value = token.value.role);
 
     if (role.value !== undefined) {
       isUserLoggedIn.value = true;
+
+      role.value.map((role) => {
+        role === "ROLE_ADMIN"
+          ? (isUserAdmin.value = true)
+          : (isUserAdmin.value = false);
+
+        role === "ROLE_USER"
+          ? (isUserUser.value = true)
+          : (isUserUser.value = false);
+      });
     } else {
       isUserLoggedIn.value = false;
-    }
-
-    if (role.value === "ROLE_ADMIN") {
-      isUserAdmin.value = true;
-    } else {
-      isUserAdmin.value = false;
-    }
-
-    if (role.value === "ROLE_USER") {
-      isUserUser.value = true;
-    } else {
-      isUserUser.value = false;
     }
   },
   { flush: "post" }
@@ -48,5 +45,14 @@ watchEffect(
 
 <template>
   <DisconnectedNavbar v-if="!isUserLoggedIn" />
-  <UserNavbar v-if="isUserLoggedIn" @logout="logout" />
+  <UserNavbar
+    v-if="isUserLoggedIn && isUserUser"
+    v-model="isUserUser"
+    @logout="logout"
+  />
+  <AdminNavbar
+    v-if="isUserLoggedIn && isUserAdmin"
+    v-model="isUserAdmin"
+    @logout="logout"
+  />
 </template>
