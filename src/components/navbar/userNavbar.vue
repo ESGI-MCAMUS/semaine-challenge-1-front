@@ -1,5 +1,10 @@
 <script setup>
 import { RouterLink } from "vue-router";
+import router from "../../router";
+
+const onProfile = () => {
+  router.push("/profile");
+};
 </script>
 
 <template>
@@ -47,7 +52,7 @@ import { RouterLink } from "vue-router";
 
               <a-menu-item key="1">
                 <a
-                  @click="profile"
+                  @click="onProfile"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >Profile</a
                 >
