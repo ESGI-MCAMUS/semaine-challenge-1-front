@@ -127,7 +127,7 @@ export default defineComponent({
             >
             <a-button
               shape="circle"
-              v-if="token.id && !this.isFavorite(ad['@id'])"
+              v-if="token?.id && !this.isFavorite(ad['@id'])"
               danger
               @click="this.addFavortiteAd(ad['@id'])"
             >
@@ -136,7 +136,7 @@ export default defineComponent({
 
             <a-button
               shape="circle"
-              v-if="token.id && this.isFavorite(ad['@id'])"
+              v-if="token?.id && this.isFavorite(ad['@id'])"
               danger
               @click="this.removeFavoriteAd(ad['@id'])"
             >
