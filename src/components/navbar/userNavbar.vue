@@ -26,7 +26,7 @@ import { RouterLink } from "vue-router";
           <a class="ant-dropdown-link" @click.prevent>
             <img
               class="w-8 h-8 rounded-full"
-              src="https://media.tenor.com/587AABroBfwAAAAS/dance-skeleton.gif"
+              src="https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&w=1000"
               alt="user photo"
             />
           </a>
@@ -44,17 +44,18 @@ import { RouterLink } from "vue-router";
                 </div>
               </a-menu-item>
               <a-menu-divider />
+
               <a-menu-item key="1">
                 <a
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >Dashboard</a
+                  >Profile</a
                 >
               </a-menu-item>
 
               <a-menu-item key="2">
                 <a
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >Profile</a
+                  >Mes favoris</a
                 >
               </a-menu-item>
 
