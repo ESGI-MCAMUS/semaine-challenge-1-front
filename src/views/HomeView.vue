@@ -197,7 +197,6 @@ export default defineComponent({
       onChangedValues,
       handleChangeSelectType,
       handleChangeSelectClassification,
-      updateSearchText,
     };
   },
 });
@@ -215,12 +214,7 @@ export default defineComponent({
       /></a-col>
       <a-col
         :span="18"
-        style="
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-          background-color: red;
-        "
+        style="display: flex; justify-content: flex-start; align-items: center"
       >
         <a-typography-text
           >Filtres
