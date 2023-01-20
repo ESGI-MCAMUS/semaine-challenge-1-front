@@ -1,7 +1,7 @@
 <script setup>
 import { HeartFilled, HeartOutlined } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import router from "../router";
 import { client } from "../services";
 import { formatPrice } from "../utils/ads.utils";
@@ -17,7 +17,8 @@ const state = reactive({
   itemPerPage: 0,
 });
 
-console.log(state.estate);
+const isFavoritToShow = ref(state.estate.length > 0 ? true : false);
+
 const getLikes = async () => {
   client
     .get(`/favorite_ads?page=${state.page}`)
@@ -42,6 +43,7 @@ const getEstate = async (route) => {
     .then((res) => {
       const data = res.data;
       state.estate.push(data);
+      isFavoritToShow.value = true;
     })
 
     .catch((err) => {
@@ -109,9 +111,8 @@ getLikes();
 
 <template>
   <main>
-    <h1>My Favorites</h1>
-
-    <div class="adsContainer">
+    <h1 class="text-4xl">Mes favories</h1>
+    <div class="adsContainer" v-if="isFavoritToShow">
       <div class="adsBox" v-for="estate in state.estate" :key="estate.id">
         <a-card style="width: 400px" bodyStyle="padding: 20px">
           <template #cover>
@@ -160,6 +161,9 @@ getLikes();
         </a-card>
       </div>
     </div>
+    <div v-else>
+      <h2>Pas de favories pour le moment</h2>
+    </div>
 
     <div></div>
   </main>
@@ -180,5 +184,11 @@ getLikes();
   padding-right: 20px;
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+h1,
+h2 {
+  text-align: center;
+  padding-bottom: 20px;
 }
 </style>
