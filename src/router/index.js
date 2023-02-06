@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import HomeAdminView from "../views/admin/HomeAdminView.vue";
 import ConfirmEmail from "../views/ConfirmEmailView.vue";
 import HomeView from "../views/HomeView.vue";
 import LikesView from "../views/LikesView.vue";
@@ -56,6 +57,11 @@ const router = createRouter({
       path: "/real_estate_ads/:id",
       name: "real_estate_ads",
       component: RealEstateAdsView,
+    },
+    {
+      path: "/admin",
+      name: "admin_home",
+      component: HomeAdminView,
     },
   ],
 });

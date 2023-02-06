@@ -56,9 +56,8 @@
 </template>
 
 <script>
-import axios from "axios";
 import { defineComponent, reactive, ref } from "vue";
-import router from "../router";
+import { client } from "../services";
 
 export default defineComponent({
   setup() {
@@ -147,7 +146,7 @@ export default defineComponent({
       formState.isSuccess = false;
       formState.isError = false;
       formState.message = "";
-      axios
+      client
         .post("/users", {
           email: values.email,
           plainPassword: values.password,
