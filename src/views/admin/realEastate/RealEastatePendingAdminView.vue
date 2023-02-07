@@ -28,21 +28,6 @@ const getRealEastateAds = async () => {
     });
 };
 
-// turn An real estate ad into a validated one
-const validateRealEstateAd = async (adId) => {
-  client
-    .put(`/real_estate_ads/${adId}`, {
-      isVisible: true,
-    })
-    .then((res) => {
-      console.log(res);
-      getRealEastateAds();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
 const navigate = (id) => {
   router.push(`${id}`);
 };
