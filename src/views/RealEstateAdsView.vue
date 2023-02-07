@@ -1,12 +1,14 @@
 <script>
 import {
+  CheckCircleOutlined,
+  DeleteOutlined,
   HeartFilled,
   HeartOutlined,
   LeftCircleOutlined,
   RightCircleOutlined,
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import router from "../router";
 import { client } from "../services";
 import { formatPrice } from "../utils/ads.utils";
@@ -15,6 +17,8 @@ import { favorites, token } from "../utils/localStorage";
 
 export default defineComponent({
   components: {
+    DeleteOutlined,
+    CheckCircleOutlined,
     LeftCircleOutlined,
     RightCircleOutlined,
     HeartFilled,
@@ -26,6 +30,11 @@ export default defineComponent({
       housing: {},
       housingProperties: {},
     });
+
+    let isAdmin = ref(false);
+    token.value.role.includes("ROLE_ADMIN")
+      ? (isAdmin.value = true)
+      : (isAdmin.value = false);
 
     const id = router.currentRoute.value.params.id;
 
@@ -111,40 +120,107 @@ export default defineComponent({
         });
     };
 
+    // turn on visible an ads
+    const validateAd = (adId) => {
+      client
+        .put(`${adId}`, {
+          isVisible: true,
+        })
+        .then((res) => {
+          router.push("/admin/apartment/waiting");
+          notification["success"]({
+            message: "Annonce validée",
+            description: "Cette annonce a bien été validée !",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de la validation !",
+          });
+        });
+    };
+
+    const deleteAd = (adId) => {
+      client
+        .delete(`${adId}`)
+        .then((res) => {
+          router.push("/admin/apartment/waiting");
+          notification["success"]({
+            message: "Annonce supprimée",
+            description: "Cette annonce a bien été supprimée !",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de la suppression !",
+          });
+        });
+    };
+
     return {
       state,
       formatPrice,
       addFavortiteAd,
       removeFavoriteAd,
       isFavorite,
+      validateAd,
+      deleteAd,
       token,
+      isAdmin,
     };
   },
 });
 </script>
+
 <template>
-  <!-- add antd col -->
   <a-col :span="12" :offset="6">
     <a-card>
       <template #actions>
-        <a-button
-          shape="circle"
-          v-if="token.id && !this.isFavorite(state.ad['@id'])"
-          danger
-          @click="this.addFavortiteAd(state.ad['@id'])"
-        >
-          <template #icon><HeartOutlined /></template>
-        </a-button>
+        <div v-if="isAdmin">
+          <a-button
+            shape="circle"
+            v-if="token.id && !state.ad.isVisible"
+            danger
+            @click="this.validateAd(state.ad['@id'])"
+          >
+            <template #icon><CheckCircleOutlined /></template>
+          </a-button>
 
-        <a-button
-          shape="circle"
-          v-if="token.id && this.isFavorite(state.ad['@id'])"
-          danger
-          @click="this.removeFavoriteAd(state.ad['@id'])"
-        >
-          <template #icon><HeartFilled /></template>
-        </a-button>
+          <a-button
+            shape="circle"
+            v-if="token.id"
+            danger
+            @click="this.deleteAd(state.ad['@id'])"
+          >
+            <template #icon><DeleteOutlined /></template>
+          </a-button>
+        </div>
+
+        <div v-else>
+          <a-button
+            shape="circle"
+            v-if="token.id && !this.isFavorite(state.ad['@id'])"
+            danger
+            @click="this.addFavortiteAd(state.ad['@id'])"
+          >
+            <template #icon><HeartOutlined /></template>
+          </a-button>
+
+          <a-button
+            shape="circle"
+            v-if="token.id && this.isFavorite(state.ad['@id'])"
+            danger
+            @click="this.removeFavoriteAd(state.ad['@id'])"
+          >
+            <template #icon><HeartFilled /></template>
+          </a-button>
+        </div>
       </template>
+
       <a-carousel arrows autoplay>
         <template #prevArrow>
           <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
