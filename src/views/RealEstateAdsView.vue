@@ -1,5 +1,7 @@
 <script>
 import {
+  CheckCircleOutlined,
+  DeleteOutlined,
   HeartFilled,
   HeartOutlined,
   LeftCircleOutlined,
@@ -15,6 +17,8 @@ import { favorites, token } from "../utils/localStorage";
 
 export default defineComponent({
   components: {
+    DeleteOutlined,
+    CheckCircleOutlined,
     LeftCircleOutlined,
     RightCircleOutlined,
     HeartFilled,
@@ -31,8 +35,6 @@ export default defineComponent({
     token.value.role.includes("ROLE_ADMIN")
       ? (isAdmin.value = true)
       : (isAdmin.value = false);
-
-    console.log("isAdmin = ", isAdmin.value);
 
     const id = router.currentRoute.value.params.id;
 
@@ -118,12 +120,55 @@ export default defineComponent({
         });
     };
 
+    // turn on visible an ads
+    const validateAd = (adId) => {
+      client
+        .put(`${adId}`, {
+          isVisible: true,
+        })
+        .then((res) => {
+          router.push("/admin/apartment/waiting");
+          notification["success"]({
+            message: "Annonce validée",
+            description: "Cette annonce a bien été validée !",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de la validation !",
+          });
+        });
+    };
+
+    const deleteAd = (adId) => {
+      client
+        .delete(`${adId}`)
+        .then((res) => {
+          router.push("/admin/apartment/waiting");
+          notification["success"]({
+            message: "Annonce supprimée",
+            description: "Cette annonce a bien été supprimée !",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de la suppression !",
+          });
+        });
+    };
+
     return {
       state,
       formatPrice,
       addFavortiteAd,
       removeFavoriteAd,
       isFavorite,
+      validateAd,
+      deleteAd,
       token,
       isAdmin,
     };
@@ -136,7 +181,23 @@ export default defineComponent({
     <a-card>
       <template #actions>
         <div v-if="isAdmin">
-          <p>pouet</p>
+          <a-button
+            shape="circle"
+            v-if="token.id"
+            danger
+            @click="this.validateAd(state.ad['@id'])"
+          >
+            <template #icon><CheckCircleOutlined /></template>
+          </a-button>
+
+          <a-button
+            shape="circle"
+            v-if="token.id"
+            danger
+            @click="this.deleteAd(state.ad['@id'])"
+          >
+            <template #icon><DeleteOutlined /></template>
+          </a-button>
         </div>
 
         <div v-else>
