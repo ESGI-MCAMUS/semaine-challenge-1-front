@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { token } from "../utils/localStorage";
 import HomeAdminView from "../views/admin/HomeAdminView.vue";
+import RealEastateAllAdminView from "../views/admin/realEastate/RealEastateAllAdminView.vue";
+import RealEastatePendingAdminView from "../views/admin/realEastate/RealEastatePendingAdminView.vue";
 import ConfirmEmail from "../views/ConfirmEmailView.vue";
 import HomeView from "../views/HomeView.vue";
 import LikesView from "../views/LikesView.vue";
@@ -104,11 +106,13 @@ const router = createRouter({
     {
       path: "/admin/apartment/all",
       name: "admin_real_estate_ads_all",
+      component: RealEastateAllAdminView,
       beforeEnter: ifIsAdmin,
     },
     {
       path: "/admin/apartment/waiting",
       name: "admin_real_estate_ads_waiting",
+      component: RealEastatePendingAdminView,
       beforeEnter: ifIsAdmin,
     },
   ],
