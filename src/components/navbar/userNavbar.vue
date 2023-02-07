@@ -11,9 +11,7 @@ const onProfile = () => {
 </script>
 
 <template>
-  <nav
-    class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900"
-  >
+  <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded">
     <div class="container flex flex-wrap items-center justify-between mx-auto">
       <RouterLink to="/">
         <a class="flex items-center">
@@ -22,8 +20,7 @@ const onProfile = () => {
             class="h-6 mr-3 sm:h-9"
             alt="Flowbite Logo"
           />
-          <span
-            class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
+          <span class="self-center text-xl font-semibold whitespace-nowrap"
             >HabitatHunter</span
           >
         </a>
@@ -42,11 +39,11 @@ const onProfile = () => {
             <a-menu>
               <a-menu-item key="0" disabled>
                 <div class="px-4 py-3">
-                  <span class="block text-sm text-gray-900 dark:text-white"
+                  <span class="block text-sm text-gray-900"
                     >{{ firtname }} {{ lastname }}</span
                   >
                   <span
-                    class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400"
+                    class="block text-sm font-medium text-gray-500 truncate"
                     >{{ email }}</span
                   >
                 </div>
@@ -56,7 +53,7 @@ const onProfile = () => {
               <a-menu-item key="1">
                 <a
                   @click="onProfile"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >Profile</a
                 >
               </a-menu-item>
@@ -64,7 +61,7 @@ const onProfile = () => {
               <RouterLink to="likes">
                 <a-menu-item key="2">
                   <a
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >Mes favoris</a
                   >
                 </a-menu-item>
@@ -73,7 +70,7 @@ const onProfile = () => {
               <a-menu-item key="3">
                 <a
                   @click="$emit('logout')"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >Déconnexion</a
                 >
               </a-menu-item>
@@ -84,7 +81,7 @@ const onProfile = () => {
         <button
           data-collapse-toggle="mobile-menu-2"
           type="button"
-          class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
           aria-controls="mobile-menu-2"
           aria-expanded="false"
         >
@@ -112,7 +109,7 @@ const onProfile = () => {
         <RouterLink to="/">
           <button
             type="button"
-            class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2"
+            class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 mb-2"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -137,12 +134,12 @@ const onProfile = () => {
           </button>
         </RouterLink>
         <ul
-          class="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
+          class="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white"
         >
           <li>
             <RouterLink to="/">
               <a
-                class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
                 aria-current="page"
                 >Accueil</a
               >
@@ -151,7 +148,7 @@ const onProfile = () => {
           <li>
             <RouterLink to="/">
               <a
-                class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
                 aria-current="page"
                 >Acheter</a
               >
@@ -160,7 +157,7 @@ const onProfile = () => {
           <li>
             <a
               href="#"
-              class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
               >Louer</a
             >
           </li>

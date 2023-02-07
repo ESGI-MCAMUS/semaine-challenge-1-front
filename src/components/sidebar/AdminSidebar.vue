@@ -1,16 +1,14 @@
 <template>
   <aside class="w-64 sidebar" aria-label="Sidebar">
-    <div
-      class="px-3 py-4 overflow-y-auto rounded bg-gray-50 dark:bg-gray-800 h-full"
-    >
+    <div class="px-3 py-4 overflow-y-auto rounded bg-gray-50 0 h-full">
       <ul class="space-y-2">
         <li>
           <a
-            class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+            class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg hover:bg-gray-100"
           >
             <svg
               aria-hidden="true"
-              class="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+              class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -24,11 +22,11 @@
 
         <li>
           <a
-            class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+            class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg hover:bg-gray-100"
           >
             <svg
               aria-hidden="true"
-              class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+              class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -46,14 +44,14 @@
         <li>
           <button
             type="button"
-            class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+            class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
             aria-controls="dropdown-example"
             data-collapse-toggle="dropdown-example"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+              class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
             >
               <path fill="none" d="M0 0h24v24H0Z"></path>
               <path
@@ -84,14 +82,14 @@
             <li>
               <a
                 href="#"
-                class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
                 >Tout les appartement</a
               >
             </li>
             <li>
               <a
                 href="#"
-                class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
                 >En attente de validation</a
               >
             </li>
@@ -101,12 +99,12 @@
         <li>
           <a
             @click="$emit('logout')"
-            class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+            class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg hover:bg-gray-100"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+              class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
             >
               <path fill="none" d="M0 0h24v24H0Z"></path>
               <path

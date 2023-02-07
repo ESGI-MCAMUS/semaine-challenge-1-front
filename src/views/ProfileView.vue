@@ -19,6 +19,7 @@ const getuser = async () => {
 
   try {
     const res = await client.get(`/users/${userId}`);
+    console.log("res", res);
   } catch (error) {
     console.log("error", error);
   }
@@ -28,19 +29,19 @@ const getuser = async () => {
 <template>
   <div class="flex">
     <div
-      class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700"
+      class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-md"
     >
       <div class="flex justify-end px-4 pt-4"></div>
       <div class="flex flex-col items-center pb-10">
         <img
           class="w-24 h-24 mb-3 rounded-full shadow-lg"
-          src="https://media.tenor.com/587AABroBfwAAAAS/dance-skeleton.gif"
+          src="https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&w=1000"
           alt="Bonnie image"
         />
-        <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+        <h5 class="mb-1 text-xl font-medium text-gray-900">
           {{ store.name }}
         </h5>
-        <span class="text-sm text-gray-500 dark:text-gray-400">ROLE</span>
+        <span class="text-sm text-gray-500">ROLE</span>
         <div class="flex mt-4 space-x-3 md:mt-6"></div>
       </div>
     </div>
@@ -50,7 +51,7 @@ const getuser = async () => {
 
         <Button>Some action</Button>
         <Button @click="onUpdateName">Change le nom</Button>
-        <Button @click="getuser">Change le nom</Button>
+        <Button @click="getuser">Get user console</Button>
       </div>
     </Card>
   </div>
