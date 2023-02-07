@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
 import { client } from "../../services";
 
 const state = reactive({
@@ -31,8 +31,10 @@ const getUsers = async () => {
     });
 };
 
-getAllApartements();
-getUsers();
+onMounted(() => {
+  getAllApartements();
+  getUsers();
+});
 </script>
 
 <template>
