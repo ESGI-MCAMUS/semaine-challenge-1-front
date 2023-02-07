@@ -46,7 +46,6 @@ export default defineComponent({
       password: "",
       remember: true,
       navToResetPassword: () => {
-        console.log("navToResetPassword");
         router.push("/reset-password");
       },
     });
@@ -59,7 +58,6 @@ export default defineComponent({
       axios
         .post("/auth", { email: values.username, password: values.password })
         .then((res) => {
-          console.log(res);
           if (res.status === 200) {
             //add user to localStorage
             const token = res.data.token;
@@ -84,7 +82,6 @@ export default defineComponent({
     };
 
     const navToResetPwd = () => {
-      console.log("navToResetPwd");
       router.push("/reset-password");
     };
 

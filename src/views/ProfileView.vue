@@ -19,7 +19,6 @@ const getuser = async () => {
 
   try {
     const res = await client.get(`/users/${userId}`);
-    console.log("res", res);
   } catch (error) {
     console.log("error", error);
   }

@@ -156,7 +156,6 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.status === 201) {
-            console.log(res.data);
             formState.isSuccess = true;
             formState.firstname = "";
             formState.lastname = "";

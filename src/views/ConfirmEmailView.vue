@@ -23,7 +23,6 @@ export default defineComponent({
     axios
       .post(`/users/verify/${token}`, {})
       .then((res) => {
-        console.log(res);
         if (res.status === 200) {
           router.push("/login");
         }

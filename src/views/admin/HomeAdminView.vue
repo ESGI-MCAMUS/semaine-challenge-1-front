@@ -21,7 +21,7 @@ const getAllApartements = async () => {
 
 const getUsers = async () => {
   client
-    .get("/users?pagination=false")
+    .get("/users")
     .then((res) => {
       const data = res.data;
       state.users = data["hydra:member"];
