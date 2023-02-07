@@ -6,7 +6,7 @@ import {
   RightCircleOutlined,
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import router from "../router";
 import { client } from "../services";
 import { formatPrice } from "../utils/ads.utils";
@@ -26,6 +26,13 @@ export default defineComponent({
       housing: {},
       housingProperties: {},
     });
+
+    let isAdmin = ref(false);
+    token.value.role.includes("ROLE_ADMIN")
+      ? (isAdmin.value = true)
+      : (isAdmin.value = false);
+
+    console.log("isAdmin = ", isAdmin.value);
 
     const id = router.currentRoute.value.params.id;
 
@@ -118,33 +125,41 @@ export default defineComponent({
       removeFavoriteAd,
       isFavorite,
       token,
+      isAdmin,
     };
   },
 });
 </script>
+
 <template>
-  <!-- add antd col -->
   <a-col :span="12" :offset="6">
     <a-card>
       <template #actions>
-        <a-button
-          shape="circle"
-          v-if="token.id && !this.isFavorite(state.ad['@id'])"
-          danger
-          @click="this.addFavortiteAd(state.ad['@id'])"
-        >
-          <template #icon><HeartOutlined /></template>
-        </a-button>
+        <div v-if="isAdmin">
+          <p>pouet</p>
+        </div>
 
-        <a-button
-          shape="circle"
-          v-if="token.id && this.isFavorite(state.ad['@id'])"
-          danger
-          @click="this.removeFavoriteAd(state.ad['@id'])"
-        >
-          <template #icon><HeartFilled /></template>
-        </a-button>
+        <div v-else>
+          <a-button
+            shape="circle"
+            v-if="token.id && !this.isFavorite(state.ad['@id'])"
+            danger
+            @click="this.addFavortiteAd(state.ad['@id'])"
+          >
+            <template #icon><HeartOutlined /></template>
+          </a-button>
+
+          <a-button
+            shape="circle"
+            v-if="token.id && this.isFavorite(state.ad['@id'])"
+            danger
+            @click="this.removeFavoriteAd(state.ad['@id'])"
+          >
+            <template #icon><HeartFilled /></template>
+          </a-button>
+        </div>
       </template>
+
       <a-carousel arrows autoplay>
         <template #prevArrow>
           <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
