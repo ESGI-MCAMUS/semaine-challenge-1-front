@@ -183,7 +183,7 @@ export default defineComponent({
         <div v-if="isAdmin">
           <a-button
             shape="circle"
-            v-if="token.id"
+            v-if="token.id && !state.ad.isVisible"
             danger
             @click="this.validateAd(state.ad['@id'])"
           >

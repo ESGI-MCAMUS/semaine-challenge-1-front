@@ -92,7 +92,6 @@ getRealEastateAds();
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  max-height: calc(100vh - 180px);
   overflow-y: scroll;
 }
 
@@ -100,6 +99,5 @@ getRealEastateAds();
   padding-left: 20px;
   padding-right: 20px;
   margin-top: 20px;
-  margin-bottom: 20px;
 }
 </style>

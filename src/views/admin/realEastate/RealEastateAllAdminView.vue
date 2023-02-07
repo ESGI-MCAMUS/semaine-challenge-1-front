@@ -1,5 +1,6 @@
 <script setup>
 import { reactive } from "vue";
+import router from "../../../router";
 import { client } from "../../../services";
 import { formatPrice } from "../../../utils/ads.utils";
 
@@ -14,15 +15,18 @@ const state = reactive({
 
 const getRealEastateAds = async () => {
   client
-    .get(`/real_estate_ads?page=${state.page}`)
+    .get(`/real_estate_ads?pagination=false`)
     .then((res) => {
       const data = res.data;
       state.apartments = data["hydra:member"];
-      console.log(state.apartments);
     })
     .catch((err) => {
       console.log(err);
     });
+};
+
+const navigate = (id) => {
+  router.push(`${id}`);
 };
 
 getRealEastateAds();
@@ -30,8 +34,6 @@ getRealEastateAds();
 
 <template>
   <div class="p-4 sm:ml-64">
-    <p>pouet</p>
-
     <div class="adsContainer">
       <div class="adsBox" v-for="ad in state.apartments" :key="ad.id">
         <a-card style="width: 400px" bodyStyle="padding: 20px">
@@ -41,6 +43,12 @@ getRealEastateAds();
               :src="ad.photos[0]"
               style="width: 100%; height: 300px; object-fit: cover"
             />
+          </template>
+
+          <template #actions>
+            <a-button type="default" @click="navigate(ad['@id'])"
+              >Voir l'annonce</a-button
+            >
           </template>
 
           <a-card-meta
@@ -66,7 +74,7 @@ getRealEastateAds();
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  max-height: calc(100vh - 180px);
+
   overflow-y: scroll;
 }
 
