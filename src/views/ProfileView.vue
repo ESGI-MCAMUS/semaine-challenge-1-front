@@ -5,6 +5,7 @@ import { onMounted, reactive, ref } from "vue";
 import Button from "../components/UI/Button.vue";
 import Card from "../components/UI/Card.vue";
 import Heading from "../components/UI/Heading.vue";
+import Spinner from "../components/UI/Spinner.vue";
 import { client } from "../services";
 import { token } from "../utils/localStorage";
 
@@ -36,7 +37,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="isLoading"></div>
+  <div
+    v-if="isLoading"
+    class="w-[100%] h-[80vh] flex justify-center items-center"
+  >
+    <Spinner />
+  </div>
+
   <div v-else>
     <div class="flex">
       <div
