@@ -2,9 +2,12 @@
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { onMounted, reactive, ref } from "vue";
+import AppointementPreview from "../components/UI/AppointementPreview.vue";
 import Button from "../components/UI/Button.vue";
 import Card from "../components/UI/Card.vue";
 import Heading from "../components/UI/Heading.vue";
+import MessagePreview from "../components/UI/MessagePreview.vue";
+import RealEstateCard from "../components/UI/RealEstateCard.vue";
 import Spinner from "../components/UI/Spinner.vue";
 import { client } from "../services";
 import { token } from "../utils/localStorage";
@@ -31,6 +34,7 @@ onMounted(() => {
         locale: fr,
       }),
     };
+    console.log("user", user);
     isLoading.value = false;
   });
 });
@@ -91,18 +95,46 @@ onMounted(() => {
         </div>
       </Card>
     </div>
-    <Card class="w-[100%] h-80 mt-4">
+    <Card class="w-[100%] h-[100%] mt-4">
       <Heading>Mes biens</Heading>
-      <div>Vous ne posséder aucun bien pour le moment</div>
+
+      <div v-if="user.housings.length === 0" class="h-36">
+        <div>Vous n'avez aucun biens pour le moment.</div>
+        <Button class="mt-2"> Ajouter un bien </Button>
+      </div>
+
+      <!-- TODO : Faire un pseudo carousel avec les différents bien-->
+
+      <div v-else class="flex overflow-scroll">
+        <RealEstateCard class="w-1/3" />
+      </div>
     </Card>
     <div class="flex">
-      <Card class="w-[100%] h-80 mt-4">
+      <Card class="w-1/2 h-80 mt-4">
         <Heading>Mes derniers paiements</Heading>
-        <div>Vous n'avez procécés à aucuns paiements pour le moment</div>
+        <!-- <div>Vous n'avez procécés à aucun paiements pour le moment</div> -->
+
+        <!-- TODO : Faire la condition pour les paiements ici -->
+
+        <div class="flex flex-col">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-500">Date</span>
+            <span class="text-sm text-gray-500">Montant</span>
+          </div>
+          <AppointementPreview date="12/12/12" amount="2000" />
+        </div>
       </Card>
-      <Card class="w-[100%] h-80 mt-4 ml-4">
+      <Card class="w-1/2 h-80 mt-4 ml-4">
         <Heading>Mes derniers messages</Heading>
-        <div>Vous n'avez reçus aucun messages pour le moment</div>
+        <!-- <div>Vous n'avez reçus aucun messages pour le moment</div> -->
+
+        <!-- TODO : Faire la condition pour les messages ici -->
+
+        <MessagePreview
+          expeditorName="Pata Pouet"
+          message="Message random, flemme de styliser, j'deteste vue, j'deteste PHP,
+        vivement que ça se finisse."
+        />
       </Card>
     </div>
   </div>
