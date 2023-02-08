@@ -11,15 +11,30 @@ import RealEstateCard from "../components/UI/RealEstateCard.vue";
 import Spinner from "../components/UI/Spinner.vue";
 import { client } from "../services";
 import { token } from "../utils/localStorage";
+import { notification } from "ant-design-vue";
 
 let isLoading = ref(true);
 let user = reactive({});
+let messages = reactive([]);
+let senders = reactive([]);
+let modalVisible = ref(false);
+let messagesFiltered = reactive([]);
+let message = ref("");
 
 const getuser = async () => {
   const userId = token.value.id;
 
   try {
     const res = await client.get(`/users/${userId}`);
+    return res;
+  } catch (error) {
+    return undefined;
+  }
+};
+
+const getMessages = async () => {
+  try {
+    const res = await client.post(`users/messages`);
     return res;
   } catch (error) {
     return undefined;
@@ -37,7 +52,81 @@ onMounted(() => {
     console.log("user", user);
     isLoading.value = false;
   });
+
+  getMessages().then((res) => {
+    console.log("messages", res);
+    // Get unique senders
+    messages = res.data;
+    senders = [
+      ...new Set(res.data.receivedMessages.map((message) => message.sender.id)),
+    ];
+    console.log("senders", senders);
+  });
 });
+
+const openMessages = (senderId) => {
+  modalVisible.value = true;
+  console.log("senderId", senderId);
+  const filteredReceivedMessages = messages.receivedMessages.filter(
+    (message) => message.sender.id === senderId
+  );
+
+  const filteredSentMessages = messages.sentMessages.filter(
+    (message) => message.receiver.id === senderId
+  );
+
+  const messagesFilteredByCreatedAt = [
+    ...filteredReceivedMessages,
+    ...filteredSentMessages,
+  ].sort((a, b) => {
+    return new Date(a.createdAt) - new Date(b.createdAt);
+  });
+
+  messagesFiltered = messagesFilteredByCreatedAt;
+
+  // Scroll to div .bottomMessage
+  const bottomMessage = document.querySelector(".bottomMessage");
+  bottomMessage.scrollTop = bottomMessage.scrollHeight;
+
+  console.log("messagesFilteredByCreatedAt", messagesFilteredByCreatedAt);
+};
+
+const sendMessage = (receiver) => {
+  client
+    .post(`/messages`, {
+      sender: `/users/${token.value.id}`,
+      receiver: `/users/${receiver}`,
+      message: message.value,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .then((res) => {
+      notification["success"]({
+        message: "Message envoyé",
+        description: "Votre message a bien été envoyé !",
+      });
+      message.value = "";
+      modalVisible.value = false;
+      getMessages().then((res) => {
+        console.log("messages", res);
+        // Get unique senders
+        messages = res.data;
+        senders = [
+          ...new Set(
+            res.data.receivedMessages.map((message) => message.sender.id)
+          ),
+        ];
+        console.log("senders", senders);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      notification["error"]({
+        message: "Oups !",
+        description: "Une erreur est survenue lors de l'envoi du message !",
+      });
+    });
+};
 </script>
 
 <template>
@@ -125,16 +214,83 @@ onMounted(() => {
         </div>
       </Card>
       <Card class="w-1/2 h-80 mt-4 ml-4">
-        <Heading>Mes derniers messages</Heading>
+        <Heading>Mes messages</Heading>
         <!-- <div>Vous n'avez reçus aucun messages pour le moment</div> -->
 
         <!-- TODO : Faire la condition pour les messages ici -->
-
-        <MessagePreview
-          expeditorName="Pata Pouet"
-          message="Message random, flemme de styliser, j'deteste vue, j'deteste PHP,
-        vivement que ça se finisse."
-        />
+        <div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-500">Expediteur</span>
+            <span class="text-sm text-gray-500">Action</span>
+          </div>
+          <br />
+          <div class="flex justify-between" v-for="senderId in senders">
+            <span class="text-sm text-gray-900"
+              >{{
+                messages.receivedMessages.find((m) => m.sender.id == senderId)
+                  .sender.firstname
+              }}
+              {{
+                messages.receivedMessages.find((m) => m.sender.id == senderId)
+                  .sender.lastname
+              }}</span
+            >
+            <a-button type="primary" @click="openMessages(senderId)"
+              >Consulter</a-button
+            >
+            <a-modal
+              v-model:visible="modalVisible"
+              :title="`Messages`"
+              @ok="sendMessage(senderId)"
+              okText="Envoyer message"
+            >
+              <div style="height: 50vh; overflow-y: scroll">
+                <div v-for="message in messagesFiltered" :key="message.id">
+                  <div
+                    v-if="message.sender.id === senderId"
+                    style="margin-top: 10px; margin-bottom: 10px"
+                  >
+                    <div class="flex justify-end">
+                      <div class="flex flex-col">
+                        <span class="text-sm text-gray-900">
+                          {{ message.message }}
+                        </span>
+                        <span class="text-sm text-gray-500">
+                          {{ message.createdAt }} —
+                          {{ message.sender.firstname }}
+                          {{ message.sender.lastname }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else>
+                    <div
+                      class="flex justify-start"
+                      style="margin-top: 10px; margin-bottom: 10px"
+                    >
+                      <div class="flex flex-col">
+                        <span class="text-sm text-gray-900">
+                          {{ message.message }}
+                        </span>
+                        <span class="text-sm text-gray-500">
+                          {{ message.createdAt }} —
+                          {{ message.sender.firstname }}
+                          {{ message.sender.lastname }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bottomMessage"></div>
+              </div>
+              <a-input
+                placeholder="Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui."
+                v-model:value="message"
+                autofocus
+              />
+            </a-modal>
+          </div>
+        </div>
       </Card>
     </div>
   </div>
