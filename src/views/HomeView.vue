@@ -1,5 +1,10 @@
 <script>
-import { HeartFilled, HeartOutlined } from "@ant-design/icons-vue";
+import {
+  HeartFilled,
+  HeartOutlined,
+  WechatOutlined,
+  EyeOutlined,
+} from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 import { defineComponent, reactive } from "vue";
 import Footer from "../components/Footer.vue";
@@ -14,6 +19,8 @@ export default defineComponent({
   components: {
     HeartOutlined,
     HeartFilled,
+    WechatOutlined,
+    EyeOutlined,
   },
   setup() {
     const state = reactive({
@@ -28,6 +35,11 @@ export default defineComponent({
       classification: "all",
       filteredProperties: [],
       searchText: "",
+      message: "",
+      modal: {
+        visible: false,
+        ad: {},
+      },
     });
 
     const getAds = () => {
@@ -184,6 +196,38 @@ export default defineComponent({
         });
     };
 
+    const updateModal = (visible, ad = {}) => {
+      state.modal.visible = visible;
+      state.modal.ad = ad;
+    };
+
+    const sendMessage = () => {
+      client
+        .post(`/messages`, {
+          sender: `/users/${token.value.id}`,
+          receiver: `${state.modal.ad.publisher}`,
+          message: state.message,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .then((res) => {
+          notification["success"]({
+            message: "Message envoyé",
+            description:
+              "Votre message a bien été envoyé ! Vous pouvez retrouver votre conversation dans la rubrique 'Mes derniers messages' de votre profil.",
+          });
+          state.message = "";
+          updateModal(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de l'envoi du message !",
+          });
+        });
+    };
+
     return {
       state,
       getAds,
@@ -197,6 +241,8 @@ export default defineComponent({
       onChangedValues,
       handleChangeSelectType,
       handleChangeSelectClassification,
+      updateModal,
+      sendMessage,
     };
   },
 });
@@ -269,9 +315,9 @@ export default defineComponent({
             />
           </template>
           <template #actions>
-            <a-button type="default" @click="this.navigate(ad['@id'])"
-              >Voir l'annonce</a-button
-            >
+            <a-button shape="circle" primary @click="this.navigate(ad['@id'])">
+              <template #icon><EyeOutlined /></template>
+            </a-button>
             <a-button
               shape="circle"
               v-if="token?.id && !this.isFavorite(ad['@id'])"
@@ -288,6 +334,15 @@ export default defineComponent({
               @click="this.removeFavoriteAd(ad['@id'])"
             >
               <template #icon><HeartFilled /></template>
+            </a-button>
+
+            <a-button
+              shape="circle"
+              v-if="token?.id"
+              primary
+              @click="this.updateModal(true, ad)"
+            >
+              <template #icon><WechatOutlined /></template>
             </a-button>
           </template>
           <a-card-meta
@@ -326,6 +381,19 @@ export default defineComponent({
           "
         />
       </div>
+    </div>
+    <div>
+      <a-modal
+        v-model:visible="state.modal.visible"
+        :title="`Envoyer un message au propriétaire`"
+        @ok="this.sendMessage()"
+      >
+        <a-textarea
+          v-model:value="state.message"
+          placeholder="Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui."
+          :rows="4"
+        />
+      </a-modal>
     </div>
   </main>
   <Footer />
