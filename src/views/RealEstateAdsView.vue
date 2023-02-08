@@ -32,9 +32,12 @@ export default defineComponent({
     });
 
     let isAdmin = ref(false);
-    token.value.role.includes("ROLE_ADMIN")
-      ? (isAdmin.value = true)
-      : (isAdmin.value = false);
+
+    if (token?.role?.value !== undefined) {
+      token.value.role.includes("ROLE_ADMIN")
+        ? (isAdmin.value = true)
+        : (isAdmin.value = false);
+    }
 
     const id = router.currentRoute.value.params.id;
 
