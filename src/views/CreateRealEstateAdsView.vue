@@ -1,8 +1,13 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { client } from "../services";
+import { token } from "../utils/localStorage";
 
 const formRef = ref();
+
+const userId = token.value.id;
+const housingPropertiesId = ref();
+const housingId = ref();
 
 const formState = reactive({
   // real estate
@@ -23,7 +28,7 @@ const formState = reactive({
 
   surface: "",
   rooms: "",
-  has_garden: false,
+  has_garden: "",
   has_parking: false,
   has_pool: false,
   has_cave: false,
@@ -102,6 +107,71 @@ const validateSwitch = async (_rule, value) => {
 };
 
 // let rules = {
+
+const createHousingProperty = async (values) => {
+  client
+    .post("/housing_properties", {
+      type: values.type,
+      surface: parseInt(values.surface),
+      rooms: parseInt(values.rooms),
+      hasGarden: Boolean(values.has_garden),
+      hasParking: Boolean(values.has_parking),
+      hasPool: Boolean(values.has_pool),
+      hasCave: Boolean(values.has_cave),
+      hasAttic: Boolean(values.has_attic),
+      hasBalcony: Boolean(values.has_balcony),
+      nearPublicTransport: Boolean(values.near_public_transport),
+      classification: values.classification,
+    })
+    .then((response) => {
+      console.log(response);
+      housingPropertiesId.value = response.data.id;
+      createHousing(values);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+const createHousing = async (values) => {
+  client
+    .post("/housings", {
+      properties: "/housing_properties/" + housingPropertiesId.value,
+      owner: "/users/" + userId,
+      address: values.address,
+      address2: values.address2,
+      city: values.city,
+      zipcode: values.zipcode,
+      floor: parseInt(values.floor),
+    })
+    .then((response) => {
+      console.log(response);
+      housingId.value = response.data.id;
+      createRealEstateAd(values);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+const createRealEstateAd = async (values) => {
+  client
+    .post("/real_estate_ads", {
+      housing: "/housings/" + housingId.value,
+      publisher: "/users/" + userId,
+      title: values.title,
+      type: values.type,
+      description: values.description,
+      price: parseInt(values.price),
+      isVisible: false,
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 //   type: [
 //     {
 //       validator: validateType,
@@ -197,26 +267,7 @@ const validateSwitch = async (_rule, value) => {
 const onFinish = (values) => {
   console.log("Success:", values);
 
-  client
-    .post("/housing_properties", {
-      surface: values.surface,
-      type: values.type,
-      rooms: values.rooms,
-      has_garden: values.has_garden,
-      has_parking: values.has_parking,
-      has_pool: values.has_pool,
-      has_cave: values.has_cave,
-      has_attic: values.has_attic,
-      has_balcony: values.has_balcony,
-      near_public_transport: values.near_public_transport,
-      classification: values.classification,
-    })
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  createHousingProperty(values);
 };
 </script>
 
@@ -285,6 +336,13 @@ const onFinish = (values) => {
           <a-switch v-model:checked="formState.has_garden" />
         </a-form-item>
 
+        <!-- <a-form-item label="has_garden" name="has_garden">
+          <a-radio-group v-model:value="formState.has_garden">
+            <a-radio value="true">Oui</a-radio>
+            <a-radio value="false">Non</a-radio>
+          </a-radio-group>
+        </a-form-item> -->
+
         <a-form-item label="Possède un parking" name="has_parking">
           <a-switch v-model:checked="formState.has_parking" />
         </a-form-item>
@@ -311,11 +369,11 @@ const onFinish = (values) => {
 
         <a-form-item label="Classification" name="classification">
           <a-radio-group v-model:value="formState.classification">
-            <a-radio value="1">insalubrious</a-radio>
-            <a-radio value="2">bad</a-radio>
-            <a-radio value="3">average</a-radio>
-            <a-radio value="4">good</a-radio>
-            <a-radio value="5">excellent</a-radio>
+            <a-radio value="insalubrious">insalubrious</a-radio>
+            <a-radio value="bad">bad</a-radio>
+            <a-radio value="average">average</a-radio>
+            <a-radio value="good">good</a-radio>
+            <a-radio value="excellent">excellent</a-radio>
           </a-radio-group>
         </a-form-item>
 
