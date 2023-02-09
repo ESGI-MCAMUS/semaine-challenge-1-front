@@ -14,10 +14,7 @@ import { client } from "../services";
 import { refetchFavorites } from "../utils/favorites";
 import { favorites, token } from "../utils/localStorage";
 
-console.log(
-  "G API key from main.js :",
-  import.meta.env.VITE_API_GOOGLE_MAPS_KEY
-);
+console.log("enfin enculé:", import.meta.env.VITE_API_GOOGLE_MAPS_KEY);
 
 console.log("pouet");
 
