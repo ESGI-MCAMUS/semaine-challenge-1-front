@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, ref } from "vue";
+import { client } from "../services";
 
 const formRef = ref();
 
@@ -20,7 +21,6 @@ const formState = reactive({
   door: "",
   floor: "",
 
-  // housing properties
   surface: "",
   rooms: "",
   has_garden: false,
@@ -101,101 +101,122 @@ const validateSwitch = async (_rule, value) => {
   }
 };
 
-let rules = {
-  type: [
-    {
-      validator: validateType,
-    },
-  ],
-  price: [
-    {
-      validator: validatePrice,
-    },
-  ],
-  title: [
-    {
-      validator: validateNotEmpty,
-    },
-  ],
-  description: [
-    {
-      validator: validateNotEmpty,
-    },
-  ],
-  address: [
-    {
-      validator: validateNotEmpty,
-    },
-  ],
-  city: [
-    {
-      validator: validateNotEmpty,
-    },
-  ],
-  zipcode: [
-    {
-      validator: validateZipcode,
-    },
-  ],
-  floor: [
-    {
-      validator: validateFloor,
-    },
-  ],
-  surface: [
-    {
-      validator: validateSurface,
-    },
-  ],
-  rooms: [
-    {
-      validator: validateSurface,
-    },
-  ],
-  has_garden: [
-    {
-      validator: validateSwitch,
-    },
-  ],
-  has_parking: [
-    {
-      validator: validateSwitch,
-    },
-  ],
-  has_pool: [
-    {
-      validator: validateSwitch,
-    },
-  ],
-  has_cave: [
-    {
-      validator: validateSwitch,
-    },
-  ],
-  has_attic: [
-    {
-      validator: validateSwitch,
-    },
-  ],
-  has_balcony: [
-    {
-      validator: validateSwitch,
-    },
-  ],
-  near_public_transport: [
-    {
-      validator: validateSwitch,
-    },
-  ],
-  classification: [
-    {
-      validator: validateNotEmpty,
-    },
-  ],
-};
+// let rules = {
+//   type: [
+//     {
+//       validator: validateType,
+//     },
+//   ],
+//   price: [
+//     {
+//       validator: validatePrice,
+//     },
+//   ],
+//   title: [
+//     {
+//       validator: validateNotEmpty,
+//     },
+//   ],
+//   description: [
+//     {
+//       validator: validateNotEmpty,
+//     },
+//   ],
+//   address: [
+//     {
+//       validator: validateNotEmpty,
+//     },
+//   ],
+//   city: [
+//     {
+//       validator: validateNotEmpty,
+//     },
+//   ],
+//   zipcode: [
+//     {
+//       validator: validateZipcode,
+//     },
+//   ],
+//   floor: [
+//     {
+//       validator: validateFloor,
+//     },
+//   ],
+//   surface: [
+//     {
+//       validator: validateSurface,
+//     },
+//   ],
+//   rooms: [
+//     {
+//       validator: validateSurface,
+//     },
+//   ],
+//   has_garden: [
+//     {
+//       validator: validateSwitch,
+//     },
+//   ],
+//   has_parking: [
+//     {
+//       validator: validateSwitch,
+//     },
+//   ],
+//   has_pool: [
+//     {
+//       validator: validateSwitch,
+//     },
+//   ],
+//   has_cave: [
+//     {
+//       validator: validateSwitch,
+//     },
+//   ],
+//   has_attic: [
+//     {
+//       validator: validateSwitch,
+//     },
+//   ],
+//   has_balcony: [
+//     {
+//       validator: validateSwitch,
+//     },
+//   ],
+//   near_public_transport: [
+//     {
+//       validator: validateSwitch,
+//     },
+//   ],
+//   classification: [
+//     {
+//       validator: validateNotEmpty,
+//     },
+//   ],
+// };
 
 const onFinish = (values) => {
   console.log("Success:", values);
+
+  client
+    .post("/housing_properties", {
+      surface: values.surface,
+      type: values.type,
+      rooms: values.rooms,
+      has_garden: values.has_garden,
+      has_parking: values.has_parking,
+      has_pool: values.has_pool,
+      has_cave: values.has_cave,
+      has_attic: values.has_attic,
+      has_balcony: values.has_balcony,
+      near_public_transport: values.near_public_transport,
+      classification: values.classification,
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 </script>
 
@@ -260,31 +281,31 @@ const onFinish = (values) => {
           <a-input v-model:value="formState.rooms" />
         </a-form-item>
 
-        <a-form-item label="Possède un jardin">
+        <a-form-item label="Possède un jardin" name="has_garden">
           <a-switch v-model:checked="formState.has_garden" />
         </a-form-item>
 
-        <a-form-item label="Possède un parking">
+        <a-form-item label="Possède un parking" name="has_parking">
           <a-switch v-model:checked="formState.has_parking" />
         </a-form-item>
 
-        <a-form-item label="Possède une piscine">
+        <a-form-item label="Possède une piscine" name="has_pool">
           <a-switch v-model:checked="formState.has_pool" />
         </a-form-item>
 
-        <a-form-item label="Possède une cave">
+        <a-form-item label="Possède une cave" name="has_cave">
           <a-switch v-model:checked="formState.has_cave" />
         </a-form-item>
 
-        <a-form-item label="Possède un grenier">
+        <a-form-item label="Possède un grenier" name="has_attic">
           <a-switch v-model:checked="formState.has_attic" />
         </a-form-item>
 
-        <a-form-item label="Possède un balcon">
+        <a-form-item label="Possède un balcon" name="has_balcony">
           <a-switch v-model:checked="formState.has_balcony" />
         </a-form-item>
 
-        <a-form-item label="Proche des transports">
+        <a-form-item label="Proche des transports" name="near_public_transport">
           <a-switch v-model:checked="formState.near_public_transport" />
         </a-form-item>
 
