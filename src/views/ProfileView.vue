@@ -1,4 +1,5 @@
 <script setup>
+import { notification } from "ant-design-vue";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { onMounted, reactive, ref } from "vue";
@@ -6,12 +7,10 @@ import AppointementPreview from "../components/UI/AppointementPreview.vue";
 import Button from "../components/UI/Button.vue";
 import Card from "../components/UI/Card.vue";
 import Heading from "../components/UI/Heading.vue";
-import MessagePreview from "../components/UI/MessagePreview.vue";
 import RealEstateCard from "../components/UI/RealEstateCard.vue";
 import Spinner from "../components/UI/Spinner.vue";
 import { client } from "../services";
 import { token } from "../utils/localStorage";
-import { notification } from "ant-design-vue";
 
 let isLoading = ref(true);
 let user = reactive({});
