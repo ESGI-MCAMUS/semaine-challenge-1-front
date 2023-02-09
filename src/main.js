@@ -13,10 +13,10 @@ const pinia = createPinia();
 const app = createApp(App);
 //dotenv.config();
 
-console.log(
-  "G API key from main.js :",
-  import.meta.env.VITE_API_GOOGLE_MAPS_KEY
-);
+// console.log(
+//   "G API key from main.js :",
+//   import.meta.env.VITE_API_GOOGLE_MAPS_KEY
+// );
 
 // TODO : je sais pas s'il faut laisser ça jérémy
 // app.use(GMaps, {
