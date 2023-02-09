@@ -15,6 +15,11 @@ import { formatPrice } from "../utils/ads.utils";
 import { isFavorite, refetchFavorites } from "../utils/favorites";
 import { favorites, token } from "../utils/localStorage";
 
+console.log(
+  "test RealEstateView G API KEY",
+  process.env.VUE_APP_API_GOOGLE_MAP_KEY
+);
+
 export default defineComponent({
   components: {
     DeleteOutlined,
@@ -29,6 +34,7 @@ export default defineComponent({
       ad: {},
       housing: {},
       housingProperties: {},
+      mapsUrl: "",
     });
 
     let isAdmin = ref(false);
@@ -40,7 +46,6 @@ export default defineComponent({
     }
 
     const id = router.currentRoute.value.params.id;
-
     client
       .get(`/real_estate_ads/${id}`)
       .then((resAd) => {
@@ -61,6 +66,8 @@ export default defineComponent({
                     if (resHousingProperties.status === 200) {
                       const dataHousingProperties = resHousingProperties.data;
                       state.housingProperties = dataHousingProperties;
+                      state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_API_GOOGLE_MAP_KEY}&q=${state.housing.lat},${state.housing.lng}`;
+                      console.log(import.meta.env);
                       refetchFavorites();
                     }
                   })
@@ -248,8 +255,21 @@ export default defineComponent({
         `Prix: ${this.formatPrice(state.ad.price)} ${
           state.ad.type === "sale" ? "€" : "€/mois"
         }`
-      }}</a-typography-title
-      ><br />
+      }}</a-typography-title>
+      <div>
+        <iframe
+          title="maps"
+          width="600"
+          height="450"
+          style="border: 0"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          :src="state.mapsUrl"
+        >
+        </iframe>
+      </div>
+      <br />
       <br />
       <a-typography-title :level="4"
         >Caracteristiques du bien</a-typography-title
@@ -334,9 +354,10 @@ export default defineComponent({
           <a-list-item>
             <a-list-item-meta :description="item.description">
               <template #title>
-                <p>
-                  <b>{{ item.title }}</b>
-                </p>
+                <p></p>
+                <div>
+                  {{ item.title }}
+                </div>
               </template>
               <template #avatar>
                 <a-avatar :src="item.image" />
@@ -357,3 +378,7 @@ export default defineComponent({
   border-radius: 15px;
 }
 </style>
+
+<script setup>
+console.log(import.meta.env);
+</script>
