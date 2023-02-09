@@ -1,5 +1,7 @@
 <script setup>
+import { notification } from "ant-design-vue";
 import { reactive, ref } from "vue";
+import router from "../router";
 import { client } from "../services";
 import { token } from "../utils/localStorage";
 
@@ -8,6 +10,10 @@ const formRef = ref();
 const userId = token.value.id;
 const housingPropertiesId = ref();
 const housingId = ref();
+
+const navigate = (id) => {
+  router.push(`${id}`);
+};
 
 const formState = reactive({
   // real estate
@@ -106,7 +112,93 @@ const validateSwitch = async (_rule, value) => {
   }
 };
 
-// let rules = {
+let rules = {
+  type: [
+    {
+      validator: validateType,
+    },
+  ],
+  price: [
+    {
+      validator: validatePrice,
+    },
+  ],
+  title: [
+    {
+      validator: validateNotEmpty,
+    },
+  ],
+  description: [
+    {
+      validator: validateNotEmpty,
+    },
+  ],
+  address: [
+    {
+      validator: validateNotEmpty,
+    },
+  ],
+  city: [
+    {
+      validator: validateNotEmpty,
+    },
+  ],
+  zipcode: [
+    {
+      validator: validateZipcode,
+    },
+  ],
+  floor: [
+    {
+      validator: validateFloor,
+    },
+  ],
+  surface: [
+    {
+      validator: validateSurface,
+    },
+  ],
+  has_garden: [
+    {
+      validator: validateSwitch,
+    },
+  ],
+  has_parking: [
+    {
+      validator: validateSwitch,
+    },
+  ],
+  has_pool: [
+    {
+      validator: validateSwitch,
+    },
+  ],
+  has_cave: [
+    {
+      validator: validateSwitch,
+    },
+  ],
+  has_attic: [
+    {
+      validator: validateSwitch,
+    },
+  ],
+  has_balcony: [
+    {
+      validator: validateSwitch,
+    },
+  ],
+  near_public_transport: [
+    {
+      validator: validateSwitch,
+    },
+  ],
+  classification: [
+    {
+      validator: validateNotEmpty,
+    },
+  ],
+};
 
 const createHousingProperty = async (values) => {
   client
@@ -124,7 +216,6 @@ const createHousingProperty = async (values) => {
       classification: values.classification,
     })
     .then((response) => {
-      console.log(response);
       housingPropertiesId.value = response.data.id;
       createHousing(values);
     })
@@ -145,7 +236,6 @@ const createHousing = async (values) => {
       floor: parseInt(values.floor),
     })
     .then((response) => {
-      console.log(response);
       housingId.value = response.data.id;
       createRealEstateAd(values);
     })
@@ -166,107 +256,19 @@ const createRealEstateAd = async (values) => {
       isVisible: false,
     })
     .then((response) => {
-      console.log(response);
+      notification["success"]({
+        message: "Annonce créée !",
+        description: "Cette annonce a bien été créée !",
+      });
+
+      router.push("/");
     })
     .catch((error) => {
       console.log(error);
     });
 };
-//   type: [
-//     {
-//       validator: validateType,
-//     },
-//   ],
-//   price: [
-//     {
-//       validator: validatePrice,
-//     },
-//   ],
-//   title: [
-//     {
-//       validator: validateNotEmpty,
-//     },
-//   ],
-//   description: [
-//     {
-//       validator: validateNotEmpty,
-//     },
-//   ],
-//   address: [
-//     {
-//       validator: validateNotEmpty,
-//     },
-//   ],
-//   city: [
-//     {
-//       validator: validateNotEmpty,
-//     },
-//   ],
-//   zipcode: [
-//     {
-//       validator: validateZipcode,
-//     },
-//   ],
-//   floor: [
-//     {
-//       validator: validateFloor,
-//     },
-//   ],
-//   surface: [
-//     {
-//       validator: validateSurface,
-//     },
-//   ],
-//   rooms: [
-//     {
-//       validator: validateSurface,
-//     },
-//   ],
-//   has_garden: [
-//     {
-//       validator: validateSwitch,
-//     },
-//   ],
-//   has_parking: [
-//     {
-//       validator: validateSwitch,
-//     },
-//   ],
-//   has_pool: [
-//     {
-//       validator: validateSwitch,
-//     },
-//   ],
-//   has_cave: [
-//     {
-//       validator: validateSwitch,
-//     },
-//   ],
-//   has_attic: [
-//     {
-//       validator: validateSwitch,
-//     },
-//   ],
-//   has_balcony: [
-//     {
-//       validator: validateSwitch,
-//     },
-//   ],
-//   near_public_transport: [
-//     {
-//       validator: validateSwitch,
-//     },
-//   ],
-//   classification: [
-//     {
-//       validator: validateNotEmpty,
-//     },
-//   ],
-// };
 
 const onFinish = (values) => {
-  console.log("Success:", values);
-
   createHousingProperty(values);
 };
 </script>
