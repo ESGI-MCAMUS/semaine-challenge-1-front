@@ -17,7 +17,7 @@ import { favorites, token } from "../utils/localStorage";
 
 console.log(
   "test RealEstateView G API KEY",
-  process.env.VUE_APP_API_GOOGLE_MAP_KEY
+  import.meta.env.VUE_APP_API_GOOGLE_MAP_KEY
 );
 
 export default defineComponent({
