@@ -4,6 +4,7 @@ import HomeAdminView from "../views/admin/HomeAdminView.vue";
 import RealEastateAllAdminView from "../views/admin/realEastate/RealEastateAllAdminView.vue";
 import RealEastatePendingAdminView from "../views/admin/realEastate/RealEastatePendingAdminView.vue";
 import ConfirmEmail from "../views/ConfirmEmailView.vue";
+import CreateRealEasteAds from "../views/CreateRealEstateAdsView.vue";
 import HomeView from "../views/HomeView.vue";
 import LikesView from "../views/LikesView.vue";
 import LoginView from "../views/LoginView.vue";
@@ -109,6 +110,12 @@ const router = createRouter({
       path: "/real_estate_ads/:id",
       name: "real_estate_ads",
       component: RealEstateAdsView,
+    },
+    {
+      path: "/real_estate_ads/create",
+      name: "create_real_estate_ads",
+      component: CreateRealEasteAds,
+      beforeEnter: ifIsUser,
     },
     {
       path: "/admin",
