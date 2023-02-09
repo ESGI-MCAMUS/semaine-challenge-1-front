@@ -106,7 +106,7 @@ const onProfile = () => {
         class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
         id="mobile-menu-2"
       >
-        <RouterLink :to="{ name: 'home' }">
+        <RouterLink :to="{ name: 'create_real_estate_ads' }">
           <button
             type="button"
             class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 mb-2"
