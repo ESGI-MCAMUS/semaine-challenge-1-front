@@ -1,13 +1,17 @@
 <script>
+import { LeftCircleOutlined, RightCircleOutlined } from "@ant-design/icons-vue";
+import { notification } from "ant-design-vue";
 import { defineComponent, reactive } from "vue";
 import router from "../router";
-import { LeftCircleOutlined, RightCircleOutlined } from "@ant-design/icons-vue";
-import { formatPrice } from "../utils/ads.utils";
 import { client } from "../services";
-import { token } from "../utils/localStorage";
-import { notification } from "ant-design-vue";
-import { refetchFavorites, isFavorite } from "../utils/favorites";
-import { favorites } from "../utils/localStorage";
+import { formatPrice } from "../utils/ads.utils";
+import { isFavorite, refetchFavorites } from "../utils/favorites";
+import { favorites, token } from "../utils/localStorage";
+
+console.log(
+  "test RealEstateView G API KEY",
+  process.env.VUE_APP_API_GOOGLE_MAP_KEY
+);
 
 export default defineComponent({
   components: {
