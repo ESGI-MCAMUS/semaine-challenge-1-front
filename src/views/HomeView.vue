@@ -1,10 +1,12 @@
 <script>
 import {
+  EyeOutlined,
   HeartFilled,
   HeartOutlined,
   WechatOutlined,
   EyeOutlined,
   EuroCircleOutlined,
+
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 import { defineComponent, reactive } from "vue";
@@ -60,7 +62,11 @@ export default defineComponent({
         .then((res) => {
           const data = res.data;
           state.totalItems = data["hydra:totalItems"];
-          state.ads = data["hydra:member"];
+          //sort by id desc
+          state.ads = data["hydra:member"].filter((ad) => {
+            return ad.isVisible === true;
+          });
+
           state.itemPerPage = state.ads.length;
           state.totalPages = !state.filtersEnabled
             ? Number(data["hydra:view"]["hydra:last"].slice(-1))
