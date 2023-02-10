@@ -34,8 +34,7 @@ export default defineComponent({
 
     let isAdmin = ref(false);
 
-    if (token.role !== undefined) {
-      console.log("pouet");
+    if (Object.keys(token.value).length !== 0) {
       token.value.role.includes("ROLE_ADMIN")
         ? (isAdmin.value = true)
         : (isAdmin.value = false);
