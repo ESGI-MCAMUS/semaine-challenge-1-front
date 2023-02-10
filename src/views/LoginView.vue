@@ -30,7 +30,6 @@ export default defineComponent({
         };
 
         token.value = userToken;
-        console.log("role", userToken.role);
 
         if (userToken.role.includes("ROLE_ADMIN")) {
           router.push("/admin");

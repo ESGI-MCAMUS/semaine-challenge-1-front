@@ -77,7 +77,7 @@ onMounted(() => {
         locale: fr,
       }),
     };
-    console.log("user housings", user.housings);
+
     user.housings.map((housing) => {
       getRealEstateAd(housing);
     });
@@ -93,14 +93,13 @@ onMounted(() => {
   });
 
   getPayments().then((res) => {
-    console.log("payments", res);
     payments = res.data.payments;
   });
 });
 
 const openMessages = (senderId) => {
   modalVisible.value = true;
-  console.log("senderId", senderId);
+
   const filteredReceivedMessages = messages.receivedMessages.filter(
     (message) => message.sender.id === senderId
   );
@@ -121,8 +120,6 @@ const openMessages = (senderId) => {
   // Scroll to div .bottomMessage
   const bottomMessage = document.querySelector(".bottomMessage");
   bottomMessage.scrollTop = bottomMessage.scrollHeight;
-
-  console.log("messagesFilteredByCreatedAt", messagesFilteredByCreatedAt);
 };
 
 const sendMessage = (receiver) => {
@@ -142,7 +139,6 @@ const sendMessage = (receiver) => {
       message.value = "";
       modalVisible.value = false;
       getMessages().then((res) => {
-        console.log("messages", res);
         // Get unique senders
         messages = res.data;
         senders = [
@@ -150,7 +146,6 @@ const sendMessage = (receiver) => {
             res.data.receivedMessages.map((message) => message.sender.id)
           ),
         ];
-        console.log("senders", senders);
       });
     })
     .catch((err) => {

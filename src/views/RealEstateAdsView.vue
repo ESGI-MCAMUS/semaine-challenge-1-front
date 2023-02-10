@@ -36,7 +36,7 @@ export default defineComponent({
         ? (isAdmin.value = true)
         : (isAdmin.value = false);
     }
-    console.log(isAdmin.value);
+
     const id = router.currentRoute.value.params.id;
     client
       .get(`/real_estate_ads/${id}`)

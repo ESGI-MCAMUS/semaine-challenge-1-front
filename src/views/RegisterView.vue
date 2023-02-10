@@ -169,7 +169,6 @@ export default defineComponent({
         .catch((error) => {
           const res = error.response;
           if (res.status === 422) {
-            console.log(res.data["hydra:description"]);
             if (
               res.data["hydra:description"].includes(
                 "email: This value is already used"
