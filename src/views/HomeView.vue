@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons-vue";
 
 import { notification } from "ant-design-vue";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import Footer from "../components/Footer.vue";
 import router from "../router";
 import { client } from "../services";
@@ -45,6 +45,15 @@ export default defineComponent({
       },
     });
 
+    let isConnected = ref(false);
+
+    if (token.value !== undefined) {
+      console.log("token.value", token.value);
+      token.value.role?.includes("ROLE_ADMIN")
+        ? (isConnected.value = true)
+        : (isConnected.value = false);
+    }
+
     const getAds = () => {
       client
         .get(
@@ -70,7 +79,9 @@ export default defineComponent({
           state.totalPages = !state.filtersEnabled
             ? Number(data["hydra:view"]["hydra:last"].slice(-1))
             : -1;
-          refetchFavorites();
+          if (isConnected.value === true) {
+            refetchFavorites();
+          }
           if (state.filtersEnabled) {
             let filteredAds = state.ads.map((ad) => {
               const isPresent = state.filteredProperties.some((fp) => {

@@ -1,5 +1,5 @@
 <script>
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import router from "../router";
 import { clientWithoutAuth } from "../services";
 import { token } from "../utils/localStorage";
@@ -10,6 +10,8 @@ export default defineComponent({
       username: "",
       password: "",
     });
+
+    const isError = ref(false);
 
     const onFinish = async (values) => {
       try {
@@ -31,6 +33,41 @@ export default defineComponent({
 
         token.value = userToken;
 
+        const validateEmail = async (_rule, value) => {
+          // regex pour valider l'email
+          const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+          if (value === "") {
+            return Promise.reject("Veuillez saisir votre adresse mail");
+          } else if (!regex.test(value)) {
+            return Promise.reject("Veuillez saisir une adresse mail valide");
+          } else {
+            return Promise.resolve();
+          }
+        };
+
+        const validateNotEmpty = async (_rule, value) => {
+          if (value === "") {
+            return Promise.reject("Veuillez saisir votre mot de passe");
+          } else {
+            return Promise.resolve();
+          }
+        };
+
+        let rules = {
+          username: [
+            {
+              required: true,
+              validator: validateEmail,
+            },
+          ],
+          password: [
+            {
+              required: true,
+              validator: validateNotEmpty,
+            },
+          ],
+        };
+
         if (userToken.role.includes("ROLE_ADMIN")) {
           router.push("/admin");
         } else {
@@ -40,6 +77,7 @@ export default defineComponent({
         // router.push("/");
       } catch (error) {
         console.error("error", error);
+        isError.value = true;
       }
     };
     const onFinishFailed = (errorInfo) => {
