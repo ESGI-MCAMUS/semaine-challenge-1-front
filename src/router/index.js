@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { token } from "../utils/localStorage";
+import Error404 from "../views/404View.vue";
 import HomeAdminView from "../views/admin/HomeAdminView.vue";
 import RealEastateAllAdminView from "../views/admin/realEastate/RealEastateAllAdminView.vue";
 import RealEastatePendingAdminView from "../views/admin/realEastate/RealEastatePendingAdminView.vue";
@@ -15,6 +16,7 @@ import RealEstateAdsView from "../views/RealEstateAdsView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import ResetPassword from "../views/ResetPasswordView.vue";
 import UpdatePaymentStatus from "../views/UpdatePaymentStatus.vue";
+import UploadDocument from "../views/UploadDocumentView.vue";
 
 const ifAuthenticated = (to, from, next) => {
   if (token.value.token) {
@@ -104,6 +106,11 @@ const router = createRouter({
       component: ResetPassword,
     },
     {
+      path: "/upload-document",
+      name: "upload-document",
+      component: UploadDocument,
+    },
+    {
       path: "/new-password/:token",
       name: "new-password",
       component: NewPassword,
@@ -146,6 +153,12 @@ const router = createRouter({
       path: "/KYC",
       name: "KYC",
       component: KYC,
+    },
+    //create 404 page
+    {
+      path: "/:catchAll(.*)",
+      name: "not-found",
+      component: Error404,
     },
   ],
 });
