@@ -4,10 +4,9 @@ import {
   HeartFilled,
   HeartOutlined,
   WechatOutlined,
-  EyeOutlined,
   EuroCircleOutlined,
-
 } from "@ant-design/icons-vue";
+
 import { notification } from "ant-design-vue";
 import { defineComponent, reactive } from "vue";
 import Footer from "../components/Footer.vue";
