@@ -1,4 +1,4 @@
-<script setup>
+<script>
 import {
   CheckCircleOutlined,
   DeleteOutlined,
@@ -8,162 +8,170 @@ import {
   RightCircleOutlined,
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
-import { reactive, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import router from "../router";
 import { client } from "../services";
-import { refetchFavorites } from "../utils/favorites";
+import { formatPrice } from "../utils/ads.utils";
+import { isFavorite, refetchFavorites } from "../utils/favorites";
 import { favorites, token } from "../utils/localStorage";
-
-console.log("enfin enculé:", import.meta.env.VITE_API_GOOGLE_MAPS_KEY);
-
-console.log("pouet");
-
-const state = reactive({
-  ad: {},
-  housing: {},
-  housingProperties: {},
-  mapsUrl: "",
-});
-
-let isAdmin = ref(false);
-
-if (token.value !== undefined) {
-  console.log("pouet");
-  token.value.role.includes("ROLE_ADMIN")
-    ? (isAdmin.value = true)
-    : (isAdmin.value = false);
-}
-console.log(isAdmin.value);
-
-const id = router.currentRoute.value.params.id;
-
-client
-  .get(`/real_estate_ads/${id}`)
-  .then((resAd) => {
-    if (resAd.status === 200) {
-      const dataAd = resAd.data;
-      state.ad = dataAd;
-
+export default defineComponent({
+  components: {
+    DeleteOutlined,
+    CheckCircleOutlined,
+    LeftCircleOutlined,
+    RightCircleOutlined,
+    HeartFilled,
+    HeartOutlined,
+  },
+  setup() {
+    const state = reactive({
+      ad: {},
+      housing: {},
+      housingProperties: {},
+      mapsUrl: "",
+    });
+    let isAdmin = ref(false);
+    if (token.value !== undefined) {
+      console.log("pouet");
+      token.value.role.includes("ROLE_ADMIN")
+        ? (isAdmin.value = true)
+        : (isAdmin.value = false);
+    }
+    console.log(isAdmin.value);
+    const id = router.currentRoute.value.params.id;
+    client
+      .get(`/real_estate_ads/${id}`)
+      .then((resAd) => {
+        if (resAd.status === 200) {
+          const dataAd = resAd.data;
+          state.ad = dataAd;
+          client
+            .get(`${dataAd.housing}`)
+            .then((resHousing) => {
+              if (resHousing.status === 200) {
+                const dataHousing = resHousing.data;
+                state.housing = dataHousing;
+                client
+                  .get(`${dataHousing.properties}`)
+                  .then((resHousingProperties) => {
+                    if (resHousingProperties.status === 200) {
+                      const dataHousingProperties = resHousingProperties.data;
+                      state.housingProperties = dataHousingProperties;
+                      state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_API_GOOGLE_MAP_KEY}&q=${state.housing.lat},${state.housing.lng}`;
+                      refetchFavorites();
+                    }
+                  })
+                  .catch((err) => {
+                    // router.push("/");
+                    console.log(err);
+                  });
+              }
+            })
+            .catch((err) => {
+              // router.push("/");
+              console.log(err);
+            });
+        }
+      })
+      .catch((err) => {
+        // router.push("/");
+        console.log(err);
+      });
+    const addFavortiteAd = (adId) => {
       client
-        .get(`${dataAd.housing}`)
-        .then((resHousing) => {
-          if (resHousing.status === 200) {
-            const dataHousing = resHousing.data;
-            state.housing = dataHousing;
-
-            client
-              .get(`${dataHousing.properties}`)
-              .then((resHousingProperties) => {
-                if (resHousingProperties.status === 200) {
-                  const dataHousingProperties = resHousingProperties.data;
-                  state.housingProperties = dataHousingProperties;
-                  state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_API_GOOGLE_MAP_KEY}&q=${state.housing.lat},${state.housing.lng}`;
-
-                  refetchFavorites();
-                }
-              })
-              .catch((err) => {
-                // router.push("/");
-                console.log(err);
-              });
-          }
+        .post(`/favorite_ads`, {
+          realEstateAd: adId,
+          fkUser: `/users/${token.value.id}`,
+        })
+        .then((res) => {
+          notification["success"]({
+            message: "Favoris ajouté",
+            description: "Cette annonce a bien été ajoutée à vos favoris !",
+          });
+          refetchFavorites();
         })
         .catch((err) => {
-          // router.push("/");
           console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de l'ajout du favoris !",
+          });
         });
-    }
-  })
-  .catch((err) => {
-    // router.push("/");
-    console.log(err);
-  });
-
-const addFavortiteAd = (adId) => {
-  client
-    .post(`/favorite_ads`, {
-      realEstateAd: adId,
-      fkUser: `/users/${token.value.id}`,
-    })
-    .then((res) => {
-      notification["success"]({
-        message: "Favoris ajouté",
-        description: "Cette annonce a bien été ajoutée à vos favoris !",
-      });
-      refetchFavorites();
-    })
-    .catch((err) => {
-      console.log(err);
-      notification["error"]({
-        message: "Oups !",
-        description: "Une erreur est survenue lors de l'ajout du favoris !",
-      });
-    });
-};
-
-const removeFavoriteAd = (adId) => {
-  const favoriteId = favorites.value.find(
-    (favorite) => favorite.realEstateAd === adId
-  ).id;
-  client
-    .delete(`/favorite_ads/${favoriteId}`)
-    .then((res) => {
-      notification["success"]({
-        message: "Favoris supprimé",
-        description: "Cette annonce a bien été supprimée de vos favoris !",
-      });
-      refetchFavorites();
-    })
-    .catch((err) => {
-      console.log(err);
-      notification["error"]({
-        message: "Oups !",
-        description:
-          "Une erreur est survenue lors de la suppression du favoris !",
-      });
-    });
-};
-
-// turn on visible an ads
-const validateAd = (adId) => {
-  client
-    .put(`${adId}`, {
-      isVisible: true,
-    })
-    .then((res) => {
-      router.push("/admin/apartment/waiting");
-      notification["success"]({
-        message: "Annonce validée",
-        description: "Cette annonce a bien été validée !",
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      notification["error"]({
-        message: "Oups !",
-        description: "Une erreur est survenue lors de la validation !",
-      });
-    });
-};
-
-const deleteAd = (adId) => {
-  client
-    .delete(`${adId}`)
-    .then((res) => {
-      router.push("/admin/apartment/waiting");
-      notification["success"]({
-        message: "Annonce supprimée",
-        description: "Cette annonce a bien été supprimée !",
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      notification["error"]({
-        message: "Oups !",
-        description: "Une erreur est survenue lors de la suppression !",
-      });
-    });
-};
+    };
+    const removeFavoriteAd = (adId) => {
+      const favoriteId = favorites.value.find(
+        (favorite) => favorite.realEstateAd === adId
+      ).id;
+      client
+        .delete(`/favorite_ads/${favoriteId}`)
+        .then((res) => {
+          notification["success"]({
+            message: "Favoris supprimé",
+            description: "Cette annonce a bien été supprimée de vos favoris !",
+          });
+          refetchFavorites();
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description:
+              "Une erreur est survenue lors de la suppression du favoris !",
+          });
+        });
+    };
+    // turn on visible an ads
+    const validateAd = (adId) => {
+      client
+        .put(`${adId}`, {
+          isVisible: true,
+        })
+        .then((res) => {
+          router.push("/admin/apartment/waiting");
+          notification["success"]({
+            message: "Annonce validée",
+            description: "Cette annonce a bien été validée !",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de la validation !",
+          });
+        });
+    };
+    const deleteAd = (adId) => {
+      client
+        .delete(`${adId}`)
+        .then((res) => {
+          router.push("/admin/apartment/waiting");
+          notification["success"]({
+            message: "Annonce supprimée",
+            description: "Cette annonce a bien été supprimée !",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description: "Une erreur est survenue lors de la suppression !",
+          });
+        });
+    };
+    return {
+      state,
+      formatPrice,
+      addFavortiteAd,
+      removeFavoriteAd,
+      isFavorite,
+      validateAd,
+      deleteAd,
+      token,
+      isAdmin,
+    };
+  },
+});
 </script>
 
 <template>
