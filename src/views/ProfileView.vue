@@ -3,12 +3,12 @@ import { notification } from "ant-design-vue";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { onMounted, reactive, ref } from "vue";
-import { RouterLink } from "vue-router";
+import AppointementPreview from "../components/UI/AppointementPreview.vue";
 import Button from "../components/UI/Button.vue";
 import Card from "../components/UI/Card.vue";
 import Heading from "../components/UI/Heading.vue";
 import Spinner from "../components/UI/Spinner.vue";
-import { client } from "../services";
+import { client, clientPatch } from "../services";
 import { token } from "../utils/localStorage";
 
 let isLoading = ref(true);
@@ -19,6 +19,73 @@ let modalVisible = ref(false);
 let messagesFiltered = reactive([]);
 let message = ref("");
 let payments = reactive([]);
+
+// MODIFY MODAL
+
+const validateEmail = async (_rule, value) => {
+  // regex pour valider l'email
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  if (value === "") {
+    return Promise.reject("Veuillez saisir votre adresse mail");
+  } else if (!regex.test(value)) {
+    return Promise.reject("Veuillez saisir une adresse mail valide");
+  } else {
+    return Promise.resolve();
+  }
+};
+
+let profileModalVisible = ref(false);
+
+const formState = reactive({
+  firstname: "",
+  lastname: "",
+  email: "",
+  birthdate: "",
+});
+
+const rules = {
+  firstname: [
+    { required: true, message: "Veuillez saisir votre prénom" },
+    { min: 2, message: "Le prénom doit contenir au moins 2 caractères" },
+  ],
+  lastname: [
+    { required: true, message: "Veuillez saisir votre nom de famille" },
+    {
+      min: 2,
+      message: "Le nom de famille doit contenir au moins 2 caractères",
+    },
+  ],
+  email: [{ required: false, validator: validateEmail, trigger: "change" }],
+
+  birthdate: [
+    { required: true, message: "Veuillez saisir votre date de naissance" },
+  ],
+};
+
+const updateProfileModalVisible = () =>
+  (profileModalVisible.value = !profileModalVisible.value);
+
+const onFinish = (values) => {
+  updateUserProfile(values);
+  updateProfileModalVisible();
+};
+
+const updateUserProfile = async (values) => {
+  console.log("userId", user.id);
+  console.log("values profile", values);
+  clientPatch
+    .patch(`/users/${user.id}`, {
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      birthdate: new Date(values.birthdate.format("YYYY-MM-DD")),
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+// END MODIFY MODAL
 
 const state = reactive({
   ads: [],
@@ -61,7 +128,7 @@ const getMessages = async () => {
 const getPayments = async () => {
   try {
     const res = await client.post(`payments/get`);
-
+    console.log("res", res);
     return res;
   } catch (error) {
     console.log(error);
@@ -99,7 +166,7 @@ onMounted(() => {
 
 const openMessages = (senderId) => {
   modalVisible.value = true;
-
+  console.log("senderId", senderId);
   const filteredReceivedMessages = messages.receivedMessages.filter(
     (message) => message.sender.id === senderId
   );
@@ -190,7 +257,49 @@ const formatPrice = (price) => {
       <Card class="w-[100%] ml-4">
         <div class="flex justify-between">
           <Heading>Mon profil</Heading>
-          <Button> Modifier </Button>
+          <a-button @click="updateProfileModalVisible"> Modifier</a-button>
+          <a-modal
+            v-model:visible="profileModalVisible"
+            :title="`Modifier vos informations`"
+            @ok="sendMessage(senderId)"
+            okText="Valider les modifs"
+          >
+            <div style="overflow-y: scroll">
+              <a-form
+                :model="formState"
+                name="basic"
+                :label-col="{ span: 8 }"
+                :wrapper-col="{ span: 14 }"
+                autocomplete="off"
+                @finish="onFinish"
+                ref="formRef"
+                :rules="rules"
+              >
+                <a-form-item label="Prénom" name="firstname">
+                  <a-input v-model:value="formState.firstname" />
+                </a-form-item>
+
+                <a-form-item label="Nom" name="lastname">
+                  <a-input v-model:value="formState.lastname" />
+                </a-form-item>
+
+                <a-form-item label="Adresse mail" name="email">
+                  <a-input v-model:value="formState.email" />
+                </a-form-item>
+
+                <a-form-item label="Date de naissance" name="birthdate">
+                  <a-date-picker
+                    v-model:value="formState.birthdate"
+                    label="JJ/MM/YYYY"
+                  />
+                </a-form-item>
+
+                <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+                  <a-button html-type="submit">BOUTON VALIDER FORM</a-button>
+                </a-form-item>
+              </a-form>
+            </div>
+          </a-modal>
         </div>
 
         <div class="flex">
@@ -217,6 +326,7 @@ const formatPrice = (price) => {
         </div>
       </Card>
     </div>
+
     <Card class="w-[100%] h-[100%] mt-4">
       <Heading>Mes biens</Heading>
 

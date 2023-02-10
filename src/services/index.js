@@ -18,3 +18,11 @@ export const client = axios.create({
     Authorization: authHeader,
   },
 });
+
+export const clientPatch = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/merge-patch+json",
+    Authorization: authHeader,
+  },
+});
