@@ -14,7 +14,6 @@ import { client } from "../services";
 import { formatPrice } from "../utils/ads.utils";
 import { isFavorite, refetchFavorites } from "../utils/favorites";
 import { favorites, token } from "../utils/localStorage";
-
 export default defineComponent({
   components: {
     DeleteOutlined,
@@ -31,16 +30,13 @@ export default defineComponent({
       housingProperties: {},
       mapsUrl: "",
     });
-
     let isAdmin = ref(false);
-
-    if (Object.keys(token.value).length !== 0) {
+    if (token.value !== undefined) {
       token.value.role.includes("ROLE_ADMIN")
         ? (isAdmin.value = true)
         : (isAdmin.value = false);
     }
     console.log(isAdmin.value);
-
     const id = router.currentRoute.value.params.id;
     client
       .get(`/real_estate_ads/${id}`)
@@ -48,22 +44,21 @@ export default defineComponent({
         if (resAd.status === 200) {
           const dataAd = resAd.data;
           state.ad = dataAd;
-
           client
             .get(`${dataAd.housing}`)
             .then((resHousing) => {
               if (resHousing.status === 200) {
                 const dataHousing = resHousing.data;
                 state.housing = dataHousing;
-
                 client
                   .get(`${dataHousing.properties}`)
                   .then((resHousingProperties) => {
                     if (resHousingProperties.status === 200) {
                       const dataHousingProperties = resHousingProperties.data;
                       state.housingProperties = dataHousingProperties;
-                      state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_API_GOOGLE_MAP_KEY}&q=${state.housing.lat},${state.housing.lng}`;
-
+                      state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${
+                        import.meta.env.VITE_API_GOOGLE_MAPS_KEY
+                      }&q=${state.housing.lat},${state.housing.lng}`;
                       refetchFavorites();
                     }
                   })
@@ -83,7 +78,6 @@ export default defineComponent({
         // router.push("/");
         console.log(err);
       });
-
     const addFavortiteAd = (adId) => {
       client
         .post(`/favorite_ads`, {
@@ -105,7 +99,6 @@ export default defineComponent({
           });
         });
     };
-
     const removeFavoriteAd = (adId) => {
       const favoriteId = favorites.value.find(
         (favorite) => favorite.realEstateAd === adId
@@ -128,7 +121,6 @@ export default defineComponent({
           });
         });
     };
-
     // turn on visible an ads
     const validateAd = (adId) => {
       client
@@ -150,7 +142,6 @@ export default defineComponent({
           });
         });
     };
-
     const deleteAd = (adId) => {
       client
         .delete(`${adId}`)
@@ -169,7 +160,6 @@ export default defineComponent({
           });
         });
     };
-
     return {
       state,
       formatPrice,
@@ -194,7 +184,7 @@ export default defineComponent({
             shape="circle"
             v-if="token.id && !state.ad.isVisible"
             danger
-            @click="this.validateAd(state.ad['@id'])"
+            @click="validateAd(state.ad['@id'])"
           >
             <template #icon><CheckCircleOutlined /></template>
           </a-button>
@@ -203,27 +193,28 @@ export default defineComponent({
             shape="circle"
             v-if="token.id"
             danger
-            @click="this.deleteAd(state.ad['@id'])"
+            @click="deleteAd(state.ad['@id'])"
           >
             <template #icon><DeleteOutlined /></template>
           </a-button>
         </div>
 
+        <!-- TODO : Je ne comprends pas d'ou ça vientle isFavorite : TypeError: _ctx.isFavorite is not a function -->
         <div v-else>
           <a-button
             shape="circle"
-            v-if="token.id && !this.isFavorite(state.ad['@id'])"
+            v-if="token.id && !isFavorite(state.ad['@id'])"
             danger
-            @click="this.addFavortiteAd(state.ad['@id'])"
+            @click="addFavortiteAd(state.ad['@id'])"
           >
             <template #icon><HeartOutlined /></template>
           </a-button>
 
           <a-button
             shape="circle"
-            v-if="token.id && this.isFavorite(state.ad['@id'])"
+            v-if="token.id && isFavorite(state.ad['@id'])"
             danger
-            @click="this.removeFavoriteAd(state.ad['@id'])"
+            @click="removeFavoriteAd(state.ad['@id'])"
           >
             <template #icon><HeartFilled /></template>
           </a-button>
@@ -251,11 +242,11 @@ export default defineComponent({
       <br />
       <br />
       <a-typography-title :level="3">{{
-        `Prix: ${this.formatPrice(state.ad.price)} ${
+        `Prix: ${formatPrice(state.ad.price)} ${
           state.ad.type === "sale" ? "€" : "€/mois"
         }`
       }}</a-typography-title>
-      <!-- <div>
+      <div>
         <iframe
           title="maps"
           width="600"
@@ -267,7 +258,7 @@ export default defineComponent({
           :src="state.mapsUrl"
         >
         </iframe>
-      </div> -->
+      </div>
       <br />
       <br />
       <a-typography-title :level="4"
