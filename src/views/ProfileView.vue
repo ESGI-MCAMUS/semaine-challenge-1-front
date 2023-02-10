@@ -19,6 +19,7 @@ let senders = reactive([]);
 let modalVisible = ref(false);
 let messagesFiltered = reactive([]);
 let message = ref("");
+let payments = reactive([]);
 
 const getuser = async () => {
   const userId = token.value.id;
@@ -40,6 +41,17 @@ const getMessages = async () => {
   }
 };
 
+const getPayments = async () => {
+  try {
+    const res = await client.post(`payments/get`);
+    console.log("res", res);
+    return res;
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
+};
+
 onMounted(() => {
   getuser().then((res) => {
     user = {
@@ -48,18 +60,20 @@ onMounted(() => {
         locale: fr,
       }),
     };
-    console.log("user", user);
     isLoading.value = false;
   });
 
   getMessages().then((res) => {
-    console.log("messages", res);
     // Get unique senders
     messages = res.data;
     senders = [
       ...new Set(res.data.receivedMessages.map((message) => message.sender.id)),
     ];
-    console.log("senders", senders);
+  });
+
+  getPayments().then((res) => {
+    console.log("payments", res);
+    payments = res.data.payments;
   });
 });
 
@@ -125,6 +139,10 @@ const sendMessage = (receiver) => {
         description: "Une erreur est survenue lors de l'envoi du message !",
       });
     });
+};
+
+const formatPrice = (price) => {
+  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 </script>
 
@@ -204,12 +222,42 @@ const sendMessage = (receiver) => {
 
         <!-- TODO : Faire la condition pour les paiements ici -->
 
-        <div class="flex flex-col">
+        <div class="flex flex-col" style="overflow-y: scroll">
           <div class="flex justify-between">
             <span class="text-sm text-gray-500">Date</span>
+            <span class="text-sm text-gray-500">Statut</span>
             <span class="text-sm text-gray-500">Montant</span>
           </div>
-          <AppointementPreview date="12/12/12" amount="2000" />
+          <br />
+          <div class="flex justify-between" v-for="p in payments">
+            <span class="text-sm text-gray-900">
+              {{ new Date(p.createdAt).toLocaleString() }}
+            </span>
+            <span
+              class="text-sm text-gray-900"
+              v-if="p.status === 'pending'"
+              style="font-style: italic !important"
+            >
+              En attente
+            </span>
+            <span
+              class="text-sm text-danger-900"
+              v-else-if="p.status === 'failed'"
+              style="color: red; font-weight: 600"
+            >
+              Échoué
+            </span>
+            <span
+              class="text-sm text-gray-900"
+              style="color: green; font-weight: 600"
+              v-else
+            >
+              Réussi
+            </span>
+            <span class="text-sm text-gray-900">
+              {{ formatPrice(p.price) }}€
+            </span>
+          </div>
         </div>
       </Card>
       <Card class="w-1/2 h-80 mt-4 ml-4">
@@ -234,9 +282,7 @@ const sendMessage = (receiver) => {
                   .sender.lastname
               }}</span
             >
-            <a-button type="primary" @click="openMessages(senderId)"
-              >Consulter</a-button
-            >
+            <Button @click="openMessages(senderId)">Consulter</Button>
             <a-modal
               v-model:visible="modalVisible"
               :title="`Messages`"

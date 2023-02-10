@@ -13,6 +13,7 @@ import ProfileView from "../views/ProfileView.vue";
 import RealEstateAdsView from "../views/RealEstateAdsView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import ResetPassword from "../views/ResetPasswordView.vue";
+import UpdatePaymentStatus from "../views/UpdatePaymentStatus.vue";
 
 const ifAuthenticated = (to, from, next) => {
   if (token.value.token) {
@@ -134,6 +135,11 @@ const router = createRouter({
       name: "admin_real_estate_ads_waiting",
       component: RealEastatePendingAdminView,
       beforeEnter: ifIsAdmin,
+    },
+    {
+      path: "/payments/:status/:id/:token",
+      name: "update_payement_status",
+      component: UpdatePaymentStatus,
     },
   ],
 });

@@ -10,6 +10,7 @@
 import axios from "axios";
 import { defineComponent, reactive } from "vue";
 import router from "../router";
+import { client } from "../services";
 
 export default defineComponent({
   setup() {
@@ -20,7 +21,7 @@ export default defineComponent({
     // log le router actuel
 
     const token = router.currentRoute.value.params.token;
-    axios
+    client
       .post(`/users/verify/${token}`, {})
       .then((res) => {
         if (res.status === 200) {
