@@ -215,6 +215,21 @@ const deleteAd = (adId) => {
 const formState = reactive({
   appointmentDate: "",
 });
+
+const createAppointment = async () => {
+  client
+    .post(`/appointment/9999`)
+    .then((res) => {
+      console.log("res", res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const onFinish = () => {
+  createAppointment();
+};
 </script>
 
 <template>
