@@ -10,6 +10,7 @@ import Spinner from "../components/UI/Spinner.vue";
 import router from "../router";
 import { client, clientPatch } from "../services";
 import { token } from "../utils/localStorage";
+import { validateEmail } from "../utils/validators";
 
 let isLoading = ref(true);
 let user = reactive({});
@@ -21,18 +22,6 @@ let message = ref("");
 let payments = reactive([]);
 
 // MODIFY MODAL
-
-const validateEmail = async (_rule, value) => {
-  // regex pour valider l'email
-  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-  if (value === "") {
-    return Promise.reject("Veuillez saisir votre adresse mail");
-  } else if (!regex.test(value)) {
-    return Promise.reject("Veuillez saisir une adresse mail valide");
-  } else {
-    return Promise.resolve();
-  }
-};
 
 let profileModalVisible = ref(false);
 
@@ -90,9 +79,6 @@ const onFinish = () => {
 };
 
 const updateUserProfile = async () => {
-  console.log("userId", user.id);
-  console.log("values profile", formState);
-
   try {
     const res = await clientPatch.patch(`/users/${user.id}`, {
       firstname: formState.firstname,
@@ -149,7 +135,6 @@ const getMessages = async () => {
 const getPayments = async () => {
   try {
     const res = await client.post(`payments/get`);
-    console.log("res", res);
     return res;
   } catch (error) {
     console.log(error);
@@ -187,7 +172,6 @@ onMounted(() => {
 
 const openMessages = (senderId) => {
   modalVisible.value = true;
-  console.log("senderId", senderId);
   const filteredReceivedMessages = messages.receivedMessages.filter(
     (message) => message.sender.id === senderId
   );

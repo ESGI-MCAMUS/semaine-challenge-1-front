@@ -58,6 +58,7 @@
 <script>
 import { defineComponent, reactive, ref } from "vue";
 import { client } from "../services";
+import { validateEmail } from "../utils/validators";
 
 export default defineComponent({
   setup() {
@@ -93,18 +94,6 @@ export default defineComponent({
         return Promise.reject("Veuillez confirmer votre mot de passe");
       } else if (value !== formState.password) {
         return Promise.reject("Les mots de passe ne correspondent pas");
-      } else {
-        return Promise.resolve();
-      }
-    };
-
-    const validateEmail = async (_rule, value) => {
-      // regex pour valider l'email
-      const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-      if (value === "") {
-        return Promise.reject("Veuillez saisir votre adresse mail");
-      } else if (!regex.test(value)) {
-        return Promise.reject("Veuillez saisir une adresse mail valide");
       } else {
         return Promise.resolve();
       }
