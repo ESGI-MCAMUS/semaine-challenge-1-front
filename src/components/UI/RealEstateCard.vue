@@ -10,7 +10,7 @@
       src="https://via.placeholder.com/640x480.png/?text=bien"
       alt=""
     />
-    <div class="flex flex-col justify-between p-4 leading-normal">
+    <div class="flex flex-col justify-between p-4 leading-normal w-[200px]">
       <h5 class="text-2xl font-bold tracking-tight text-gray-900">
         VILLE, XX XXX
       </h5>

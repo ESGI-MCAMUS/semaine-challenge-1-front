@@ -3,10 +3,10 @@ import { notification } from "ant-design-vue";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { onMounted, reactive, ref } from "vue";
+import { RouterLink } from "vue-router";
 import Button from "../components/UI/Button.vue";
 import Card from "../components/UI/Card.vue";
 import Heading from "../components/UI/Heading.vue";
-import RealEstateCard from "../components/UI/RealEstateCard.vue";
 import Spinner from "../components/UI/Spinner.vue";
 import { client } from "../services";
 import { token } from "../utils/localStorage";
@@ -20,15 +20,33 @@ let messagesFiltered = reactive([]);
 let message = ref("");
 let payments = reactive([]);
 
+const state = reactive({
+  ads: [],
+});
+
 const getuser = async () => {
   const userId = token.value.id;
 
   try {
     const res = await client.get(`/users/${userId}`);
+
     return res;
   } catch (error) {
     return undefined;
   }
+};
+
+const getRealEstateAd = async (route) => {
+  client
+    .get(`${route}`)
+    .then((res) => {
+      // rajouter les données dans le state en plus de ce qui est déjà dedans
+      state.ads = [...state.ads, res.data];
+      isLoading.value = false;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 const getMessages = async () => {
@@ -43,7 +61,7 @@ const getMessages = async () => {
 const getPayments = async () => {
   try {
     const res = await client.post(`payments/get`);
-    console.log("res", res);
+
     return res;
   } catch (error) {
     console.log(error);
@@ -59,6 +77,10 @@ onMounted(() => {
         locale: fr,
       }),
     };
+    console.log("user housings", user.housings);
+    user.housings.map((housing) => {
+      getRealEstateAd(housing);
+    });
     isLoading.value = false;
   });
 
@@ -211,9 +233,25 @@ const formatPrice = (price) => {
       <!-- TODO : Faire un pseudo carousel avec les différents bien-->
 
       <div v-else class="flex overflow-scroll">
-        <RealEstateCard class="w-1/3" />
+        <div v-for="ad in state.ads" :key="ad.id">
+          <a-card style="width: 300px" :title="ad.id">
+            <template #extra>
+              <RouterLink
+                :to="{ name: 'real_estate_ads', params: { id: ad.id } }"
+              >
+                <a href=""> Voir mon bien </a>
+              </RouterLink>
+            </template>
+            <p>{{ ad.address }}</p>
+            <p>{{ ad.city }}</p>
+            <p>{{ ad.zipcode }}</p>
+          </a-card>
+        </div>
+
+        <!-- <RealEstateCard /> -->
       </div>
     </Card>
+
     <div class="flex">
       <Card class="w-1/2 h-80 mt-4">
         <Heading>Mes derniers paiements</Heading>
@@ -339,5 +377,3 @@ const formatPrice = (price) => {
     </div>
   </div>
 </template>
-
-<style></style>
