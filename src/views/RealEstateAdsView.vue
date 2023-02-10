@@ -1,4 +1,4 @@
-<script>
+<script setup>
 import {
   CheckCircleOutlined,
   DeleteOutlined,
@@ -8,7 +8,7 @@ import {
   RightCircleOutlined,
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
-import { defineComponent, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import router from "../router";
 import { client } from "../services";
 import { formatPrice } from "../utils/ads.utils";
@@ -90,99 +90,125 @@ export default defineComponent({
       });
     const addFavortiteAd = (adId) => {
       client
-        .post(`/favorite_ads`, {
-          realEstateAd: adId,
-          fkUser: `/users/${token.value.id}`,
-        })
-        .then((res) => {
-          notification["success"]({
-            message: "Favoris ajouté",
-            description: "Cette annonce a bien été ajoutée à vos favoris !",
-          });
-          refetchFavorites();
-        })
-        .catch((err) => {
-          console.log(err);
-          notification["error"]({
-            message: "Oups !",
-            description: "Une erreur est survenue lors de l'ajout du favoris !",
-          });
-        });
-    };
-    const removeFavoriteAd = (adId) => {
-      const favoriteId = favorites.value.find(
-        (favorite) => favorite.realEstateAd === adId
-      ).id;
-      client
-        .delete(`/favorite_ads/${favoriteId}`)
-        .then((res) => {
-          notification["success"]({
-            message: "Favoris supprimé",
-            description: "Cette annonce a bien été supprimée de vos favoris !",
-          });
-          refetchFavorites();
+        .get(`${dataAd.housing}`)
+        .then((resHousing) => {
+          if (resHousing.status === 200) {
+            const dataHousing = resHousing.data;
+            state.housing = dataHousing;
+            client
+              .get(`${dataHousing.properties}`)
+              .then((resHousingProperties) => {
+                if (resHousingProperties.status === 200) {
+                  const dataHousingProperties = resHousingProperties.data;
+                  state.housingProperties = dataHousingProperties;
+                  state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${
+                    import.meta.env.VITE_API_GOOGLE_MAPS_KEY
+                  }&q=${state.housing.lat},${state.housing.lng}`;
+                  refetchFavorites();
+                }
+              })
+              .catch((err) => {
+                // router.push("/");
+                console.log(err);
+              });
+          }
         })
         .catch((err) => {
+          // router.push("/");
           console.log(err);
-          notification["error"]({
-            message: "Oups !",
-            description:
-              "Une erreur est survenue lors de la suppression du favoris !",
-          });
         });
-    };
-    // turn on visible an ads
-    const validateAd = (adId) => {
-      client
-        .put(`${adId}`, {
-          isVisible: true,
-        })
-        .then((res) => {
-          router.push("/admin/apartment/waiting");
-          notification["success"]({
-            message: "Annonce validée",
-            description: "Cette annonce a bien été validée !",
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          notification["error"]({
-            message: "Oups !",
-            description: "Une erreur est survenue lors de la validation !",
-          });
-        });
-    };
-    const deleteAd = (adId) => {
-      client
-        .delete(`${adId}`)
-        .then((res) => {
-          router.push("/admin/apartment/waiting");
-          notification["success"]({
-            message: "Annonce supprimée",
-            description: "Cette annonce a bien été supprimée !",
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          notification["error"]({
-            message: "Oups !",
-            description: "Une erreur est survenue lors de la suppression !",
-          });
-        });
-    };
-    return {
-      state,
-      formatPrice,
-      addFavortiteAd,
-      removeFavoriteAd,
-      isFavorite,
-      validateAd,
-      deleteAd,
-      token,
-      isAdmin,
-    };
-  },
-});
+    }
+  })
+  .catch((err) => {
+    // router.push("/");
+    console.log(err);
+  });
+
+const addFavortiteAd = (adId) => {
+  client
+    .post(`/favorite_ads`, {
+      realEstateAd: adId,
+      fkUser: `/users/${token.value.id}`,
+    })
+    .then((res) => {
+      notification["success"]({
+        message: "Favoris ajouté",
+        description: "Cette annonce a bien été ajoutée à vos favoris !",
+      });
+      refetchFavorites();
+    })
+    .catch((err) => {
+      console.log(err);
+      notification["error"]({
+        message: "Oups !",
+        description: "Une erreur est survenue lors de l'ajout du favoris !",
+      });
+    });
+};
+
+const removeFavoriteAd = (adId) => {
+  const favoriteId = favorites.value.find(
+    (favorite) => favorite.realEstateAd === adId
+  ).id;
+  client
+    .delete(`/favorite_ads/${favoriteId}`)
+    .then((res) => {
+      notification["success"]({
+        message: "Favoris supprimé",
+        description: "Cette annonce a bien été supprimée de vos favoris !",
+      });
+      refetchFavorites();
+    })
+    .catch((err) => {
+      console.log(err);
+      notification["error"]({
+        message: "Oups !",
+        description:
+          "Une erreur est survenue lors de la suppression du favoris !",
+      });
+    });
+};
+
+// turn on visible an ads
+const validateAd = (adId) => {
+  client
+    .put(`${adId}`, {
+      isVisible: true,
+    })
+    .then((res) => {
+      router.push("/admin/apartment/waiting");
+      notification["success"]({
+        message: "Annonce validée",
+        description: "Cette annonce a bien été validée !",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      notification["error"]({
+        message: "Oups !",
+        description: "Une erreur est survenue lors de la validation !",
+      });
+    });
+};
+
+const deleteAd = (adId) => {
+  client
+    .delete(`${adId}`)
+    .then((res) => {
+      router.push("/admin/apartment/waiting");
+      notification["success"]({
+        message: "Annonce supprimée",
+        description: "Cette annonce a bien été supprimée !",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      notification["error"]({
+        message: "Oups !",
+        description: "Une erreur est survenue lors de la suppression !",
+      });
+    });
+};
 </script>
 
 <template>
@@ -209,7 +235,6 @@ export default defineComponent({
           </a-button>
         </div>
 
-        <!-- TODO : Je ne comprends pas d'ou ça vientle isFavorite : TypeError: _ctx.isFavorite is not a function -->
         <div v-else>
           <a-button
             shape="circle"

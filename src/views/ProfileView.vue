@@ -21,8 +21,6 @@ let messagesFiltered = reactive([]);
 let message = ref("");
 let payments = reactive([]);
 
-// MODIFY MODAL
-
 let profileModalVisible = ref(false);
 
 const formState = reactive({
@@ -91,8 +89,6 @@ const updateUserProfile = async () => {
     console.log("error updateUserProfile", error);
   }
 };
-
-// END MODIFY MODAL
 
 const state = reactive({
   ads: [],
