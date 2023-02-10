@@ -35,9 +35,9 @@
   </a-col>
 </template>
 <script>
-import axios from "axios";
 import { defineComponent, reactive } from "vue";
 import router from "../router";
+import { client } from "../services";
 
 export default defineComponent({
   setup() {
@@ -53,9 +53,7 @@ export default defineComponent({
     // log le router actuel
 
     const onFinish = (values) => {
-      console.log("Success:", values);
-
-      axios
+      client
         .post("/auth", { email: values.username, password: values.password })
         .then((res) => {
           if (res.status === 200) {

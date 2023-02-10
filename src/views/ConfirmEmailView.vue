@@ -7,7 +7,6 @@
   </a-col>
 </template>
 <script>
-import axios from "axios";
 import { defineComponent, reactive } from "vue";
 import router from "../router";
 import { client } from "../services";
@@ -40,8 +39,6 @@ export default defineComponent({
           default:
             break;
         }
-
-        console.log(res);
       });
 
     return {

@@ -112,7 +112,7 @@ export default defineComponent({
         })
         .catch((error) => {
           const res = error.response;
-          console.log(res);
+
           formState.isError = true;
           formState.message =
             "Une erreur est survenue lors de la mise à jour de votre mot de passe, veuillez réesayer plus tard";

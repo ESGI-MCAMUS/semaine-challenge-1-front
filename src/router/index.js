@@ -6,6 +6,7 @@ import RealEastatePendingAdminView from "../views/admin/realEastate/RealEastateP
 import ConfirmEmail from "../views/ConfirmEmailView.vue";
 import CreateRealEasteAds from "../views/CreateRealEstateAdsView.vue";
 import HomeView from "../views/HomeView.vue";
+import KYC from "../views/KycView.vue";
 import LikesView from "../views/LikesView.vue";
 import LoginView from "../views/LoginView.vue";
 import NewPassword from "../views/NewPasswordView.vue";
@@ -140,6 +141,11 @@ const router = createRouter({
       path: "/payments/:status/:id/:token",
       name: "update_payement_status",
       component: UpdatePaymentStatus,
+    },
+    {
+      path: "/KYC",
+      name: "KYC",
+      component: KYC,
     },
   ],
 });
