@@ -27,11 +27,13 @@ const state = reactive({
 
 let isAdmin = ref(false);
 
-if (token?.role?.value !== undefined) {
+if (token.value !== undefined) {
+  console.log("pouet");
   token.value.role.includes("ROLE_ADMIN")
     ? (isAdmin.value = true)
     : (isAdmin.value = false);
 }
+console.log(isAdmin.value);
 
 const id = router.currentRoute.value.params.id;
 
@@ -56,22 +58,25 @@ client
                   const dataHousingProperties = resHousingProperties.data;
                   state.housingProperties = dataHousingProperties;
                   state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_API_GOOGLE_MAP_KEY}&q=${state.housing.lat},${state.housing.lng}`;
-                  console.log(import.meta.env);
+
                   refetchFavorites();
                 }
               })
               .catch((err) => {
-                router.push("/");
+                // router.push("/");
+                console.log(err);
               });
           }
         })
         .catch((err) => {
-          router.push("/");
+          // router.push("/");
+          console.log(err);
         });
     }
   })
   .catch((err) => {
-    router.push("/");
+    // router.push("/");
+    console.log(err);
   });
 
 const addFavortiteAd = (adId) => {
@@ -232,7 +237,7 @@ const deleteAd = (adId) => {
           state.ad.type === "sale" ? "€" : "€/mois"
         }`
       }}</a-typography-title>
-      <div>
+      <!-- <div>
         <iframe
           title="maps"
           width="600"
@@ -244,7 +249,7 @@ const deleteAd = (adId) => {
           :src="state.mapsUrl"
         >
         </iframe>
-      </div>
+      </div> -->
       <br />
       <br />
       <a-typography-title :level="4"

@@ -1,9 +1,12 @@
 <script>
 import {
+  EyeOutlined,
   HeartFilled,
   HeartOutlined,
   WechatOutlined,
   EyeOutlined,
+  EuroCircleOutlined,
+
 } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 import { defineComponent, reactive } from "vue";
@@ -21,6 +24,7 @@ export default defineComponent({
     HeartFilled,
     WechatOutlined,
     EyeOutlined,
+    EuroCircleOutlined,
   },
   setup() {
     const state = reactive({
@@ -58,7 +62,11 @@ export default defineComponent({
         .then((res) => {
           const data = res.data;
           state.totalItems = data["hydra:totalItems"];
-          state.ads = data["hydra:member"];
+          //sort by id desc
+          state.ads = data["hydra:member"].filter((ad) => {
+            return ad.isVisible === true;
+          });
+
           state.itemPerPage = state.ads.length;
           state.totalPages = !state.filtersEnabled
             ? Number(data["hydra:view"]["hydra:last"].slice(-1))
@@ -126,6 +134,23 @@ export default defineComponent({
 
     const navigate = (id) => {
       router.push(`${id}`);
+    };
+
+    const initiatePayments = (adId) => {
+      client
+        .post(`/payments/create/${adId}`, {})
+        .then((res) => {
+          const checkoutUrl = res.data.checkout_url;
+          window.location.href = checkoutUrl;
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description:
+              "Une erreur est survenue lors de l'initialisation du paiement !",
+          });
+        });
     };
 
     getAds();
@@ -243,6 +268,7 @@ export default defineComponent({
       handleChangeSelectClassification,
       updateModal,
       sendMessage,
+      initiatePayments,
     };
   },
 });
@@ -343,6 +369,15 @@ export default defineComponent({
               @click="this.updateModal(true, ad)"
             >
               <template #icon><WechatOutlined /></template>
+            </a-button>
+
+            <a-button
+              shape="circle"
+              v-if="token?.id"
+              success
+              @click="this.initiatePayments(ad['id'])"
+            >
+              <template #icon><EuroCircleOutlined /></template>
             </a-button>
           </template>
           <a-card-meta

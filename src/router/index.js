@@ -4,6 +4,7 @@ import HomeAdminView from "../views/admin/HomeAdminView.vue";
 import RealEastateAllAdminView from "../views/admin/realEastate/RealEastateAllAdminView.vue";
 import RealEastatePendingAdminView from "../views/admin/realEastate/RealEastatePendingAdminView.vue";
 import ConfirmEmail from "../views/ConfirmEmailView.vue";
+import CreateRealEasteAds from "../views/CreateRealEstateAdsView.vue";
 import HomeView from "../views/HomeView.vue";
 import LikesView from "../views/LikesView.vue";
 import LoginView from "../views/LoginView.vue";
@@ -12,6 +13,7 @@ import ProfileView from "../views/ProfileView.vue";
 import RealEstateAdsView from "../views/RealEstateAdsView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import ResetPassword from "../views/ResetPasswordView.vue";
+import UpdatePaymentStatus from "../views/UpdatePaymentStatus.vue";
 
 const ifAuthenticated = (to, from, next) => {
   if (token.value.token) {
@@ -111,6 +113,12 @@ const router = createRouter({
       component: RealEstateAdsView,
     },
     {
+      path: "/real_estate_ads/create",
+      name: "create_real_estate_ads",
+      component: CreateRealEasteAds,
+      beforeEnter: ifIsUser,
+    },
+    {
       path: "/admin",
       name: "admin_home",
       component: HomeAdminView,
@@ -127,6 +135,11 @@ const router = createRouter({
       name: "admin_real_estate_ads_waiting",
       component: RealEastatePendingAdminView,
       beforeEnter: ifIsAdmin,
+    },
+    {
+      path: "/payments/:status/:id/:token",
+      name: "update_payement_status",
+      component: UpdatePaymentStatus,
     },
   ],
 });
