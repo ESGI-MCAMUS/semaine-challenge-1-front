@@ -67,6 +67,15 @@ const onProfile = () => {
                 </a-menu-item>
               </RouterLink>
 
+              <RouterLink :to="{ name: 'likes' }">
+                <a-menu-item key="2">
+                  <a
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >Vérifier mon identité</a
+                  >
+                </a-menu-item>
+              </RouterLink>
+
               <a-menu-item key="3">
                 <a
                   @click="$emit('logout')"
@@ -142,24 +151,6 @@ const onProfile = () => {
                 class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
                 aria-current="page"
                 >Accueil</a
-              >
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink :to="{ name: 'home' }">
-              <a
-                class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
-                aria-current="page"
-                >Acheter</a
-              >
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink :to="{ name: 'home' }">
-              <a
-                href="#"
-                class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                >Louer</a
               >
             </RouterLink>
           </li>
