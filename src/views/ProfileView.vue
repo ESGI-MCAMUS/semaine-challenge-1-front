@@ -3,7 +3,6 @@ import { notification } from "ant-design-vue";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { onMounted, reactive, ref } from "vue";
-import AppointementPreview from "../components/UI/AppointementPreview.vue";
 import Button from "../components/UI/Button.vue";
 import Card from "../components/UI/Card.vue";
 import Heading from "../components/UI/Heading.vue";
