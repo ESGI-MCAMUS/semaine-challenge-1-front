@@ -30,6 +30,7 @@ const onProfile = () => {
         <a-dropdown :trigger="['click']">
           <a class="ant-dropdown-link" @click.prevent>
             <img
+              id="user-picture"
               class="w-8 h-8 rounded-full"
               src="https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&w=1000"
               alt="user photo"

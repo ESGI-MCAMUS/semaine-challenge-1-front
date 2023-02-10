@@ -17,6 +17,7 @@
       <div class="flex md:order-2">
         <RouterLink to="/login">
           <button
+            id="login-button"
             type="button"
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0"
           >
@@ -35,7 +36,7 @@
         <button
           data-collapse-toggle="navbar-cta"
           type="button"
-          class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
+          class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
           aria-controls="navbar-cta"
           aria-expanded="false"
         >

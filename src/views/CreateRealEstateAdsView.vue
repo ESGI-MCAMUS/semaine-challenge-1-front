@@ -34,7 +34,7 @@ const formState = reactive({
 
   surface: "",
   rooms: "",
-  has_garden: "",
+  has_garden: false,
   has_parking: false,
   has_pool: false,
   has_cave: false,
@@ -337,13 +337,6 @@ const onFinish = (values) => {
         <a-form-item label="Possède un jardin" name="has_garden">
           <a-switch v-model:checked="formState.has_garden" />
         </a-form-item>
-
-        <!-- <a-form-item label="has_garden" name="has_garden">
-          <a-radio-group v-model:value="formState.has_garden">
-            <a-radio value="true">Oui</a-radio>
-            <a-radio value="false">Non</a-radio>
-          </a-radio-group>
-        </a-form-item> -->
 
         <a-form-item label="Possède un parking" name="has_parking">
           <a-switch v-model:checked="formState.has_parking" />
