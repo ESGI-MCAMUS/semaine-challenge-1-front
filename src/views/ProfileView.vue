@@ -3,15 +3,13 @@ import { notification } from "ant-design-vue";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { onMounted, reactive, ref } from "vue";
-import AppointementPreview from "../components/UI/AppointementPreview.vue";
 import Button from "../components/UI/Button.vue";
 import Card from "../components/UI/Card.vue";
 import Heading from "../components/UI/Heading.vue";
 import Spinner from "../components/UI/Spinner.vue";
+import router from "../router";
 import { client, clientPatch } from "../services";
 import { token } from "../utils/localStorage";
-
-console.log("token", token.value);
 
 let isLoading = ref(true);
 let user = reactive({});
@@ -74,9 +72,11 @@ const onFinish = () => {
         notification["success"]({
           message: "Changements validés",
           description:
-            "La modifications de vos informations personnelles ont bien été prises en compte.",
+            "La modifications de vos informations personnelles ont bien été prises en compte. Veuillez-vous reconnecter pour voir les changements.",
         });
         updateProfileModalVisible();
+        token.value = {};
+        router.push("/login");
       }
     })
     .catch((err) => {
