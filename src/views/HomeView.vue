@@ -134,7 +134,6 @@ export default defineComponent({
       client
         .post(`/payments/create/${adId}`, {})
         .then((res) => {
-          console.log(res.data);
           const checkoutUrl = res.data.checkout_url;
           window.location.href = checkoutUrl;
         })
