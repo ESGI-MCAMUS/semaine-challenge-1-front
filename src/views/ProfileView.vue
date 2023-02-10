@@ -11,6 +11,8 @@ import Spinner from "../components/UI/Spinner.vue";
 import { client, clientPatch } from "../services";
 import { token } from "../utils/localStorage";
 
+console.log("token", token.value);
+
 let isLoading = ref(true);
 let user = reactive({});
 let messages = reactive([]);
@@ -65,24 +67,43 @@ const rules = {
 const updateProfileModalVisible = () =>
   (profileModalVisible.value = !profileModalVisible.value);
 
-const onFinish = (values) => {
-  updateUserProfile(values);
-  updateProfileModalVisible();
+const onFinish = () => {
+  updateUserProfile()
+    .then((res) => {
+      if (res.status === 200) {
+        notification["success"]({
+          message: "Changements validés",
+          description:
+            "La modifications de vos informations personnelles ont bien été prises en compte.",
+        });
+        updateProfileModalVisible();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      notification["error"]({
+        message: "Oups !",
+        description:
+          "Une erreur est survenue durant la mise à jour de vos informations. Si le problème persiste, veuillez contacter le support.",
+      });
+    });
 };
 
-const updateUserProfile = async (values) => {
+const updateUserProfile = async () => {
   console.log("userId", user.id);
-  console.log("values profile", values);
-  clientPatch
-    .patch(`/users/${user.id}`, {
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      birthdate: new Date(values.birthdate.format("YYYY-MM-DD")),
-    })
-    .catch((error) => {
-      console.log(error);
+  console.log("values profile", formState);
+
+  try {
+    const res = await clientPatch.patch(`/users/${user.id}`, {
+      firstname: formState.firstname,
+      lastname: formState.lastname,
+      email: formState.email,
+      birthdate: new Date(formState.birthdate.format("YYYY-MM-DD")),
     });
+    return res;
+  } catch (error) {
+    console.log("error updateUserProfile", error);
+  }
 };
 
 // END MODIFY MODAL
@@ -261,7 +282,7 @@ const formatPrice = (price) => {
           <a-modal
             v-model:visible="profileModalVisible"
             :title="`Modifier vos informations`"
-            @ok="sendMessage(senderId)"
+            @ok="onFinish"
             okText="Valider les modifs"
           >
             <div style="overflow-y: scroll">
@@ -271,7 +292,6 @@ const formatPrice = (price) => {
                 :label-col="{ span: 8 }"
                 :wrapper-col="{ span: 14 }"
                 autocomplete="off"
-                @finish="onFinish"
                 ref="formRef"
                 :rules="rules"
               >
@@ -294,9 +314,9 @@ const formatPrice = (price) => {
                   />
                 </a-form-item>
 
-                <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+                <!-- <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
                   <a-button html-type="submit">BOUTON VALIDER FORM</a-button>
-                </a-form-item>
+                </a-form-item> -->
               </a-form>
             </div>
           </a-modal>
