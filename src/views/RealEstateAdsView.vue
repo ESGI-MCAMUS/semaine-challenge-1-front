@@ -31,10 +31,15 @@ export default defineComponent({
       mapsUrl: "",
     });
     let isAdmin = ref(false);
+    let isConnected = ref(false);
     if (token.value !== undefined) {
-      token.value.role.includes("ROLE_ADMIN")
+      token.value.role?.includes("ROLE_ADMIN")
         ? (isAdmin.value = true)
         : (isAdmin.value = false);
+
+      token.value.role?.includes("ROLE_USER")
+        ? (isConnected.value = true)
+        : (isConnected.value = false);
     }
 
     const id = router.currentRoute.value.params.id;
@@ -59,7 +64,9 @@ export default defineComponent({
                       state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${
                         import.meta.env.VITE_API_GOOGLE_MAPS_KEY
                       }&q=${state.housing.lat},${state.housing.lng}`;
-                      refetchFavorites();
+                      if (isConnected.value) {
+                        refetchFavorites();
+                      }
                     }
                   })
                   .catch((err) => {
