@@ -1,10 +1,10 @@
 <script>
 import {
+  EuroCircleOutlined,
   EyeOutlined,
   HeartFilled,
   HeartOutlined,
   WechatOutlined,
-  EuroCircleOutlined,
 } from "@ant-design/icons-vue";
 
 import { notification } from "ant-design-vue";
