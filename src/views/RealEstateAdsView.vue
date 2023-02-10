@@ -57,7 +57,9 @@ export default defineComponent({
                     if (resHousingProperties.status === 200) {
                       const dataHousingProperties = resHousingProperties.data;
                       state.housingProperties = dataHousingProperties;
-                      state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_API_GOOGLE_MAP_KEY}&q=${state.housing.lat},${state.housing.lng}`;
+                      state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${
+                        import.meta.env.VITE_API_GOOGLE_MAPS_KEY
+                      }&q=${state.housing.lat},${state.housing.lng}`;
                       refetchFavorites();
                     }
                   })
@@ -245,7 +247,7 @@ export default defineComponent({
           state.ad.type === "sale" ? "€" : "€/mois"
         }`
       }}</a-typography-title>
-      <!-- <div>
+      <div>
         <iframe
           title="maps"
           width="600"
@@ -257,7 +259,7 @@ export default defineComponent({
           :src="state.mapsUrl"
         >
         </iframe>
-      </div> -->
+      </div>
       <br />
       <br />
       <a-typography-title :level="4"
