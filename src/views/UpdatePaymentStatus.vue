@@ -10,12 +10,7 @@ export default defineComponent({
     const status = router.currentRoute.value.params.status;
     const id = router.currentRoute.value.params.id;
     const token = router.currentRoute.value.params.token;
-    console.log({
-      status,
-      id,
-      token,
-      route: `/payments/${status}/${id}/${token}`,
-    });
+
     client
       .post(`/payments/${status}/${id}/${token}`, {})
       .then((res) => {

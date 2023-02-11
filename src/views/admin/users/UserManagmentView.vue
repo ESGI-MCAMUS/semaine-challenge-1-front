@@ -1,8 +1,8 @@
 <script setup>
+import { notification } from "ant-design-vue";
 import { onMounted, reactive } from "vue";
 import router from "../../../router";
 import { client, clientPatch } from "../../../services";
-import { notification } from "ant-design-vue";
 
 const state = reactive({
   users: {},
@@ -18,7 +18,6 @@ const getUsers = async () => {
     .then((res) => {
       const data = res.data;
       state.users = data["hydra:member"];
-      console.log(state.users);
     })
     .catch((err) => {
       console.log(err);
@@ -35,7 +34,7 @@ const deleteUser = (user) => {
         message: `Utilisateur ${user.isActive ? "désactivé" : "activé"} !`,
         description: "Cet utilisateur a bien été modifié !",
       });
-      console.log(res.data);
+
       getUsers();
     })
     .catch((err) => {
