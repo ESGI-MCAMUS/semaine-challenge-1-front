@@ -42,6 +42,7 @@ const formState = reactive({
   has_balcony: false,
   near_public_transport: false,
   classification: "",
+  photos: [],
 });
 
 const validateType = async (_rule, value) => {
@@ -198,6 +199,11 @@ let rules = {
       validator: validateNotEmpty,
     },
   ],
+  photos: [
+    {
+      validator: validateNotEmpty,
+    },
+  ],
 };
 
 const createHousingProperty = async (values) => {
@@ -254,6 +260,7 @@ const createRealEstateAd = async (values) => {
       description: values.description,
       price: parseInt(values.price),
       isVisible: false,
+      photos: formState.photos,
     })
     .then((response) => {
       notification["success"]({
@@ -268,8 +275,45 @@ const createRealEstateAd = async (values) => {
     });
 };
 
-const onFinish = (values) => {
-  createHousingProperty(values);
+const convertBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
+const onFileChange = async (e) => {
+  const files = e.target.files;
+  const base64Photos = [];
+  Promise.all(
+    Array.from(files).map(async (file) => {
+      const base64 = await convertBase64(file);
+      // remove "data:image/png;base64," from base64 string
+      base64Photos.push(base64.substring(22));
+    })
+  ).then(() => {
+    formState.photos = base64Photos;
+    console.log("Successfully convert images", formState.photos);
+  });
+};
+
+const onFinish = async (values) => {
+  if (formState.photos.length === 0) {
+    notification["error"]({
+      message: "Erreur",
+      description: "Veuillez ajouter au moins une photo",
+    });
+  } else {
+    createHousingProperty(values);
+  }
 };
 </script>
 
@@ -370,6 +414,15 @@ const onFinish = (values) => {
             <a-radio value="good">good</a-radio>
             <a-radio value="excellent">excellent</a-radio>
           </a-radio-group>
+        </a-form-item>
+
+        <a-form-item label="Photos" name="photos">
+          <a-input
+            type="file"
+            multiple
+            accept="image/png, image/gif, image/jpeg"
+            @change="onFileChange($event)"
+          />
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
