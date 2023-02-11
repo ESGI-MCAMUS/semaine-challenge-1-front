@@ -343,7 +343,7 @@ getRealEstateAd();
 
       <div class="flex overflow-scroll">
         <div v-for="ad in state.ads" :key="ad.id">
-          <a-card style="width: 300px" :title="ad.id">
+          <a-card style="width: 300px" :title="ad.title">
             <template #extra>
               <RouterLink
                 :to="{ name: 'real_estate_ads', params: { id: ad.id } }"
@@ -351,7 +351,26 @@ getRealEstateAd();
                 <a href=""> Voir mon bien </a>
               </RouterLink>
             </template>
-            <p>{{ ad.id }}</p>
+
+            <span
+              v-if="ad.isVisible === true"
+              class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
+              >Valider</span
+            >
+
+            <span
+              v-else
+              class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
+              >En cours de validation</span
+            >
+
+            <p>
+              Type:
+              <span v-if="ad.type === 'sale'">VENTE</span>
+              <span v-else>LOUER</span>
+            </p>
+            <p>Prix: {{ ad.price }}€</p>
+
             <!-- <p>{{ ad.city }}</p>
             <p>{{ ad.zipcode }}</p>
             <p>{{ ad.properties }}</p> -->
