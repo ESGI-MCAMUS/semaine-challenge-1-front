@@ -292,7 +292,6 @@ export default defineComponent({
           v-model:value="state.searchText"
           placeholder="Chercher une annonce..."
           @search="this.getAds()"
-          @change="this.updateSearchText()"
       /></a-col>
       <a-col
         :span="18"
