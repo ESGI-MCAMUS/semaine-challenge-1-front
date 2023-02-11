@@ -14,81 +14,35 @@ import { client } from "../services";
 import { formatPrice } from "../utils/ads.utils";
 import { isFavorite, refetchFavorites } from "../utils/favorites";
 import { favorites, token } from "../utils/localStorage";
-export default defineComponent({
-  components: {
-    DeleteOutlined,
-    CheckCircleOutlined,
-    LeftCircleOutlined,
-    RightCircleOutlined,
-    HeartFilled,
-    HeartOutlined,
-  },
-  setup() {
-    const state = reactive({
-      ad: {},
-      housing: {},
-      housingProperties: {},
-      mapsUrl: "",
-    });
-    let isAdmin = ref(false);
-    let isConnected = ref(false);
-    if (token.value !== undefined) {
-      token.value.role?.includes("ROLE_ADMIN")
-        ? (isAdmin.value = true)
-        : (isAdmin.value = false);
 
-      token.value.role?.includes("ROLE_USER")
-        ? (isConnected.value = true)
-        : (isConnected.value = false);
-    }
+const state = reactive({
+  ad: {},
+  housing: {},
+  housingProperties: {},
+  mapsUrl: "",
+});
 
-    const id = router.currentRoute.value.params.id;
-    client
-      .get(`/real_estate_ads/${id}`)
-      .then((resAd) => {
-        if (resAd.status === 200) {
-          const dataAd = resAd.data;
-          state.ad = dataAd;
-          client
-            .get(`${dataAd.housing}`)
-            .then((resHousing) => {
-              if (resHousing.status === 200) {
-                const dataHousing = resHousing.data;
-                state.housing = dataHousing;
-                client
-                  .get(`${dataHousing.properties}`)
-                  .then((resHousingProperties) => {
-                    console.log(state.housing);
-                    if (resHousingProperties.status === 200) {
-                      const dataHousingProperties = resHousingProperties.data;
-                      state.housingProperties = dataHousingProperties;
-                      state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${
-                        import.meta.env.VITE_API_GOOGLE_MAPS_KEY
-                      }&q=${state.housing.address} ${state.housing.address2}, ${
-                        state.housing.zipcode
-                      } ${state.housing.city}`;
-                      if (isConnected.value) {
-                        refetchFavorites();
-                      }
-                    }
-                  })
-                  .catch((err) => {
-                    // router.push("/");
-                    console.log(err);
-                  });
-              }
-            })
-            .catch((err) => {
-              // router.push("/");
-              console.log(err);
-            });
-        }
-      })
-      .catch((err) => {
-        // router.push("/");
-        console.log(err);
-      });
-    const addFavortiteAd = (adId) => {
+let isAdmin = ref(false);
+let isConnected = ref(false);
+
+if (token.value !== undefined) {
+  token.value.role?.includes("ROLE_ADMIN")
+    ? (isAdmin.value = true)
+    : (isAdmin.value = false);
+
+  token.value.role?.includes("ROLE_USER")
+    ? (isConnected.value = true)
+    : (isConnected.value = false);
+}
+
+const id = router.currentRoute.value.params.id;
+
+client
+  .get(`/real_estate_ads/${id}`)
+  .then((resAd) => {
+    if (resAd.status === 200) {
+      const dataAd = resAd.data;
+      state.ad = dataAd;
       client
         .get(`${dataAd.housing}`)
         .then((resHousing) => {
@@ -98,13 +52,18 @@ export default defineComponent({
             client
               .get(`${dataHousing.properties}`)
               .then((resHousingProperties) => {
+                console.log(state.housing);
                 if (resHousingProperties.status === 200) {
                   const dataHousingProperties = resHousingProperties.data;
                   state.housingProperties = dataHousingProperties;
                   state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${
                     import.meta.env.VITE_API_GOOGLE_MAPS_KEY
-                  }&q=${state.housing.lat},${state.housing.lng}`;
-                  refetchFavorites();
+                  }&q=${state.housing.address} ${state.housing.address2}, ${
+                    state.housing.zipcode
+                  } ${state.housing.city}`;
+                  if (isConnected.value) {
+                    refetchFavorites();
+                  }
                 }
               })
               .catch((err) => {
@@ -169,7 +128,6 @@ const removeFavoriteAd = (adId) => {
     });
 };
 
-// turn on visible an ads
 const validateAd = (adId) => {
   client
     .put(`${adId}`, {
@@ -209,242 +167,190 @@ const deleteAd = (adId) => {
       });
     });
 };
-
-// TODO : Vérifier que l'user n'a pas déjà fait un rendez pour cette annonce.
-// TODO : Vérifier que l'annonce n'est pas déjà réservée pour le jour en question.
-const formState = reactive({
-  appointmentDate: "",
-});
-
-const createAppointment = async () => {
-  client
-    .post(`/appointment/9999`)
-    .then((res) => {
-      console.log("res", res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
-const onFinish = () => {
-  createAppointment();
-};
 </script>
 
 <template>
-  <div class="flex">
-    <a-col :span="12" :offset="4">
-      <a-card>
-        <template #actions>
-          <div v-if="isAdmin">
-            <a-button
-              shape="circle"
-              v-if="token.id && !state.ad.isVisible"
-              danger
-              @click="validateAd(state.ad['@id'])"
-            >
-              <template #icon><CheckCircleOutlined /></template>
-            </a-button>
+  <a-col :span="12" :offset="6">
+    <a-card>
+      <template #actions>
+        <div v-if="isAdmin">
+          <a-button
+            shape="circle"
+            v-if="token.id && !state.ad.isVisible"
+            danger
+            @click="validateAd(state.ad['@id'])"
+          >
+            <template #icon><CheckCircleOutlined /></template>
+          </a-button>
 
-            <a-button
-              shape="circle"
-              v-if="token.id"
-              danger
-              @click="deleteAd(state.ad['@id'])"
-            >
-              <template #icon><DeleteOutlined /></template>
-            </a-button>
-          </div>
+          <a-button
+            shape="circle"
+            v-if="token.id"
+            danger
+            @click="deleteAd(state.ad['@id'])"
+          >
+            <template #icon><DeleteOutlined /></template>
+          </a-button>
+        </div>
 
-          <div v-else>
-            <a-button
-              shape="circle"
-              v-if="token.id && !isFavorite(state.ad['@id'])"
-              danger
-              @click="addFavortiteAd(state.ad['@id'])"
-            >
-              <template #icon><HeartOutlined /></template>
-            </a-button>
+        <div v-else>
+          <a-button
+            shape="circle"
+            v-if="token.id && !isFavorite(state.ad['@id'])"
+            danger
+            @click="addFavortiteAd(state.ad['@id'])"
+          >
+            <template #icon><HeartOutlined /></template>
+          </a-button>
 
-            <a-button
-              shape="circle"
-              v-if="token.id && isFavorite(state.ad['@id'])"
-              danger
-              @click="removeFavoriteAd(state.ad['@id'])"
-            >
-              <template #icon><HeartFilled /></template>
-            </a-button>
+          <a-button
+            shape="circle"
+            v-if="token.id && isFavorite(state.ad['@id'])"
+            danger
+            @click="removeFavoriteAd(state.ad['@id'])"
+          >
+            <template #icon><HeartFilled /></template>
+          </a-button>
+        </div>
+      </template>
+
+      <a-carousel arrows autoplay>
+        <template #prevArrow>
+          <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
+            <left-circle-outlined />
           </div>
         </template>
-
-        <a-carousel arrows autoplay>
-          <template #prevArrow>
-            <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
-              <left-circle-outlined />
-            </div>
-          </template>
-          <template #nextArrow>
-            <div class="custom-slick-arrow" style="right: 10px">
-              <right-circle-outlined />
-            </div>
-          </template>
-          <div v-for="photo in state.ad.photos">
-            <img alt="example" :src="photo" class="images" />
+        <template #nextArrow>
+          <div class="custom-slick-arrow" style="right: 10px">
+            <right-circle-outlined />
           </div>
-        </a-carousel>
-        <br />
-        <a-typography-title :level="2">{{ state.ad.title }}</a-typography-title>
-        <a-typography-text>{{ state.ad.description }}</a-typography-text>
-        <br />
-        <br />
-        <a-typography-title :level="3">{{
-          `Prix: ${formatPrice(state.ad.price)} ${
-            state.ad.type === "sale" ? "€" : "€/mois"
-          }`
-        }}</a-typography-title>
-        <div>
-          <iframe
-            title="maps"
-            width="550"
-            height="450"
-            style="border: 0"
-            loading="lazy"
-            allowfullscreen
-            referrerpolicy="no-referrer-when-downgrade"
-            :src="state.mapsUrl"
-          >
-          </iframe>
+        </template>
+        <div v-for="photo in state.ad.photos">
+          <img alt="example" :src="photo" class="images" />
         </div>
-        <br />
-        <br />
-        <a-typography-title :level="4"
-          >Caracteristiques du bien</a-typography-title
+      </a-carousel>
+      <br />
+      <a-typography-title :level="2">{{ state.ad.title }}</a-typography-title>
+      <a-typography-text>{{ state.ad.description }}</a-typography-text>
+      <br />
+      <br />
+      <a-typography-title :level="3">{{
+        `Prix: ${formatPrice(state.ad.price)} ${
+          state.ad.type === "sale" ? "€" : "€/mois"
+        }`
+      }}</a-typography-title>
+      <div>
+        <iframe
+          title="maps"
+          width="600"
+          height="450"
+          style="border: 0"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          :src="state.mapsUrl"
         >
-        <a-list
-          item-layout="horizontal"
-          :data-source="[
-            {
-              description: 'Type de bien',
-              title:
-                state.housingProperties.type === 'house'
-                  ? 'Maison'
-                  : 'Appartement',
-              image:
-                state.housingProperties.type === 'house'
-                  ? 'https://img.icons8.com/fluency/512/home.png'
-                  : 'https://img.icons8.com/fluency/512/link-company-child.png',
-            },
-            {
-              description: 'Classification du logement',
-              title:
-                state.housingProperties.classification === 'excellent'
-                  ? 'Excellent'
-                  : state.housingProperties.classification === 'good'
-                  ? 'Bon'
-                  : state.housingProperties.classification === 'average'
-                  ? 'Moyen'
-                  : state.housingProperties.classification === 'bad'
-                  ? 'Mauvais'
-                  : 'Insalubre',
-              image: 'https://img.icons8.com/fluency/512/housekeeping.png',
-            },
-            {
-              description: 'Surface habitable',
-              title: `${state.housingProperties.surface} m²`,
-              image: 'https://img.icons8.com/fluency/512/room.png',
-            },
-            {
-              description: 'Nombre de pièces',
-              title: `${state.housingProperties.rooms} pièces`,
-              image: 'https://img.icons8.com/fluency/512/four-beds.png',
-            },
-            {
-              description: 'Le bien possède-t-il un jardin ?',
-              title: state.housingProperties.hasGarden ? 'Oui' : 'Non',
-              image:
-                'https://img.icons8.com/fluency/512/house-with-a-garden.png',
-            },
-            {
-              description: 'Le bien possède-t-il un parking ?',
-              title: state.housingProperties.hasParking ? 'Oui' : 'Non',
-              image:
-                'https://img.icons8.com/fluency/512/garage-door-part-open.png',
-            },
-            {
-              description: 'Le bien possède-t-il une piscine ?',
-              title: state.housingProperties.hasPool ? 'Oui' : 'Non',
-              image: 'https://img.icons8.com/fluency/2x/kids-pool.png',
-            },
-            {
-              description: 'Le bien possède-t-il une grotte ?',
-              title: state.housingProperties.hasCave ? 'Oui' : 'Non',
-              image: 'https://img.icons8.com/fluency/512/cave.png',
-            },
-            {
-              description: 'Le bien possède-t-il un grenier ?',
-              title: state.housingProperties.hasAttic ? 'Oui' : 'Non',
-              image: 'https://img.icons8.com/fluency/512/roofing.png',
-            },
-            {
-              description: 'Le bien possède-t-il une terrasse/balcon ?',
-              title: state.housingProperties.hasBalcony ? 'Oui' : 'Non',
-              image: 'https://img.icons8.com/fluency/512/balcony.png',
-            },
-            {
-              description: 'Y-a-t-il des transporter en commun à proximité ?',
-              title: state.housingProperties.nearPublicTransport
-                ? 'Oui'
-                : 'Non',
-              image: 'https://img.icons8.com/fluency/512/railway-station.png',
-            },
-          ]"
-        >
-          <template #renderItem="{ item }">
-            <a-list-item>
-              <a-list-item-meta :description="item.description">
-                <template #title>
-                  <p></p>
-                  <div>
-                    {{ item.title }}
-                  </div>
-                </template>
-                <template #avatar>
-                  <a-avatar :src="item.image" />
-                </template>
-              </a-list-item-meta>
-            </a-list-item>
-          </template>
-        </a-list>
-      </a-card>
-    </a-col>
-
-    <a-col class="ml-4" :span="6">
-      <a-card>
-        <a-typography-title :level="3">Prise de rendez-vous</a-typography-title>
-
-        <a-form
-          :model="formState"
-          name="basic"
-          autocomplete="off"
-          @finish="onFinish"
-          ref="formRef"
-          :rules="rules"
-        >
-          <a-form-item label="Date de naissance" name="appointmentDate">
-            <a-date-picker
-              v-model:value="formState.appointmentDate"
-              label="JJ/MM/YYYY"
-            />
-          </a-form-item>
-
-          <a-form-item>
-            <a-button html-type="submit">Valider le rendez-vous</a-button>
-          </a-form-item>
-        </a-form>
-      </a-card>
-    </a-col>
-  </div>
+        </iframe>
+      </div>
+      <br />
+      <br />
+      <a-typography-title :level="4"
+        >Caracteristiques du bien</a-typography-title
+      >
+      <a-list
+        item-layout="horizontal"
+        :data-source="[
+          {
+            description: 'Type de bien',
+            title:
+              state.housingProperties.type === 'house'
+                ? 'Maison'
+                : 'Appartement',
+            image:
+              state.housingProperties.type === 'house'
+                ? 'https://img.icons8.com/fluency/512/home.png'
+                : 'https://img.icons8.com/fluency/512/link-company-child.png',
+          },
+          {
+            description: 'Classification du logement',
+            title:
+              state.housingProperties.classification === 'excellent'
+                ? 'Excellent'
+                : state.housingProperties.classification === 'good'
+                ? 'Bon'
+                : state.housingProperties.classification === 'average'
+                ? 'Moyen'
+                : state.housingProperties.classification === 'bad'
+                ? 'Mauvais'
+                : 'Insalubre',
+            image: 'https://img.icons8.com/fluency/512/housekeeping.png',
+          },
+          {
+            description: 'Surface habitable',
+            title: `${state.housingProperties.surface} m²`,
+            image: 'https://img.icons8.com/fluency/512/room.png',
+          },
+          {
+            description: 'Nombre de pièces',
+            title: `${state.housingProperties.rooms} pièces`,
+            image: 'https://img.icons8.com/fluency/512/four-beds.png',
+          },
+          {
+            description: 'Le bien possède-t-il un jardin ?',
+            title: state.housingProperties.hasGarden ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/house-with-a-garden.png',
+          },
+          {
+            description: 'Le bien possède-t-il un parking ?',
+            title: state.housingProperties.hasParking ? 'Oui' : 'Non',
+            image:
+              'https://img.icons8.com/fluency/512/garage-door-part-open.png',
+          },
+          {
+            description: 'Le bien possède-t-il une piscine ?',
+            title: state.housingProperties.hasPool ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/2x/kids-pool.png',
+          },
+          {
+            description: 'Le bien possède-t-il une grotte ?',
+            title: state.housingProperties.hasCave ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/cave.png',
+          },
+          {
+            description: 'Le bien possède-t-il un grenier ?',
+            title: state.housingProperties.hasAttic ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/roofing.png',
+          },
+          {
+            description: 'Le bien possède-t-il une terrasse/balcon ?',
+            title: state.housingProperties.hasBalcony ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/balcony.png',
+          },
+          {
+            description: 'Y-a-t-il des transporter en commun à proximité ?',
+            title: state.housingProperties.nearPublicTransport ? 'Oui' : 'Non',
+            image: 'https://img.icons8.com/fluency/512/railway-station.png',
+          },
+        ]"
+      >
+        <template #renderItem="{ item }">
+          <a-list-item>
+            <a-list-item-meta :description="item.description">
+              <template #title>
+                <p></p>
+                <div>
+                  {{ item.title }}
+                </div>
+              </template>
+              <template #avatar>
+                <a-avatar :src="item.image" />
+              </template>
+            </a-list-item-meta>
+          </a-list-item>
+        </template>
+      </a-list>
+    </a-card>
+  </a-col>
 </template>
 
 <style scoped>
