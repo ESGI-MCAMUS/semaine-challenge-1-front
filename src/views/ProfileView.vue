@@ -32,6 +32,10 @@ const formState = reactive({
   birthdate: "",
 });
 
+const formDocumentState = reactive({
+  documents: [],
+});
+
 const rules = {
   firstname: [
     { required: true, message: "Veuillez saisir votre prénom" },
@@ -96,6 +100,13 @@ const updateUserProfile = async () => {
 
 const state = reactive({
   ads: [],
+  documents: [],
+  modal: {
+    visible: false,
+    type: "",
+    documents: [],
+    housing: {},
+  },
 });
 
 const getuser = async () => {
@@ -110,12 +121,24 @@ const getuser = async () => {
   }
 };
 
-const getRealEstateAd = async (route) => {
+const getHousings = async (route) => {
   client
     .get(`${route}`)
     .then((res) => {
-      // rajouter les données dans le state en plus de ce qui est déjà dedans
       state.ads = [...state.ads, res.data];
+      isLoading.value = false;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getDocuments = async (route) => {
+  client
+    .get(`${route}`)
+    .then((res) => {
+      state.documents = [...state.documents, res.data];
+      console.log(state.documents);
       isLoading.value = false;
     })
     .catch((err) => {
@@ -151,8 +174,13 @@ onMounted(() => {
       }),
     };
 
+    console.log(user.housings);
     user.housings.map((housing) => {
-      getRealEstateAd(housing);
+      getHousings(housing);
+    });
+
+    user.documents.map((document) => {
+      getDocuments(document);
     });
     isLoading.value = false;
   });
@@ -231,6 +259,99 @@ const sendMessage = (receiver) => {
 
 const formatPrice = (price) => {
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+const updateModal = (visible, type, documents, housing) => {
+  console.log({ visible, type, documents });
+  state.modal.visible = visible;
+  state.modal.type = type;
+  state.modal.documents = documents;
+  state.modal.housing = housing;
+};
+
+const convertBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
+const onFileChange = async (e) => {
+  const files = e.target.files;
+  const base64Photos = [];
+  Promise.all(
+    Array.from(files).map(async (file) => {
+      const base64 = await convertBase64(file);
+      base64Photos.push(base64.substring(22));
+    })
+  ).then(() => {
+    formDocumentState.documents = base64Photos;
+    console.log("Successfully convert images", formDocumentState.documents);
+  });
+};
+
+const uploadDocuments = (type, documents) => {
+  console.log({ type, documents, housing: state.modal.housing });
+  if (formDocumentState.length === 0) {
+    notification["error"]({
+      message: "Oups !",
+      description: "Veuillez ajouter au moins une photo !",
+    });
+  } else {
+    if (type === "add") {
+      client
+        .post(`documents`, {
+          documentsOwner: `/users/${token.value.id}`,
+          documents: formDocumentState.documents,
+          housing: `${state.modal.housing["@id"]}`,
+        })
+        .then((res) => {
+          notification["success"]({
+            message: "Documents ajoutés",
+            description: "Vos documents ont bien été ajoutés !",
+          });
+          updateModal(false, "", []);
+          router.push("/KYC");
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description:
+              "Une erreur est survenue lors de l'ajout des documents !",
+          });
+        });
+    } else {
+      clientPatch
+        .patch(`${documents["@id"]}`, {
+          documents: formDocumentState.documents,
+        })
+        .then((res) => {
+          notification["success"]({
+            message: "Documents modifiés",
+            description: "Vos documents ont bien été modifiés !",
+          });
+          updateModal(false, "", []);
+          router.push("/KYC");
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description:
+              "Une erreur est survenue lors de la modification des documents !",
+          });
+        });
+    }
+  }
 };
 </script>
 
@@ -354,6 +475,63 @@ const formatPrice = (price) => {
             <p>{{ ad.address }}</p>
             <p>{{ ad.city }}</p>
             <p>{{ ad.zipcode }}</p>
+            <Button
+              @click="
+                updateModal(
+                  true,
+                  state.documents.some((doc) => doc.housing === ad['@id'])
+                    ? 'edit'
+                    : 'add',
+                  state.documents.find((doc) => doc.housing === ad['@id']),
+                  ad
+                )
+              "
+              >{{
+                state.documents.find((doc) => doc.housing === ad["@id"])
+                  ? "Modifier document(s)"
+                  : "Ajouter document(s)"
+              }}</Button
+            >
+            <a-modal
+              v-model:visible="state.modal.visible"
+              :title="`${
+                state.modal.type === 'add' ? 'Ajouter' : 'Modifier'
+              } des documents`"
+              @ok="uploadDocuments(state.modal.type, state.modal.documents)"
+            >
+              <div
+                :style="
+                  state.modal.documents !== undefined
+                    ? 'height: 50vh; overflow-y: scroll'
+                    : ''
+                "
+              >
+                <div v-if="state.modal.documents !== undefined">
+                  <img
+                    v-for="img in state.modal.documents.documents"
+                    :src="img"
+                    alt="document"
+                    style="width: 100%"
+                  />
+                </div>
+                <br />
+                <a-form
+                  :model="formDocumentState"
+                  @finish="
+                    uploadDocuments(state.modal.type, state.modal.documents)
+                  "
+                >
+                  <a-form-item label="Documents" name="documents">
+                    <a-input
+                      type="file"
+                      multiple
+                      accept="image/png, image/gif, image/jpeg"
+                      @change="onFileChange($event)"
+                    />
+                  </a-form-item>
+                </a-form>
+              </div>
+            </a-modal>
           </a-card>
         </div>
 
