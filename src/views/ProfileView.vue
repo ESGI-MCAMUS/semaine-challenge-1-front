@@ -112,11 +112,13 @@ const getuser = async () => {
 
 const getRealEstateAd = async () => {
   client
-    .get(`/real_estate_ads?user=${token.value.id}`)
+    .get(`/real_estate_ads?pagination=false`)
     .then((res) => {
       // rajouter les données dans le state en plus de ce qui est déjà dedans
-      console.log(res.data);
-      state.ads = res.data["hydra:member"];
+
+      state.ads = res.data["hydra:member"].filter((ad) => {
+        return parseInt(ad.publisher.split("/").pop()) === token.value.id;
+      });
       isLoading.value = false;
     })
     .catch((err) => {
