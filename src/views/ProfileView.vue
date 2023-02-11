@@ -32,6 +32,10 @@ const formState = reactive({
   birthdate: "",
 });
 
+const state = reactive({
+  ads: [],
+});
+
 const rules = {
   firstname: [
     { required: true, message: "Veuillez saisir votre prénom" },
@@ -94,10 +98,6 @@ const updateUserProfile = async () => {
 
 // END MODIFY MODAL
 
-const state = reactive({
-  ads: [],
-});
-
 const getuser = async () => {
   const userId = token.value.id;
 
@@ -110,12 +110,13 @@ const getuser = async () => {
   }
 };
 
-const getRealEstateAd = async (route) => {
+const getRealEstateAd = async () => {
   client
-    .get(`${route}`)
+    .get(`/real_estate_ads?user=${token.value.id}`)
     .then((res) => {
       // rajouter les données dans le state en plus de ce qui est déjà dedans
-      state.ads = [...state.ads, res.data];
+      console.log(res.data);
+      state.ads = res.data["hydra:member"];
       isLoading.value = false;
     })
     .catch((err) => {
@@ -151,9 +152,6 @@ onMounted(() => {
       }),
     };
 
-    user.housings.map((housing) => {
-      getRealEstateAd(housing);
-    });
     isLoading.value = false;
   });
 
@@ -232,6 +230,8 @@ const sendMessage = (receiver) => {
 const formatPrice = (price) => {
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
+
+getRealEstateAd();
 </script>
 
 <template>
@@ -334,14 +334,14 @@ const formatPrice = (price) => {
     <Card class="w-[100%] h-[100%] mt-4">
       <Heading>Mes biens</Heading>
 
-      <div v-if="user.housings.length === 0" class="h-36">
+      <!-- <div v-if="user.housings.length === 0" class="h-36">
         <div>Vous n'avez aucun biens pour le moment.</div>
         <Button class="mt-2"> Ajouter un bien </Button>
-      </div>
+      </div> -->
 
       <!-- TODO : Faire un pseudo carousel avec les différents bien-->
 
-      <div v-else class="flex overflow-scroll">
+      <div class="flex overflow-scroll">
         <div v-for="ad in state.ads" :key="ad.id">
           <a-card style="width: 300px" :title="ad.id">
             <template #extra>
@@ -351,13 +351,12 @@ const formatPrice = (price) => {
                 <a href=""> Voir mon bien </a>
               </RouterLink>
             </template>
-            <p>{{ ad.address }}</p>
-            <p>{{ ad.city }}</p>
+            <p>{{ ad.id }}</p>
+            <!-- <p>{{ ad.city }}</p>
             <p>{{ ad.zipcode }}</p>
+            <p>{{ ad.properties }}</p> -->
           </a-card>
         </div>
-
-        <!-- <RealEstateCard /> -->
       </div>
     </Card>
 
