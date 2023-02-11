@@ -264,7 +264,7 @@ const onFinish = () => {
         <div>
           <iframe
             title="maps"
-            width="600"
+            width="550"
             height="450"
             style="border: 0"
             loading="lazy"
