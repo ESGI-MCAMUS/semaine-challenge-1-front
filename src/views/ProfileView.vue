@@ -30,6 +30,10 @@ const formState = reactive({
   birthdate: "",
 });
 
+const state = reactive({
+  ads: [],
+});
+
 const rules = {
   firstname: [
     { required: true, message: "Veuillez saisir votre prénom" },
@@ -90,10 +94,6 @@ const updateUserProfile = async () => {
   }
 };
 
-const state = reactive({
-  ads: [],
-});
-
 const getuser = async () => {
   const userId = token.value.id;
 
@@ -106,12 +106,15 @@ const getuser = async () => {
   }
 };
 
-const getRealEstateAd = async (route) => {
+const getRealEstateAd = async () => {
   client
-    .get(`${route}`)
+    .get(`/real_estate_ads?pagination=false`)
     .then((res) => {
       // rajouter les données dans le state en plus de ce qui est déjà dedans
-      state.ads = [...state.ads, res.data];
+
+      state.ads = res.data["hydra:member"].filter((ad) => {
+        return parseInt(ad.publisher.split("/").pop()) === token.value.id;
+      });
       isLoading.value = false;
     })
     .catch((err) => {
@@ -147,9 +150,6 @@ onMounted(() => {
       }),
     };
 
-    user.housings.map((housing) => {
-      getRealEstateAd(housing);
-    });
     isLoading.value = false;
   });
 
@@ -228,6 +228,8 @@ const sendMessage = (receiver) => {
 const formatPrice = (price) => {
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
+
+getRealEstateAd();
 </script>
 
 <template>
@@ -330,16 +332,16 @@ const formatPrice = (price) => {
     <Card class="w-[100%] h-[100%] mt-4">
       <Heading>Mes biens</Heading>
 
-      <div v-if="user.housings.length === 0" class="h-36">
+      <!-- <div v-if="user.housings.length === 0" class="h-36">
         <div>Vous n'avez aucun biens pour le moment.</div>
         <Button class="mt-2"> Ajouter un bien </Button>
-      </div>
+      </div> -->
 
       <!-- TODO : Faire un pseudo carousel avec les différents bien-->
 
-      <div v-else class="flex overflow-scroll">
+      <div class="flex overflow-scroll">
         <div v-for="ad in state.ads" :key="ad.id">
-          <a-card style="width: 300px" :title="ad.id">
+          <a-card style="width: 300px" :title="ad.title">
             <template #extra>
               <RouterLink
                 :to="{ name: 'real_estate_ads', params: { id: ad.id } }"
@@ -347,13 +349,31 @@ const formatPrice = (price) => {
                 <a href=""> Voir mon bien </a>
               </RouterLink>
             </template>
-            <p>{{ ad.address }}</p>
-            <p>{{ ad.city }}</p>
+
+            <span
+              v-if="ad.isVisible === true"
+              class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
+              >Valider</span
+            >
+
+            <span
+              v-else
+              class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
+              >En cours de validation</span
+            >
+
+            <p>
+              Type:
+              <span v-if="ad.type === 'sale'">VENTE</span>
+              <span v-else>LOUER</span>
+            </p>
+            <p>Prix: {{ ad.price }}€</p>
+
+            <!-- <p>{{ ad.city }}</p>
             <p>{{ ad.zipcode }}</p>
+            <p>{{ ad.properties }}</p> -->
           </a-card>
         </div>
-
-        <!-- <RealEstateCard /> -->
       </div>
     </Card>
 

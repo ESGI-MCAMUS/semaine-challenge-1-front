@@ -301,7 +301,6 @@ const onFileChange = async (e) => {
     })
   ).then(() => {
     formState.photos = base64Photos;
-    console.log("Successfully convert images", formState.photos);
   });
 };
 
