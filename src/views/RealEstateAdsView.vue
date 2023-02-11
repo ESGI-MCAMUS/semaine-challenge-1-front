@@ -58,12 +58,15 @@ export default defineComponent({
                 client
                   .get(`${dataHousing.properties}`)
                   .then((resHousingProperties) => {
+                    console.log(state.housing);
                     if (resHousingProperties.status === 200) {
                       const dataHousingProperties = resHousingProperties.data;
                       state.housingProperties = dataHousingProperties;
                       state.mapsUrl = `https://www.google.com/maps/embed/v1/place?key=${
                         import.meta.env.VITE_API_GOOGLE_MAPS_KEY
-                      }&q=${state.housing.lat},${state.housing.lng}`;
+                      }&q=${state.housing.address} ${state.housing.address2}, ${
+                        state.housing.zipcode
+                      } ${state.housing.city}`;
                       if (isConnected.value) {
                         refetchFavorites();
                       }
