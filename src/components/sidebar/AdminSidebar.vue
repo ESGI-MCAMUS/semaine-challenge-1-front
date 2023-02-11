@@ -31,7 +31,7 @@
               </a-menu-item>
             </RouterLink>
 
-            <RouterLink :to="{ name: 'admin_home' }">
+            <RouterLink :to="{ name: 'admin_user_managment' }">
               <a-menu-item key="2">
                 <template #icon>
                   <svg
