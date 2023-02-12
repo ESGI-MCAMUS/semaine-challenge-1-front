@@ -17,8 +17,11 @@ jobs:
         run: npm i -g vite
       - name: 💾 Install dependencies
         run: npm ci
-      # - name: 👀 Run linter
-      #   run: npm run lint
+      - name: 💾 Build development env
+        env:
+          MAPS_KEY: ${{ secrets.MAPS_KEY }}
+        run: |
+          echo "VITE_API_GOOGLE_MAPS_KEY=$MAPS_KEY" >> .env
       - name: 🔌 Switch to [dev] environment
         run: npm run switch:dev
       - name: 🔨 Build project
