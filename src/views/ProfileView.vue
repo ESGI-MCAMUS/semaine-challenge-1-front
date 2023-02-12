@@ -20,8 +20,9 @@ let modalVisible = ref(false);
 let messagesFiltered = reactive([]);
 let message = ref("");
 let payments = reactive([]);
-
 let profileModalVisible = ref(false);
+let ownerAppointments = reactive([]);
+let visitorAppointments = reactive([]);
 
 const formState = reactive({
   firstname: "",
@@ -161,6 +162,13 @@ onMounted(() => {
     ];
   });
 
+  getAppointments().then((res) => {
+    ownerAppointments = res.ownerAppointments;
+    visitorAppointments = res.visitorAppointments;
+    console.log(ownerAppointments);
+    console.log(visitorAppointments);
+  });
+
   getPayments().then((res) => {
     payments = res.data.payments;
   });
@@ -227,6 +235,17 @@ const sendMessage = (receiver) => {
 
 const formatPrice = (price) => {
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+const getAppointments = async () => {
+  try {
+    const res = await client.post(`/appointments/get`);
+    console.log("res appointments", res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
 };
 </script>
 
@@ -332,7 +351,6 @@ const formatPrice = (price) => {
 
       <div v-if="user.housings.length === 0" class="h-36">
         <div>Vous n'avez aucun biens pour le moment.</div>
-        <Button class="mt-2"> Ajouter un bien </Button>
       </div>
 
       <!-- TODO : Faire un pseudo carousel avec les différents bien-->
@@ -476,6 +494,83 @@ const formatPrice = (price) => {
                 autofocus
               />
             </a-modal>
+          </div>
+        </div>
+      </Card>
+    </div>
+    <div class="flex">
+      <Card class="w-1/2 h-80 mt-4">
+        <Heading>Mes rendez-vous (propriétaires)</Heading>
+
+        <div class="flex flex-col justify-between">
+          <div
+            v-if="ownerAppointments.length > 0"
+            class="flex w-[100%] justify-between"
+          >
+            <span class="text-sm ml-4 text-gray-500">Date</span>
+            <span class="text-sm ml-4 text-gray-500">Statut</span>
+          </div>
+
+          <div v-if="ownerAppointments.length === 0" class="flex">
+            <div>Vous n'avez aucun rendez-vous pour le moment</div>
+          </div>
+          <div
+            v-for="ao in ownerAppointments"
+            :key="ao.id"
+            class="flex ml-4 justify-between"
+          >
+            <span class="text-sm text-gray-900">
+              {{
+                `${format(new Date(ao.date), "d MMMM yyyy", {
+                  locale: fr,
+                })}`
+              }}
+            </span>
+            <span
+              class="text-sm text-gray-900"
+              v-if="ao.status === 'pending'"
+              style="font-style: italic !important"
+            >
+              Visite programmée
+            </span>
+          </div>
+        </div>
+      </Card>
+
+      <Card class="w-1/2 h-80 mt-4 ml-4">
+        <Heading>Mes rendez-vous (visiteurs)</Heading>
+
+        <div class="flex flex-col justify-between">
+          <div
+            v-if="visitorAppointments.length > 0"
+            class="flex w-[100%] justify-between"
+          >
+            <span class="text-sm ml-4 text-gray-500">Date</span>
+            <span class="text-sm ml-4 text-gray-500">Statut</span>
+          </div>
+
+          <div v-if="visitorAppointments.length === 0" class="flex">
+            <div>Vous n'avez aucun rendez-vous pour le moment</div>
+          </div>
+          <div
+            v-for="av in visitorAppointments"
+            :key="av.id"
+            class="flex ml-4 justify-between"
+          >
+            <span class="text-sm text-gray-900">
+              {{
+                `${format(new Date(av.date), "d MMMM yyyy", {
+                  locale: fr,
+                })}`
+              }}
+            </span>
+            <span
+              class="text-sm text-gray-900"
+              v-if="av.status === 'pending'"
+              style="font-style: italic !important"
+            >
+              Visite programmée
+            </span>
           </div>
         </div>
       </Card>
