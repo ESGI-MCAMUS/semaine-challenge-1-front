@@ -11,6 +11,7 @@ import router from "../router";
 import { client, clientPatch } from "../services";
 import { token } from "../utils/localStorage";
 import { validateEmail } from "../utils/validators";
+import { formatPrice } from "../utils/ads.utils";
 
 let isLoading = ref(true);
 let user = reactive({});
@@ -120,7 +121,6 @@ const getuser = async () => {
 };
 
 const getHousings = async (route) => {
-
   client
     .get(`/real_estate_ads?pagination=false`)
     .then((res) => {
@@ -260,10 +260,6 @@ const sendMessage = (receiver) => {
     });
 };
 
-const formatPrice = (price) => {
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-
 const updateModal = (visible, type, documents, housing) => {
   console.log({ visible, type, documents });
   state.modal.visible = visible;
@@ -356,7 +352,7 @@ const uploadDocuments = (type, documents) => {
     }
   }
 };
-getRealEstateAd();
+getHousings();
 </script>
 
 <template>
@@ -483,7 +479,7 @@ getRealEstateAd();
             <span
               v-if="ad.isVisible === true"
               class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
-              >Valider</span
+              >Validé</span
             >
 
             <span
@@ -497,23 +493,28 @@ getRealEstateAd();
               <span v-if="ad.type === 'sale'">VENTE</span>
               <span v-else>LOUER</span>
             </p>
-            <p>Prix: {{ ad.price }}€</p>
+            <p>Prix: {{ formatPrice(ad.price) }}€</p>
 
-            <!-- <p>{{ ad.city }}</p>
             <p>{{ ad.zipcode }}</p>
             <Button
               @click="
                 updateModal(
                   true,
-                  state.documents.some((doc) => doc.housing === ad['@id'])
+                  state.documents.some(
+                    (doc) => doc.housing === `/housings/${ad['id']}`
+                  )
                     ? 'edit'
                     : 'add',
-                  state.documents.find((doc) => doc.housing === ad['@id']),
+                  state.documents.find(
+                    (doc) => doc.housing === `/housings/${ad['id']}`
+                  ),
                   ad
                 )
               "
               >{{
-                state.documents.find((doc) => doc.housing === ad["@id"])
+                state.documents.find(
+                  (doc) => doc.housing === `/housings/${ad["id"]}`
+                )
                   ? "Modifier document(s)"
                   : "Ajouter document(s)"
               }}</Button
