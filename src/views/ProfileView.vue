@@ -1,6 +1,6 @@
 <script setup>
 import { notification } from "ant-design-vue";
-import { format } from "date-fns";
+import { add, format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { onMounted, reactive, ref } from "vue";
 import Button from "../components/UI/Button.vue";
@@ -22,12 +22,27 @@ let message = ref("");
 let payments = reactive([]);
 
 let profileModalVisible = ref(false);
+let adModalVisible = ref(false);
 
 const formState = reactive({
   firstname: "",
   lastname: "",
   email: "",
   birthdate: "",
+});
+
+const formAdState = reactive({
+  title: "",
+  description: "",
+  price: 0,
+  surface: 0,
+  rooms: 0,
+  address: "",
+  city: "",
+  postalCode: "",
+  type: "",
+  category: "",
+  images: [],
 });
 
 const state = reactive({
@@ -53,8 +68,61 @@ const rules = {
   ],
 };
 
+const adRules = {
+  title: [
+    { required: false },
+    { min: 2, message: "Le titre doit contenir au moins 2 caractères" },
+  ],
+  description: [
+    { required: false },
+    {
+      min: 2,
+      message: "La description doit contenir au moins 2 caractères",
+    },
+  ],
+  price: [
+    { required: false },
+    { min: 2, message: "Le prix doit contenir au moins 2 caractères" },
+  ],
+  surface: [
+    { required: false },
+    { min: 2, message: "La surface doit contenir au moins 2 caractères" },
+  ],
+  rooms: [
+    { required: false },
+    {
+      min: 2,
+      message: "Le nombre de pièces doit contenir au moins 2 caractères",
+    },
+  ],
+  address: [
+    { required: false },
+    { min: 2, message: "L'adresse doit contenir au moins 2 caractères" },
+  ],
+  city: [
+    { required: false },
+    { min: 2, message: "La ville doit contenir au moins 2 caractères" },
+  ],
+  postalCode: [
+    { required: false },
+    { min: 2, message: "Le code postal doit contenir au moins 2 caractères" },
+  ],
+  type: [
+    { required: false },
+    { min: 2, message: "Le type doit contenir au moins 2 caractères" },
+  ],
+  category: [
+    { required: false },
+    { min: 2, message: "La catégorie doit contenir au moins 2 caractères" },
+  ],
+  images: [{ required: false }],
+};
+
 const updateProfileModalVisible = () =>
   (profileModalVisible.value = !profileModalVisible.value);
+
+const updateAdModalVisible = () =>
+  (adModalVisible.value = !adModalVisible.value);
 
 const onFinish = () => {
   updateUserProfile()
@@ -80,6 +148,30 @@ const onFinish = () => {
     });
 };
 
+const onAdFinish = () => {
+  updateAd()
+    .then((res) => {
+      if (res.status === 200) {
+        notification["success"]({
+          message: "Changements validés",
+          description:
+            "Les modifications de votre bien ont bien été prises en compte. Veuillez-vous reconnecter pour voir les changements.",
+        });
+        updateAdModalVisible;
+        token.value = {};
+        router.push("/login");
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      notification["error"]({
+        message: "Oups !",
+        description:
+          "Une erreur est survenue durant la mise à jour de vos informations. Si le problème persiste, veuillez contacter le support.",
+      });
+    });
+};
+
 const updateUserProfile = async () => {
   try {
     const res = await clientPatch.patch(`/users/${user.id}`, {
@@ -91,6 +183,27 @@ const updateUserProfile = async () => {
     return res;
   } catch (error) {
     console.log("error updateUserProfile", error);
+  }
+};
+
+const updateAd = async (adId) => {
+  try {
+    const res = await clientPatch.patch(`/real_estate_ads/${adId}`, {
+      title: formAdState.title,
+      description: formAdState.description,
+      price: formAdState.price,
+      surface: formAdState.surface,
+      rooms: formAdState.rooms,
+      address: formAdState.address,
+      city: formAdState.city,
+      postalCode: formAdState.postalCode,
+      type: formAdState.type,
+      category: formAdState.category,
+      images: formAdState.images,
+    });
+    return res;
+  } catch (error) {
+    console.log("error updateAd", error);
   }
 };
 
@@ -332,11 +445,6 @@ getRealEstateAd();
     <Card class="w-[100%] h-[100%] mt-4">
       <Heading>Mes biens</Heading>
 
-      <!-- <div v-if="user.housings.length === 0" class="h-36">
-        <div>Vous n'avez aucun biens pour le moment.</div>
-        <Button class="mt-2"> Ajouter un bien </Button>
-      </div> -->
-
       <!-- TODO : Faire un pseudo carousel avec les différents bien-->
 
       <div class="flex overflow-scroll">
@@ -368,10 +476,68 @@ getRealEstateAd();
               <span v-else>LOUER</span>
             </p>
             <p>Prix: {{ ad.price }}€</p>
+            <p>{{ ad.id }}</p>
 
-            <!-- <p>{{ ad.city }}</p>
-            <p>{{ ad.zipcode }}</p>
-            <p>{{ ad.properties }}</p> -->
+            <a-button @click="updateAdModalVisible()">
+              Modifier mon bien
+            </a-button>
+
+            <a-modal
+              v-model:visible="adModalVisible"
+              :title="`Modifier les infrormations de votre bien`"
+              @ok="onAdFinish"
+              okText="Valider les modifs"
+            >
+              <div style="overflow-y: scroll">
+                <a-form
+                  :model="formAdState"
+                  name="basic"
+                  :label-col="{ span: 8 }"
+                  :wrapper-col="{ span: 14 }"
+                  autocomplete="off"
+                  ref="formRef"
+                  :rules="adRules"
+                >
+                  <a-form-item label="Titre" name="title">
+                    <a-input v-model:value="formAdState.title" />
+                  </a-form-item>
+                  <a-form-item label="Description" name="Description">
+                    <a-input v-model:value="formAdState.description" />
+                  </a-form-item>
+                  <a-form-item label="Prix" name="price">
+                    <a-input v-model:value="formAdState.price" />
+                  </a-form-item>
+                  <a-form-item label="Surface" name="surface">
+                    <a-input v-model:value="formAdState.surface" />
+                  </a-form-item>
+                  <a-form-item label="Pièces" name="rooms">
+                    <a-input v-model:value="formAdState.rooms" />
+                  </a-form-item>
+                  <a-form-item label="Adresse" name="address">
+                    <a-input v-model:value="formAdState.address" />
+                  </a-form-item>
+                  <a-form-item label="Ville" name="city">
+                    <a-input v-model:value="formAdState.city" />
+                  </a-form-item>
+                  <a-form-item label="Code postal" name="postalCode">
+                    <a-input v-model:value="formAdState.zipcode" />
+                  </a-form-item>
+                  <a-form-item label="Type" name="type">
+                    <a-input v-model:value="formAdState.type" />
+                  </a-form-item>
+                  <a-form-item label="Catégorie" name="category">
+                    <a-input v-model:value="formAdState.category" />
+                  </a-form-item>
+                  <a-form-item label="Photos" name="images">
+                    <a-input v-model:value="formAdState.images" />
+                  </a-form-item>
+
+                  <!-- <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+                  <a-button html-type="submit">BOUTON VALIDER FORM</a-button>
+                </a-form-item> -->
+                </a-form>
+              </div>
+            </a-modal>
           </a-card>
         </div>
       </div>
