@@ -17,16 +17,19 @@ jobs:
         run: npm ci
       - name: 🔌 Switch to [dev] environment
         run: npm run switch:dev
+      - name: ⚡️ Vite env
+        env:
+          MAPS_KEY: ${{ secrets.MAPS_KEY }}
+        run: |
+          echo "VITE_API_GOOGLE_MAPS_KEY=$MAPS_KEY" >> .env
       - name: 🔨 Build project
         run: npm run build
       - name: ⚙️ Configure app for target server
         env:
-          MAPS_KEY: ${{ secrets.MAPS_KEY }}
           HTACCESS: ${{ secrets.HTACCESS }}
         run: |
           cd ./dist
           echo "challenge-dev.mistergooddeal.org" > CNAME
-          echo "VITE_API_GOOGLE_MAPS_KEY=$MAPS_KEY" >> .env
           echo "$HTACCESS" > .htaccess
           cd ..
       - name: 🚀 Deploy to [dev] server
