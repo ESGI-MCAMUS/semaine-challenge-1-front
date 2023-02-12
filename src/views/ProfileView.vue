@@ -464,7 +464,10 @@ const uploadDocuments = (type, documents) => {
 
       <div v-else class="flex overflow-scroll">
         <div v-for="ad in state.ads" :key="ad.id">
-          <a-card style="width: 300px" :title="ad.id">
+          <a-card
+            style="width: 300px; margin-left: 5px; margin-right: 5px"
+            :title="ad.id"
+          >
             <template #extra>
               <RouterLink
                 :to="{ name: 'real_estate_ads', params: { id: ad.id } }"
