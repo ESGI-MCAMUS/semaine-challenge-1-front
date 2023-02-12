@@ -68,15 +68,6 @@ const onProfile = () => {
                 </a-menu-item>
               </RouterLink>
 
-              <RouterLink :to="{ name: 'likes' }">
-                <a-menu-item key="2">
-                  <a
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >Vérifier mon identité</a
-                  >
-                </a-menu-item>
-              </RouterLink>
-
               <a-menu-item key="3">
                 <a
                   @click="$emit('logout')"
