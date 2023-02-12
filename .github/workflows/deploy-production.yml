@@ -14,21 +14,19 @@ jobs:
           node-version: 16.x
       - name: 💾 Install dependencies
         run: npm ci
-      - name: ⚙️ Build prod config
-        env:
-          MAPS_KEY: ${{ secrets.MAPS_KEY }}
-          HTACCESS: ${{ secrets.HTACCESS }}
-        run: |
-          echo "VITE_API_GOOGLE_MAPS_KEY=$MAPS_KEY" >> .env
-          echo "$HTACCESS" > .htaccess
       - name: 🔌 Switch to [prod] environment
         run: npm run switch:prod
       - name: 🔨 Build project
         run: npm run build
       - name: ⚙️ Configure app for target server
+        env:
+          MAPS_KEY: ${{ secrets.MAPS_KEY }}
+          HTACCESS: ${{ secrets.HTACCESS }}
         run: |
           cd ./dist
           echo "challenge.mistergooddeal.org" > CNAME
+          echo "VITE_API_GOOGLE_MAPS_KEY=$MAPS_KEY" >> .env
+          echo "$HTACCESS" > .htaccess
           cd ..
       - name: 🚀 Deploy to [prod] server
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
