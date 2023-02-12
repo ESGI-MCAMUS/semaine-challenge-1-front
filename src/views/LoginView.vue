@@ -3,6 +3,7 @@ import { defineComponent, reactive, ref } from "vue";
 import router from "../router";
 import { clientWithoutAuth } from "../services";
 import { token } from "../utils/localStorage";
+import { notification } from "ant-design-vue";
 
 export default defineComponent({
   setup() {
@@ -22,56 +23,30 @@ export default defineComponent({
 
         const user = JSON.parse(atob(res.data.token.split(".")[1]));
 
-        const userToken = {
-          token: res.data.token,
-          id: user.id,
-          email: user.username,
-          role: user.role,
-          firstname: user.firstname,
-          lastname: user.lastname,
-        };
+        if (user.isActive) {
+          const userToken = {
+            token: res.data.token,
+            id: user.id,
+            email: user.username,
+            role: user.role,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            isActive: user.isActive,
+          };
 
-        token.value = userToken;
+          token.value = userToken;
 
-        const validateEmail = async (_rule, value) => {
-          // regex pour valider l'email
-          const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-          if (value === "") {
-            return Promise.reject("Veuillez saisir votre adresse mail");
-          } else if (!regex.test(value)) {
-            return Promise.reject("Veuillez saisir une adresse mail valide");
+          if (userToken.role.includes("ROLE_ADMIN")) {
+            router.push("/admin");
           } else {
-            return Promise.resolve();
+            router.push("/");
           }
-        };
-
-        const validateNotEmpty = async (_rule, value) => {
-          if (value === "") {
-            return Promise.reject("Veuillez saisir votre mot de passe");
-          } else {
-            return Promise.resolve();
-          }
-        };
-
-        let rules = {
-          username: [
-            {
-              required: true,
-              validator: validateEmail,
-            },
-          ],
-          password: [
-            {
-              required: true,
-              validator: validateNotEmpty,
-            },
-          ],
-        };
-
-        if (userToken.role.includes("ROLE_ADMIN")) {
-          router.push("/admin");
         } else {
-          router.push("/");
+          isError.value = true;
+          notification["error"]({
+            message: "Oups !",
+            description: "Votre compte n'est pas activé !",
+          });
         }
 
         // router.push("/");
