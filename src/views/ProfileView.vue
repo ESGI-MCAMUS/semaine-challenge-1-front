@@ -310,7 +310,7 @@ const uploadDocuments = (type, documents) => {
         .post(`documents`, {
           documentsOwner: `/users/${token.value.id}`,
           documents: formDocumentState.documents,
-          housing: `${state.modal.housing["@id"]}`,
+          housing: `/housings/${state.modal.housing["id"]}`,
         })
         .then((res) => {
           notification["success"]({
