@@ -3,7 +3,7 @@ import { ref, watchEffect } from "vue";
 import router from "../../router";
 import { token } from "../../utils/localStorage";
 import DisconnectedNavbar from "../navbar/disconnectedNavbar.vue";
-import UserNavbar from "../navbar/UserNavbar.vue";
+import UserNavbar from "../navbar/userNavbar.vue";
 import AdminSidebar from "../sidebar/AdminSidebar.vue";
 
 let role = ref(token.value.role);
