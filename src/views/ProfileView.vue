@@ -522,11 +522,7 @@ getRealEstateAd();
               class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
               >En cours de validation</span
             >
-            <p>
-              Type:
-              <span v-if="ad.type === 'sale'">VENTE</span>
-              <span v-else>LOUER</span>
-            </p>
+
             <p>Prix: {{ ad.price }}€</p>
             <p>{{ ad.id }}</p>
 
@@ -581,11 +577,22 @@ getRealEstateAd();
             <a-form-item label="Code postal" name="postalCode">
               <a-input v-model:value="formAdState.zipcode" />
             </a-form-item>
+
             <a-form-item label="Type" name="type">
-              <a-input v-model:value="formAdState.type" />
+              <a-radio-group v-model:value="formAdState.type">
+                <a-radio value="rent">Louer</a-radio>
+                <a-radio value="sale">Vendre</a-radio>
+              </a-radio-group>
             </a-form-item>
+
             <a-form-item label="Classification" name="classification">
-              <a-input v-model:value="formAdState.classification" />
+              <a-radio-group v-model:value="formAdState.classification">
+                <a-radio value="insalubrious">insalubrious</a-radio>
+                <a-radio value="bad">bad</a-radio>
+                <a-radio value="average">average</a-radio>
+                <a-radio value="good">good</a-radio>
+                <a-radio value="excellent">excellent</a-radio>
+              </a-radio-group>
             </a-form-item>
           </a-form>
         </div>
