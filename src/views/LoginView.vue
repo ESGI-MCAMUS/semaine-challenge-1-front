@@ -67,7 +67,7 @@ export default defineComponent({
 
 <template>
   <a-col :span="8" :offset="8">
-    <a-card title="Login">
+    <a-card title="Se connecter">
       <a-form
         :model="formState"
         name="basic"
