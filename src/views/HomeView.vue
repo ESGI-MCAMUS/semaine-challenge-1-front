@@ -48,7 +48,6 @@ export default defineComponent({
     let isConnected = ref(false);
 
     if (token.value !== undefined) {
-      console.log("token.value", token.value);
       token.value.role?.includes("ROLE_ADMIN")
         ? (isConnected.value = true)
         : (isConnected.value = false);

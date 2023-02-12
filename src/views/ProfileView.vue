@@ -21,8 +21,6 @@ let messagesFiltered = reactive([]);
 let message = ref("");
 let payments = reactive([]);
 
-// MODIFY MODAL
-
 let profileModalVisible = ref(false);
 
 const formState = reactive({
@@ -122,10 +120,15 @@ const getuser = async () => {
 };
 
 const getHousings = async (route) => {
+
   client
-    .get(`${route}`)
+    .get(`/real_estate_ads?pagination=false`)
     .then((res) => {
-      state.ads = [...state.ads, res.data];
+      // rajouter les données dans le state en plus de ce qui est déjà dedans
+
+      state.ads = res.data["hydra:member"].filter((ad) => {
+        return parseInt(ad.publisher.split("/").pop()) === token.value.id;
+      });
       isLoading.value = false;
     })
     .catch((err) => {
@@ -353,6 +356,7 @@ const uploadDocuments = (type, documents) => {
     }
   }
 };
+getRealEstateAd();
 </script>
 
 <template>
@@ -455,14 +459,14 @@ const uploadDocuments = (type, documents) => {
     <Card class="w-[100%] h-[100%] mt-4">
       <Heading>Mes biens</Heading>
 
-      <div v-if="user.housings.length === 0" class="h-36">
+      <!-- <div v-if="user.housings.length === 0" class="h-36">
         <div>Vous n'avez aucun biens pour le moment.</div>
         <Button class="mt-2"> Ajouter un bien </Button>
-      </div>
+      </div> -->
 
       <!-- TODO : Faire un pseudo carousel avec les différents bien-->
 
-      <div v-else class="flex overflow-scroll">
+      <div class="flex overflow-scroll">
         <div v-for="ad in state.ads" :key="ad.id">
           <a-card
             style="width: 300px; margin-left: 5px; margin-right: 5px"
@@ -475,8 +479,27 @@ const uploadDocuments = (type, documents) => {
                 <a href=""> Voir mon bien </a>
               </RouterLink>
             </template>
-            <p>{{ ad.address }}</p>
-            <p>{{ ad.city }}</p>
+
+            <span
+              v-if="ad.isVisible === true"
+              class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
+              >Valider</span
+            >
+
+            <span
+              v-else
+              class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
+              >En cours de validation</span
+            >
+
+            <p>
+              Type:
+              <span v-if="ad.type === 'sale'">VENTE</span>
+              <span v-else>LOUER</span>
+            </p>
+            <p>Prix: {{ ad.price }}€</p>
+
+            <!-- <p>{{ ad.city }}</p>
             <p>{{ ad.zipcode }}</p>
             <Button
               @click="
@@ -537,8 +560,6 @@ const uploadDocuments = (type, documents) => {
             </a-modal>
           </a-card>
         </div>
-
-        <!-- <RealEstateCard /> -->
       </div>
     </Card>
 
