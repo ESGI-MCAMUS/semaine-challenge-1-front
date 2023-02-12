@@ -156,8 +156,8 @@ const onFinish = () => {
 
 const patchAdsModal = () => {
   try {
-    clientPatch
-      .patch(`/real_estate_ads/${formAdState.adId}`, {
+    client
+      .put(`/real_estate_ads/${formAdState.adId}`, {
         title: formAdState.title,
         description: formAdState.description,
         price: parseInt(formAdState.price),
@@ -172,8 +172,8 @@ const patchAdsModal = () => {
 
 const patchHousingModal = (housingId) => {
   try {
-    clientPatch
-      .patch(`${housingId}`, {
+    client
+      .put(`${housingId}`, {
         address: formAdState.address,
         city: formAdState.city,
         zipcode: formAdState.zipcode,
@@ -188,8 +188,8 @@ const patchHousingModal = (housingId) => {
 
 const patchHousingProperties = (housingPropertiesId) => {
   try {
-    clientPatch
-      .patch(`${housingPropertiesId}`, {
+    client
+      .put(`${housingPropertiesId}`, {
         surface: parseInt(formAdState.surface),
         rooms: parseInt(formAdState.rooms),
         type: formAdState.type,
@@ -211,7 +211,7 @@ const patchHousingProperties = (housingPropertiesId) => {
 
 const updateUserProfile = async () => {
   try {
-    const res = await clientPatch.patch(`/users/${user.id}`, {
+    const res = await client.put(`/users/${user.id}`, {
       firstname: formState.firstname,
       lastname: formState.lastname,
       email: formState.email,
@@ -514,8 +514,8 @@ const uploadDocuments = (type, documents) => {
           });
         });
     } else {
-      clientPatch
-        .patch(`${documents["@id"]}`, {
+      client
+        .put(`${documents["@id"]}`, {
           documents: formDocumentState.documents,
         })
         .then((res) => {
