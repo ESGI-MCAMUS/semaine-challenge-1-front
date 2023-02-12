@@ -161,8 +161,6 @@ const patchAdsModal = () => {
         price: parseInt(formAdState.price),
       })
       .then((res) => {
-        console.log("res patchAdsModal", res.data);
-
         patchHousingModal(res.data.housing);
       });
   } catch (error) {
@@ -179,7 +177,6 @@ const patchHousingModal = (housingId) => {
         zipcode: formAdState.zipcode,
       })
       .then((res) => {
-        console.log("res patchHousingModal", res.data);
         patchHousingProperties(res.data.properties);
       });
   } catch (error) {
@@ -197,8 +194,6 @@ const patchHousingProperties = (housingPropertiesId) => {
         classification: formAdState.classification,
       })
       .then((res) => {
-        console.log("res patchHousingProperties", res.data);
-
         notification["success"]({
           message: "Changements validés",
           description: "La modifications votre bien à été pris en compte.",
@@ -260,7 +255,7 @@ const getOneRealEstateAdAllInformation = async (adId) => {
     .get(`/real_estate_ads/${adId}`)
     .then((res) => {
       isLoading.value = false;
-      console.log(res.data);
+
       formAdState.title = res.data.title;
       formAdState.description = res.data.description;
       formAdState.price = res.data.price;
@@ -268,7 +263,6 @@ const getOneRealEstateAdAllInformation = async (adId) => {
       client
         .get(res.data.housing)
         .then((res) => {
-          console.log("housing", res.data);
           formAdState.city = res.data.city;
           formAdState.address = res.data.address;
           formAdState.floor = res.data.floor;
@@ -277,8 +271,6 @@ const getOneRealEstateAdAllInformation = async (adId) => {
           client
             .get(res.data.properties)
             .then((res) => {
-              console.log("type", res.data);
-
               formAdState.type = res.data.type;
               formAdState.rooms = res.data.rooms;
               formAdState.surface = res.data.surface;
