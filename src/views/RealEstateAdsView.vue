@@ -176,20 +176,12 @@ const createAppointment = async () => {
   console.log("houusing", state.housing["@id"]);
 
   try {
-    const res = await client
-      .post(`/appointments`, {
-        date: new Date(formState.appointmentDate),
-        housing: state.housing["@id"],
-        visitor: `/users/${token.value.id}`,
-        status: "pending",
-      })
-      .then((res) => {
-        console.log("res", res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    console.log("res", res);
+    const res = await client.post(`/appointments`, {
+      date: new Date(formState.appointmentDate),
+      housing: state.housing["@id"],
+      visitor: `/users/${token.value.id}`,
+      status: "pending",
+    });
     return res;
   } catch (error) {
     console.error(error);
