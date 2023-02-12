@@ -157,21 +157,58 @@ const patchAdsModal = () => {
     clientPatch
       .patch(`/real_estate_ads/${formAdState.adId}`, {
         title: formAdState.title,
+        description: formAdState.description,
+        price: parseInt(formAdState.price),
       })
       .then((res) => {
-        if (res.status === 200) {
-          notification["success"]({
-            message: "Changements validés",
-            description:
-              "La modifications de vos informations personnelles ont bien été prises en compte. Veuillez-vous reconnecter pour voir les changements.",
-          });
-          updateAdModalVisible();
-          // update l'affichage des annonces
-          getRealEstateAd();
-        }
+        console.log("res patchAdsModal", res.data);
+
+        patchHousingModal(res.data.housing);
       });
   } catch (error) {
     console.log("error patchAdsModal", error);
+  }
+};
+
+const patchHousingModal = (housingId) => {
+  try {
+    clientPatch
+      .patch(`${housingId}`, {
+        address: formAdState.address,
+        city: formAdState.city,
+        zipcode: formAdState.zipcode,
+      })
+      .then((res) => {
+        console.log("res patchHousingModal", res.data);
+        patchHousingProperties(res.data.properties);
+      });
+  } catch (error) {
+    console.log("error patchHousingModal", error);
+  }
+};
+
+const patchHousingProperties = (housingPropertiesId) => {
+  try {
+    clientPatch
+      .patch(`${housingPropertiesId}`, {
+        surface: parseInt(formAdState.surface),
+        rooms: parseInt(formAdState.rooms),
+        type: formAdState.type,
+        classification: formAdState.classification,
+      })
+      .then((res) => {
+        console.log("res patchHousingProperties", res.data);
+
+        notification["success"]({
+          message: "Changements validés",
+          description: "La modifications votre bien à été pris en compte.",
+        });
+        updateAdModalVisible();
+
+        getRealEstateAd();
+      });
+  } catch (error) {
+    console.log("error patchHousingProperties", error);
   }
 };
 
