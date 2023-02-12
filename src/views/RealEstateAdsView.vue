@@ -180,6 +180,8 @@ const createAppointment = async () => {
       .post(`/appointments`, {
         date: new Date(formState.appointmentDate),
         housing: state.housing["@id"],
+        visitor: `/users/${token.value.id}`,
+        status: "pending",
       })
       .then((res) => {
         console.log("res", res);
