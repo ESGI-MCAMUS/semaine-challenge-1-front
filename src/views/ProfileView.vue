@@ -32,6 +32,9 @@ const formState = reactive({
 });
 
 const formAdState = reactive({
+  adId: "",
+  homeId: "",
+  homePropertiesId: "",
   title: "",
   description: "",
   price: "",
@@ -42,7 +45,6 @@ const formAdState = reactive({
   zipcode: "",
   type: "",
   classification: "",
-  images: [],
 });
 
 const state = reactive({
@@ -150,28 +152,27 @@ const onFinish = () => {
     });
 };
 
-const onAdFinish = () => {
-  updateAd()
-    .then((res) => {
-      if (res.status === 200) {
-        notification["success"]({
-          message: "Changements validés",
-          description:
-            "Les modifications de votre bien ont bien été prises en compte. Veuillez-vous reconnecter pour voir les changements.",
-        });
-        updateAdModalVisible;
-        token.value = {};
-        router.push("/login");
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      notification["error"]({
-        message: "Oups !",
-        description:
-          "Une erreur est survenue durant la mise à jour de vos informations. Si le problème persiste, veuillez contacter le support.",
+const patchAdsModal = () => {
+  try {
+    clientPatch
+      .patch(`/real_estate_ads/${formAdState.adId}`, {
+        title: formAdState.title,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          notification["success"]({
+            message: "Changements validés",
+            description:
+              "La modifications de vos informations personnelles ont bien été prises en compte. Veuillez-vous reconnecter pour voir les changements.",
+          });
+          updateAdModalVisible();
+          // update l'affichage des annonces
+          getRealEstateAd();
+        }
       });
-    });
+  } catch (error) {
+    console.log("error patchAdsModal", error);
+  }
 };
 
 const updateUserProfile = async () => {
@@ -185,27 +186,6 @@ const updateUserProfile = async () => {
     return res;
   } catch (error) {
     console.log("error updateUserProfile", error);
-  }
-};
-
-const updateAd = async (adId) => {
-  try {
-    const res = await clientPatch.patch(`/real_estate_ads/${adId}`, {
-      title: formAdState.title,
-      description: formAdState.description,
-      price: formAdState.price,
-      surface: formAdState.surface,
-      rooms: formAdState.rooms,
-      address: formAdState.address,
-      city: formAdState.city,
-      postalCode: formAdState.postalCode,
-      type: formAdState.type,
-      category: formAdState.category,
-      images: formAdState.images,
-    });
-    return res;
-  } catch (error) {
-    console.log("error updateAd", error);
   }
 };
 
@@ -238,6 +218,7 @@ const getRealEstateAd = async () => {
 };
 
 const getOneRealEstateAdAllInformation = async (adId) => {
+  formAdState.adId = adId;
   client
     .get(`/real_estate_ads/${adId}`)
     .then((res) => {
@@ -526,7 +507,7 @@ getRealEstateAd();
       <a-modal
         v-model:visible="adModalVisible"
         :title="`Modifier les infrormations de votre bien`"
-        @ok="onAdFinish"
+        @ok="patchAdsModal()"
         okText="Valider les modifs"
       >
         <div style="overflow-y: scroll">
