@@ -78,7 +78,7 @@ export default defineComponent({
         @finishFailed="onFinishFailed"
       >
         <a-form-item
-          label="Username"
+          label="Adresse mail"
           name="username"
           :rules="[
             { required: true, message: 'Veuillez saisir votre adresse mail!' },
@@ -88,7 +88,7 @@ export default defineComponent({
         </a-form-item>
 
         <a-form-item
-          label="Password"
+          label="Mot de passe"
           name="password"
           :rules="[
             { required: true, message: 'Veuillez saisir votre mot de passe!' },
