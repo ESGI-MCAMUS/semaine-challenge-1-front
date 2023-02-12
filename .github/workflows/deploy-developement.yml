@@ -31,6 +31,7 @@ jobs:
           cd ./dist
           echo "challenge-dev.mistergooddeal.org" > CNAME
           echo "$HTACCESS" > .htaccess
+          sed -i 's/<title>.*<\/title>/<title>Habitat Hunter [DEV]<\/title>/g' index.html
           cd ..
       - name: 🚀 Deploy to [dev] server
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
