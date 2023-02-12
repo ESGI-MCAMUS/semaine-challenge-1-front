@@ -407,7 +407,7 @@ const onFinish = () => {
           ref="formRef"
           :rules="rules"
         >
-          <a-form-item label="Date de naissance" name="appointmentDate">
+          <a-form-item label="Date du RDV" name="appointmentDate">
             <a-date-picker
               v-model:value="formState.appointmentDate"
               label="JJ/MM/YYYY"
