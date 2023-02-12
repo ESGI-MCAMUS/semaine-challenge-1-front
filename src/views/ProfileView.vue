@@ -21,9 +21,10 @@ let modalVisible = ref(false);
 let messagesFiltered = reactive([]);
 let message = ref("");
 let payments = reactive([]);
-
 let profileModalVisible = ref(false);
 let adModalVisible = ref(false);
+let ownerAppointments = reactive([]);
+let visitorAppointments = reactive([]);
 
 const formState = reactive({
   firstname: "",
@@ -376,6 +377,13 @@ onMounted(() => {
     ];
   });
 
+  getAppointments().then((res) => {
+    ownerAppointments = res.ownerAppointments;
+    visitorAppointments = res.visitorAppointments;
+    console.log(ownerAppointments);
+    console.log(visitorAppointments);
+  });
+
   getPayments().then((res) => {
     payments = res.data.payments;
   });
@@ -531,6 +539,17 @@ const uploadDocuments = (type, documents) => {
 };
 getHousings();
 fetchMyUser();
+
+const getAppointments = async () => {
+  try {
+    const res = await client.post(`/appointments/get`);
+    console.log("res appointments", res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
+};
 </script>
 
 <template>
@@ -546,16 +565,12 @@ fetchMyUser();
       <div
         class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm"
       >
-        <div class="flex flex-col items-center mt-3">
+        <div class="flex flex-col items-center justify-center h-[100%]">
           <img
             class="w-24 h-24 mb-3 rounded-full shadow-lg"
             src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
             alt="Profile picture"
           />
-          <h5 class="mb-1 text-xl font-medium text-gray-900">
-            {{ user.firstname }} {{ user.lastname }}
-          </h5>
-          <span class="text-sm text-gray-500">ROLE</span>
         </div>
       </div>
       <Card class="w-[100%] ml-4">
@@ -921,6 +936,75 @@ fetchMyUser();
                 autofocus
               />
             </a-modal>
+          </div>
+        </div>
+      </Card>
+    </div>
+    <div class="flex">
+      <Card class="w-1/2 h-80 mt-4">
+        <Heading>Mes rendez-vous (propriétaires)</Heading>
+
+        <div class="flex flex-col justify-between">
+          <div
+            v-if="ownerAppointments.length > 0"
+            class="flex w-[100%] justify-between"
+          >
+            <span class="text-sm ml-4 text-gray-500">Date</span>
+            <span class="text-sm ml-4 text-gray-500">Statut</span>
+          </div>
+
+          <div v-if="ownerAppointments.length === 0" class="flex">
+            <div>Vous n'avez aucun rendez-vous pour le moment</div>
+          </div>
+          <div
+            v-for="ao in ownerAppointments"
+            :key="ao.id"
+            class="flex ml-4 justify-between"
+          >
+            <span class="text-sm text-gray-900">
+              {{ new Date(ao.date).toLocaleDateString() }}
+            </span>
+            <span
+              class="text-sm text-gray-900"
+              v-if="ao.status === 'pending'"
+              style="font-style: italic !important"
+            >
+              Visite programmée
+            </span>
+          </div>
+        </div>
+      </Card>
+
+      <Card class="w-1/2 h-80 mt-4 ml-4">
+        <Heading>Mes rendez-vous (visiteurs)</Heading>
+
+        <div class="flex flex-col justify-between">
+          <div
+            v-if="visitorAppointments.length > 0"
+            class="flex w-[100%] justify-between"
+          >
+            <span class="text-sm ml-4 text-gray-500">Date</span>
+            <span class="text-sm ml-4 text-gray-500">Statut</span>
+          </div>
+
+          <div v-if="visitorAppointments.length === 0" class="flex">
+            <div>Vous n'avez aucun rendez-vous pour le moment</div>
+          </div>
+          <div
+            v-for="av in visitorAppointments"
+            :key="av.id"
+            class="flex ml-4 justify-between"
+          >
+            <span class="text-sm text-gray-900">
+              {{ new Date(av.date).toLocaleDateString() }}
+            </span>
+            <span
+              class="text-sm text-gray-900"
+              v-if="av.status === 'pending'"
+              style="font-style: italic !important"
+            >
+              Visite programmée
+            </span>
           </div>
         </div>
       </Card>
