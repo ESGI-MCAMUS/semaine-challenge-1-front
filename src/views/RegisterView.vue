@@ -77,7 +77,8 @@ export default defineComponent({
 
     const validatePass = async (_rule, value) => {
       // regex pour valider le mot de passe
-      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+      const regex =
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
       if (value === "") {
         return Promise.reject("Veuillez saisir votre mot de passe");
       } else if (!regex.test(value)) {

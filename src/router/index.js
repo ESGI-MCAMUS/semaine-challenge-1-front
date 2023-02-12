@@ -4,6 +4,7 @@ import Error404 from "../views/404View.vue";
 import HomeAdminView from "../views/admin/HomeAdminView.vue";
 import RealEastateAllAdminView from "../views/admin/realEastate/RealEastateAllAdminView.vue";
 import RealEastatePendingAdminView from "../views/admin/realEastate/RealEastatePendingAdminView.vue";
+import UserManagment from "../views/admin/users/UserManagmentView.vue";
 import ConfirmEmail from "../views/ConfirmEmailView.vue";
 import CreateRealEasteAds from "../views/CreateRealEstateAdsView.vue";
 import HomeView from "../views/HomeView.vue";
@@ -17,7 +18,6 @@ import RegisterView from "../views/RegisterView.vue";
 import ResetPassword from "../views/ResetPasswordView.vue";
 import UpdatePaymentStatus from "../views/UpdatePaymentStatus.vue";
 import UploadDocument from "../views/UploadDocumentView.vue";
-import UserManagment from "../views/admin/users/UserManagmentView.vue";
 
 const ifAuthenticated = (to, from, next) => {
   if (token.value.token) {
@@ -110,6 +110,7 @@ const router = createRouter({
       path: "/upload-document",
       name: "upload-document",
       component: UploadDocument,
+      beforeEnter: ifIsUser,
     },
     {
       path: "/new-password/:token",
@@ -155,11 +156,13 @@ const router = createRouter({
       path: "/payments/:status/:id/:token",
       name: "update_payement_status",
       component: UpdatePaymentStatus,
+      beforeEnter: ifIsUser,
     },
     {
       path: "/KYC",
       name: "KYC",
       component: KYC,
+      beforeEnter: ifIsUser,
     },
     //create 404 page
     {
