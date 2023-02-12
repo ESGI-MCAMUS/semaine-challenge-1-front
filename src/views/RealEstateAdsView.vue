@@ -168,25 +168,50 @@ const deleteAd = (adId) => {
     });
 };
 
-// TODO : Vérifier que l'user n'a pas déjà fait un rendez pour cette annonce.
-// TODO : Vérifier que l'annonce n'est pas déjà réservée pour le jour en question.
 const formState = reactive({
   appointmentDate: "",
 });
 
 const createAppointment = async () => {
-  client
-    .post(`/appointment/9999`)
-    .then((res) => {
-      console.log("res", res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  console.log("houusing", state.housing["@id"]);
+
+  try {
+    const res = await client
+      .post(`/appointments`, {
+        date: new Date(formState.appointmentDate),
+        housing: state.housing["@id"],
+      })
+      .then((res) => {
+        console.log("res", res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log("res", res);
+    return res;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const onFinish = () => {
-  createAppointment();
+  createAppointment()
+    .then((res) => {
+      if (res.status === 201) {
+        notification["success"]({
+          message: "Demande de RDV envoyé",
+          description:
+            "Votre rendez-vous a bien été créé ! En attente de validation de la part du propriétaire",
+        });
+      }
+    })
+    .catch((err) => {
+      notification["error"]({
+        message: "Oups !",
+        description:
+          "Une erreur est survenue lors de la création du rendez-vous !",
+      });
+    });
 };
 </script>
 
