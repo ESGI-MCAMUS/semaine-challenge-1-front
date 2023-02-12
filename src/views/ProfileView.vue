@@ -1,6 +1,6 @@
 <script setup>
 import { notification } from "ant-design-vue";
-import { add, format } from "date-fns";
+import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { onMounted, reactive, ref } from "vue";
 import Button from "../components/UI/Button.vue";
@@ -34,14 +34,14 @@ const formState = reactive({
 const formAdState = reactive({
   title: "",
   description: "",
-  price: 0,
-  surface: 0,
-  rooms: 0,
+  price: "",
+  surface: "",
+  rooms: "",
   address: "",
   city: "",
-  postalCode: "",
+  zipcode: "",
   type: "",
-  category: "",
+  classification: "",
   images: [],
 });
 
@@ -118,11 +118,13 @@ const adRules = {
   images: [{ required: false }],
 };
 
-const updateProfileModalVisible = () =>
-  (profileModalVisible.value = !profileModalVisible.value);
+const updateProfileModalVisible = () => {
+  profileModalVisible.value = !profileModalVisible.value;
+};
 
-const updateAdModalVisible = () =>
-  (adModalVisible.value = !adModalVisible.value);
+const updateAdModalVisible = () => {
+  adModalVisible.value = !adModalVisible.value;
+};
 
 const onFinish = () => {
   updateUserProfile()
@@ -229,6 +231,48 @@ const getRealEstateAd = async () => {
         return parseInt(ad.publisher.split("/").pop()) === token.value.id;
       });
       isLoading.value = false;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getOneRealEstateAdAllInformation = async (adId) => {
+  client
+    .get(`/real_estate_ads/${adId}`)
+    .then((res) => {
+      isLoading.value = false;
+      console.log(res.data);
+      formAdState.title = res.data.title;
+      formAdState.description = res.data.description;
+      formAdState.price = res.data.price;
+
+      client
+        .get(res.data.housing)
+        .then((res) => {
+          console.log("housing", res.data);
+          formAdState.city = res.data.city;
+          formAdState.address = res.data.address;
+          formAdState.floor = res.data.floor;
+          formAdState.zipcode = res.data.zipcode;
+
+          client
+            .get(res.data.properties)
+            .then((res) => {
+              console.log("type", res.data);
+
+              formAdState.type = res.data.type;
+              formAdState.rooms = res.data.rooms;
+              formAdState.surface = res.data.surface;
+              formAdState.classification = res.data.classification;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     })
     .catch((err) => {
       console.log(err);
@@ -408,10 +452,6 @@ getRealEstateAd();
                     label="JJ/MM/YYYY"
                   />
                 </a-form-item>
-
-                <!-- <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-                  <a-button html-type="submit">BOUTON VALIDER FORM</a-button>
-                </a-form-item> -->
               </a-form>
             </div>
           </a-modal>
@@ -444,9 +484,6 @@ getRealEstateAd();
 
     <Card class="w-[100%] h-[100%] mt-4">
       <Heading>Mes biens</Heading>
-
-      <!-- TODO : Faire un pseudo carousel avec les différents bien-->
-
       <div class="flex overflow-scroll">
         <div v-for="ad in state.ads" :key="ad.id">
           <a-card style="width: 300px" :title="ad.title">
@@ -457,19 +494,16 @@ getRealEstateAd();
                 <a href=""> Voir mon bien </a>
               </RouterLink>
             </template>
-
             <span
               v-if="ad.isVisible === true"
               class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
               >Valider</span
             >
-
             <span
               v-else
               class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
               >En cours de validation</span
             >
-
             <p>
               Type:
               <span v-if="ad.type === 'sale'">VENTE</span>
@@ -478,69 +512,66 @@ getRealEstateAd();
             <p>Prix: {{ ad.price }}€</p>
             <p>{{ ad.id }}</p>
 
-            <a-button @click="updateAdModalVisible()">
+            <a-button
+              @click="
+                getOneRealEstateAdAllInformation(ad.id) &&
+                  updateAdModalVisible()
+              "
+            >
               Modifier mon bien
             </a-button>
-
-            <a-modal
-              v-model:visible="adModalVisible"
-              :title="`Modifier les infrormations de votre bien`"
-              @ok="onAdFinish"
-              okText="Valider les modifs"
-            >
-              <div style="overflow-y: scroll">
-                <a-form
-                  :model="formAdState"
-                  name="basic"
-                  :label-col="{ span: 8 }"
-                  :wrapper-col="{ span: 14 }"
-                  autocomplete="off"
-                  ref="formRef"
-                  :rules="adRules"
-                >
-                  <a-form-item label="Titre" name="title">
-                    <a-input v-model:value="formAdState.title" />
-                  </a-form-item>
-                  <a-form-item label="Description" name="Description">
-                    <a-input v-model:value="formAdState.description" />
-                  </a-form-item>
-                  <a-form-item label="Prix" name="price">
-                    <a-input v-model:value="formAdState.price" />
-                  </a-form-item>
-                  <a-form-item label="Surface" name="surface">
-                    <a-input v-model:value="formAdState.surface" />
-                  </a-form-item>
-                  <a-form-item label="Pièces" name="rooms">
-                    <a-input v-model:value="formAdState.rooms" />
-                  </a-form-item>
-                  <a-form-item label="Adresse" name="address">
-                    <a-input v-model:value="formAdState.address" />
-                  </a-form-item>
-                  <a-form-item label="Ville" name="city">
-                    <a-input v-model:value="formAdState.city" />
-                  </a-form-item>
-                  <a-form-item label="Code postal" name="postalCode">
-                    <a-input v-model:value="formAdState.zipcode" />
-                  </a-form-item>
-                  <a-form-item label="Type" name="type">
-                    <a-input v-model:value="formAdState.type" />
-                  </a-form-item>
-                  <a-form-item label="Catégorie" name="category">
-                    <a-input v-model:value="formAdState.category" />
-                  </a-form-item>
-                  <a-form-item label="Photos" name="images">
-                    <a-input v-model:value="formAdState.images" />
-                  </a-form-item>
-
-                  <!-- <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-                  <a-button html-type="submit">BOUTON VALIDER FORM</a-button>
-                </a-form-item> -->
-                </a-form>
-              </div>
-            </a-modal>
           </a-card>
         </div>
       </div>
+      <a-modal
+        v-model:visible="adModalVisible"
+        :title="`Modifier les infrormations de votre bien`"
+        @ok="onAdFinish"
+        okText="Valider les modifs"
+      >
+        <div style="overflow-y: scroll">
+          <a-form
+            :model="formAdState"
+            name="basic"
+            :label-col="{ span: 8 }"
+            :wrapper-col="{ span: 14 }"
+            autocomplete="off"
+            ref="formRef"
+            :rules="adRules"
+          >
+            <a-form-item label="Titre" name="title">
+              <a-input v-model:value="formAdState.title" />
+            </a-form-item>
+            <a-form-item label="Description" name="Description">
+              <a-input v-model:value="formAdState.description" />
+            </a-form-item>
+            <a-form-item label="Prix" name="price">
+              <a-input v-model:value="formAdState.price" />
+            </a-form-item>
+            <a-form-item label="Surface" name="surface">
+              <a-input v-model:value="formAdState.surface" />
+            </a-form-item>
+            <a-form-item label="Pièces" name="rooms">
+              <a-input v-model:value="formAdState.rooms" />
+            </a-form-item>
+            <a-form-item label="Adresse" name="address">
+              <a-input v-model:value="formAdState.address" />
+            </a-form-item>
+            <a-form-item label="Ville" name="city">
+              <a-input v-model:value="formAdState.city" />
+            </a-form-item>
+            <a-form-item label="Code postal" name="postalCode">
+              <a-input v-model:value="formAdState.zipcode" />
+            </a-form-item>
+            <a-form-item label="Type" name="type">
+              <a-input v-model:value="formAdState.type" />
+            </a-form-item>
+            <a-form-item label="Classification" name="classification">
+              <a-input v-model:value="formAdState.classification" />
+            </a-form-item>
+          </a-form>
+        </div>
+      </a-modal>
     </Card>
 
     <div class="flex">
