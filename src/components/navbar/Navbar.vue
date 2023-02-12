@@ -2,7 +2,7 @@
 import { ref, watchEffect } from "vue";
 import router from "../../router";
 import { token } from "../../utils/localStorage";
-import DisconnectedNavbar from "../navbar/DisconnectedNavbar.vue";
+import DisconnectedNavbar from "../navbar/disconnectedNavbar.vue";
 import UserNavbar from "../navbar/UserNavbar.vue";
 import AdminSidebar from "../sidebar/AdminSidebar.vue";
 
