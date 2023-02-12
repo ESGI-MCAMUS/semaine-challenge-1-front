@@ -247,6 +247,20 @@ const getuser = async () => {
   }
 };
 
+const fetchMyUser = () => {
+  client
+    .get(`/users/${token.value.id}`)
+    .then((res) => {
+      console.log(res.data);
+      formState.firstname = res.data.firstname;
+      formState.lastname = res.data.lastname;
+      formState.email = res.data.email;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 const getHousings = async (route) => {
   client
     .get(`/real_estate_ads?pagination=false`)
@@ -516,6 +530,7 @@ const uploadDocuments = (type, documents) => {
   }
 };
 getHousings();
+fetchMyUser();
 </script>
 
 <template>
@@ -590,21 +605,27 @@ getHousings();
           <div class="flex flex-col mt-4 w-1/2">
             <div class="flex flex-col">
               <span class="text-sm text-gray-500">Nom</span>
-              <span class="text-sm text-gray-900">{{ user.lastname }}</span>
+              <span class="text-sm text-gray-900">{{
+                formState.lastname
+              }}</span>
             </div>
             <div class="flex flex-col mt-4">
               <span class="text-sm text-gray-500">Prénom</span>
-              <span class="text-sm text-gray-900">{{ user.firstname }}</span>
+              <span class="text-sm text-gray-900">{{
+                formState.firstname
+              }}</span>
             </div>
           </div>
           <div class="flex flex-col mt-4">
             <div class="flex flex-col">
               <span class="text-sm text-gray-500">Date de naissance</span>
-              <span class="text-sm text-gray-900">{{ user.birthdate }}</span>
+              <span class="text-sm text-gray-900">{{
+                formState.birthdate
+              }}</span>
             </div>
             <div class="flex flex-col mt-4">
               <span class="text-sm text-gray-500">Email</span>
-              <span class="text-sm text-gray-900">{{ user.email }}</span>
+              <span class="text-sm text-gray-900">{{ formState.email }}</span>
             </div>
           </div>
         </div>
