@@ -25,7 +25,7 @@ const getUsers = async () => {
 };
 
 const deleteUser = (user) => {
-  clientPatch
+  client
     .put(`${user["@id"]}`, {
       isActive: !user.isActive,
     })

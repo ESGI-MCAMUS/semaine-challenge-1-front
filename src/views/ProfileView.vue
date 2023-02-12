@@ -514,7 +514,7 @@ const uploadDocuments = (type, documents) => {
           });
         });
     } else {
-      client
+      clientPatch
         .patch(`${documents["@id"]}`, {
           documents: formDocumentState.documents,
         })
