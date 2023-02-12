@@ -371,7 +371,7 @@ const uploadDocuments = (type, documents) => {
         <div class="flex flex-col items-center mt-3">
           <img
             class="w-24 h-24 mb-3 rounded-full shadow-lg"
-            src="https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&w=1000"
+            src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
             alt="Profile picture"
           />
           <h5 class="mb-1 text-xl font-medium text-gray-900">
