@@ -52,7 +52,6 @@ client
             client
               .get(`${dataHousing.properties}`)
               .then((resHousingProperties) => {
-                console.log(state.housing);
                 if (resHousingProperties.status === 200) {
                   const dataHousingProperties = resHousingProperties.data;
                   state.housingProperties = dataHousingProperties;
