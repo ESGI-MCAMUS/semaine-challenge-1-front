@@ -56,10 +56,14 @@ export default defineComponent({
       }
     };
     const onFinishFailed = (errorInfo) => {};
+    const navToResetPwd = () => {
+      router.push("/reset-password");
+    };
     return {
       formState,
       onFinish,
       onFinishFailed,
+      navToResetPwd,
     };
   },
 });
