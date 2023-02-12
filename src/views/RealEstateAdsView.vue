@@ -67,19 +67,16 @@ client
               })
               .catch((err) => {
                 // router.push("/");
-                console.log(err);
               });
           }
         })
         .catch((err) => {
           // router.push("/");
-          console.log(err);
         });
     }
   })
   .catch((err) => {
     // router.push("/");
-    console.log(err);
   });
 
 const addFavortiteAd = (adId) => {
@@ -96,7 +93,6 @@ const addFavortiteAd = (adId) => {
       refetchFavorites();
     })
     .catch((err) => {
-      console.log(err);
       notification["error"]({
         message: "Oups !",
         description: "Une erreur est survenue lors de l'ajout du favoris !",
@@ -118,7 +114,6 @@ const removeFavoriteAd = (adId) => {
       refetchFavorites();
     })
     .catch((err) => {
-      console.log(err);
       notification["error"]({
         message: "Oups !",
         description:
@@ -140,7 +135,6 @@ const validateAd = (adId) => {
       });
     })
     .catch((err) => {
-      console.log(err);
       notification["error"]({
         message: "Oups !",
         description: "Une erreur est survenue lors de la validation !",
@@ -159,7 +153,6 @@ const deleteAd = (adId) => {
       });
     })
     .catch((err) => {
-      console.log(err);
       notification["error"]({
         message: "Oups !",
         description: "Une erreur est survenue lors de la suppression !",
@@ -172,8 +165,6 @@ const formState = reactive({
 });
 
 const createAppointment = async () => {
-  console.log("houusing", state.housing["@id"]);
-
   try {
     const res = await client.post(`/appointments`, {
       date: new Date(formState.appointmentDate),

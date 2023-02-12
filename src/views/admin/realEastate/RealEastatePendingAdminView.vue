@@ -23,9 +23,7 @@ const getRealEastateAds = async () => {
         (ad) => ad.isVisible === false
       );
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const navigate = (id) => {

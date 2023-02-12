@@ -14,9 +14,7 @@ const getAllApartements = async () => {
       const data = res.data;
       state.apartments = data["hydra:member"];
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const getUsers = async () => {
@@ -26,9 +24,7 @@ const getUsers = async () => {
       const data = res.data;
       state.users = data["hydra:member"];
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 onMounted(() => {

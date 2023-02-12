@@ -118,9 +118,7 @@ export default defineComponent({
             "Une erreur est survenue lors de la mise à jour de votre mot de passe, veuillez réesayer plus tard";
         });
     };
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
+    const onFinishFailed = (errorInfo) => {};
     return {
       formState,
       onFinish,

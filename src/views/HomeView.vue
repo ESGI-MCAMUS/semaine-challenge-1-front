@@ -91,9 +91,7 @@ export default defineComponent({
             state.ads = filteredAds.filter((ad) => ad !== undefined);
           }
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => {});
     };
 
     const addFavortiteAd = (adId) => {
@@ -110,7 +108,6 @@ export default defineComponent({
           refetchFavorites();
         })
         .catch((err) => {
-          console.log(err);
           notification["error"]({
             message: "Oups !",
             description: "Une erreur est survenue lors de l'ajout du favoris !",
@@ -132,7 +129,6 @@ export default defineComponent({
           refetchFavorites();
         })
         .catch((err) => {
-          console.log(err);
           notification["error"]({
             message: "Oups !",
             description:
@@ -153,7 +149,6 @@ export default defineComponent({
           window.location.href = checkoutUrl;
         })
         .catch((err) => {
-          console.log(err);
           notification["error"]({
             message: "Oups !",
             description:
@@ -221,7 +216,6 @@ export default defineComponent({
           }
         })
         .catch((err) => {
-          console.log(err);
           notification["error"]({
             message: "Oups !",
             description:
@@ -254,7 +248,6 @@ export default defineComponent({
           updateModal(false);
         })
         .catch((err) => {
-          console.log(err);
           notification["error"]({
             message: "Oups !",
             description: "Une erreur est survenue lors de l'envoi du message !",

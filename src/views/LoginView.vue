@@ -55,9 +55,7 @@ export default defineComponent({
         isError.value = true;
       }
     };
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
+    const onFinishFailed = (errorInfo) => {};
     return {
       formState,
       onFinish,

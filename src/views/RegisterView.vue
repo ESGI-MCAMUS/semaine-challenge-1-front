@@ -169,15 +169,12 @@ export default defineComponent({
             }
           }
           if (res.status === 500) {
-            console.log("server error");
             formState.isError = true;
             formState.message = "Erreur du serveur";
           }
         });
     };
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
+    const onFinishFailed = (errorInfo) => {};
     return {
       formState,
       onFinish,

@@ -32,9 +32,7 @@ const getLikes = async () => {
         getEstate(like.realEstateAd);
       }
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const getEstate = async (route) => {
@@ -46,9 +44,7 @@ const getEstate = async (route) => {
       isFavoritToShow.value = true;
     })
 
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const addFavortiteAd = (adId) => {
@@ -65,7 +61,6 @@ const addFavortiteAd = (adId) => {
       refetchFavorites();
     })
     .catch((err) => {
-      console.log(err);
       notification["error"]({
         message: "Oups !",
         description: "Une erreur est survenue lors de l'ajout du favoris !",
@@ -89,7 +84,6 @@ const removeFavoriteAd = (adId) => {
       state.estate = state.estate.filter((estate) => estate.id !== id);
     })
     .catch((err) => {
-      console.log(err);
       notification["error"]({
         message: "Oups !",
         description:

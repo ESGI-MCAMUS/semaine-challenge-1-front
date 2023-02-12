@@ -19,9 +19,7 @@ const getUsers = async () => {
       const data = res.data;
       state.users = data["hydra:member"];
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const deleteUser = (user) => {
@@ -38,7 +36,6 @@ const deleteUser = (user) => {
       getUsers();
     })
     .catch((err) => {
-      console.log(err);
       notification["error"]({
         message: "Oups !",
         description: "Une erreur est survenue lors de la modification !",

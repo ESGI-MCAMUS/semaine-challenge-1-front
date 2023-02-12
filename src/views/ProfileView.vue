@@ -145,7 +145,6 @@ const onFinish = () => {
       }
     })
     .catch((err) => {
-      console.log(err);
       notification["error"]({
         message: "Oups !",
         description:
@@ -165,9 +164,7 @@ const patchAdsModal = () => {
       .then((res) => {
         patchHousingModal(res.data.housing);
       });
-  } catch (error) {
-    console.log("error patchAdsModal", error);
-  }
+  } catch (error) {}
 };
 
 const patchHousingModal = (housingId) => {
@@ -181,9 +178,7 @@ const patchHousingModal = (housingId) => {
       .then((res) => {
         patchHousingProperties(res.data.properties);
       });
-  } catch (error) {
-    console.log("error patchHousingModal", error);
-  }
+  } catch (error) {}
 };
 
 const patchHousingProperties = (housingPropertiesId) => {
@@ -204,9 +199,7 @@ const patchHousingProperties = (housingPropertiesId) => {
 
         getHousings();
       });
-  } catch (error) {
-    console.log("error patchHousingProperties", error);
-  }
+  } catch (error) {}
 };
 
 const updateUserProfile = async () => {
@@ -218,9 +211,7 @@ const updateUserProfile = async () => {
       birthdate: new Date(formState.birthdate.format("YYYY-MM-DD")),
     });
     return res;
-  } catch (error) {
-    console.log("error updateUserProfile", error);
-  }
+  } catch (error) {}
 };
 
 // END MODIFY MODAL
@@ -252,14 +243,11 @@ const fetchMyUser = () => {
   client
     .get(`/users/${token.value.id}`)
     .then((res) => {
-      console.log(res.data);
       formState.firstname = res.data.firstname;
       formState.lastname = res.data.lastname;
       formState.email = res.data.email;
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const getHousings = async (route) => {
@@ -273,9 +261,7 @@ const getHousings = async (route) => {
       });
       isLoading.value = false;
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const getDocuments = async (route) => {
@@ -286,9 +272,7 @@ const getDocuments = async (route) => {
 
       isLoading.value = false;
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const getOneRealEstateAdAllInformation = async (adId) => {
@@ -318,17 +302,11 @@ const getOneRealEstateAdAllInformation = async (adId) => {
               formAdState.surface = res.data.surface;
               formAdState.classification = res.data.classification;
             })
-            .catch((err) => {
-              console.log(err);
-            });
+            .catch((err) => {});
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => {});
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const getMessages = async () => {
@@ -345,7 +323,6 @@ const getPayments = async () => {
     const res = await client.post(`payments/get`);
     return res;
   } catch (error) {
-    console.log(error);
     return undefined;
   }
 };
@@ -380,8 +357,6 @@ onMounted(() => {
   getAppointments().then((res) => {
     ownerAppointments = res.ownerAppointments;
     visitorAppointments = res.visitorAppointments;
-    console.log(ownerAppointments);
-    console.log(visitorAppointments);
   });
 
   getPayments().then((res) => {
@@ -440,7 +415,6 @@ const sendMessage = (receiver) => {
       });
     })
     .catch((err) => {
-      console.log(err);
       notification["error"]({
         message: "Oups !",
         description: "Une erreur est survenue lors de l'envoi du message !",
@@ -506,7 +480,6 @@ const uploadDocuments = (type, documents) => {
           router.push("/KYC");
         })
         .catch((err) => {
-          console.log(err);
           notification["error"]({
             message: "Oups !",
             description:
@@ -527,7 +500,6 @@ const uploadDocuments = (type, documents) => {
           router.push("/KYC");
         })
         .catch((err) => {
-          console.log(err);
           notification["error"]({
             message: "Oups !",
             description:
@@ -543,10 +515,8 @@ fetchMyUser();
 const getAppointments = async () => {
   try {
     const res = await client.post(`/appointments/get`);
-    console.log("res appointments", res.data);
     return res.data;
   } catch (error) {
-    console.log(error);
     return undefined;
   }
 };

@@ -20,9 +20,7 @@ const getRealEastateAds = async () => {
       const data = res.data;
       state.apartments = data["hydra:member"];
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => {});
 };
 
 const navigate = (id) => {

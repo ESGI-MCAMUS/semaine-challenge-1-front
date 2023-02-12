@@ -68,16 +68,12 @@ export default defineComponent({
         .catch((err) => {
           const res = err.response;
           if (res.status === 401) {
-            console.log("unauthorized");
           }
           if (res.status === 500) {
-            console.log("server error");
           }
         });
     };
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
+    const onFinishFailed = (errorInfo) => {};
 
     const navToResetPwd = () => {
       router.push("/reset-password");

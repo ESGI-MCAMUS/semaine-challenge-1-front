@@ -225,9 +225,7 @@ const createHousingProperty = async (values) => {
       housingPropertiesId.value = response.data.id;
       createHousing(values);
     })
-    .catch((error) => {
-      console.log(error);
-    });
+    .catch((error) => {});
 };
 
 const createHousing = async (values) => {
@@ -245,9 +243,7 @@ const createHousing = async (values) => {
       housingId.value = response.data.id;
       createRealEstateAd(values);
     })
-    .catch((error) => {
-      console.log(error);
-    });
+    .catch((error) => {});
 };
 
 const createRealEstateAd = async (values) => {
@@ -270,9 +266,7 @@ const createRealEstateAd = async (values) => {
 
       router.push("/");
     })
-    .catch((error) => {
-      console.log(error);
-    });
+    .catch((error) => {});
 };
 
 const convertBase64 = (file) => {
