@@ -30,8 +30,8 @@ const formState = reactive({
   birthdate: "",
 });
 
-const state = reactive({
-  ads: [],
+const formDocumentState = reactive({
+  documents: [],
 });
 
 const rules = {
@@ -94,6 +94,19 @@ const updateUserProfile = async () => {
   }
 };
 
+// END MODIFY MODAL
+
+const state = reactive({
+  ads: [],
+  documents: [],
+  modal: {
+    visible: false,
+    type: "",
+    documents: [],
+    housing: {},
+  },
+});
+
 const getuser = async () => {
   const userId = token.value.id;
 
@@ -106,7 +119,8 @@ const getuser = async () => {
   }
 };
 
-const getRealEstateAd = async () => {
+const getHousings = async (route) => {
+
   client
     .get(`/real_estate_ads?pagination=false`)
     .then((res) => {
@@ -115,6 +129,19 @@ const getRealEstateAd = async () => {
       state.ads = res.data["hydra:member"].filter((ad) => {
         return parseInt(ad.publisher.split("/").pop()) === token.value.id;
       });
+      isLoading.value = false;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getDocuments = async (route) => {
+  client
+    .get(`${route}`)
+    .then((res) => {
+      state.documents = [...state.documents, res.data];
+      console.log(state.documents);
       isLoading.value = false;
     })
     .catch((err) => {
@@ -150,6 +177,14 @@ onMounted(() => {
       }),
     };
 
+    console.log(user.housings);
+    user.housings.map((housing) => {
+      getHousings(housing);
+    });
+
+    user.documents.map((document) => {
+      getDocuments(document);
+    });
     isLoading.value = false;
   });
 
@@ -229,6 +264,98 @@ const formatPrice = (price) => {
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
+const updateModal = (visible, type, documents, housing) => {
+  console.log({ visible, type, documents });
+  state.modal.visible = visible;
+  state.modal.type = type;
+  state.modal.documents = documents;
+  state.modal.housing = housing;
+};
+
+const convertBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
+const onFileChange = async (e) => {
+  const files = e.target.files;
+  const base64Photos = [];
+  Promise.all(
+    Array.from(files).map(async (file) => {
+      const base64 = await convertBase64(file);
+      base64Photos.push(base64.substring(22));
+    })
+  ).then(() => {
+    formDocumentState.documents = base64Photos;
+    console.log("Successfully convert images", formDocumentState.documents);
+  });
+};
+
+const uploadDocuments = (type, documents) => {
+  console.log({ type, documents, housing: state.modal.housing });
+  if (formDocumentState.length === 0) {
+    notification["error"]({
+      message: "Oups !",
+      description: "Veuillez ajouter au moins une photo !",
+    });
+  } else {
+    if (type === "add") {
+      client
+        .post(`documents`, {
+          documentsOwner: `/users/${token.value.id}`,
+          documents: formDocumentState.documents,
+          housing: `${state.modal.housing["@id"]}`,
+        })
+        .then((res) => {
+          notification["success"]({
+            message: "Documents ajoutés",
+            description: "Vos documents ont bien été ajoutés !",
+          });
+          updateModal(false, "", []);
+          router.push("/KYC");
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description:
+              "Une erreur est survenue lors de l'ajout des documents !",
+          });
+        });
+    } else {
+      clientPatch
+        .patch(`${documents["@id"]}`, {
+          documents: formDocumentState.documents,
+        })
+        .then((res) => {
+          notification["success"]({
+            message: "Documents modifiés",
+            description: "Vos documents ont bien été modifiés !",
+          });
+          updateModal(false, "", []);
+          router.push("/KYC");
+        })
+        .catch((err) => {
+          console.log(err);
+          notification["error"]({
+            message: "Oups !",
+            description:
+              "Une erreur est survenue lors de la modification des documents !",
+          });
+        });
+    }
+  }
+};
 getRealEstateAd();
 </script>
 
@@ -248,7 +375,7 @@ getRealEstateAd();
         <div class="flex flex-col items-center mt-3">
           <img
             class="w-24 h-24 mb-3 rounded-full shadow-lg"
-            src="https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&w=1000"
+            src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
             alt="Profile picture"
           />
           <h5 class="mb-1 text-xl font-medium text-gray-900">
@@ -341,7 +468,10 @@ getRealEstateAd();
 
       <div class="flex overflow-scroll">
         <div v-for="ad in state.ads" :key="ad.id">
-          <a-card style="width: 300px" :title="ad.title">
+          <a-card
+            style="width: 300px; margin-left: 5px; margin-right: 5px"
+            :title="ad.id"
+          >
             <template #extra>
               <RouterLink
                 :to="{ name: 'real_estate_ads', params: { id: ad.id } }"
@@ -371,7 +501,63 @@ getRealEstateAd();
 
             <!-- <p>{{ ad.city }}</p>
             <p>{{ ad.zipcode }}</p>
-            <p>{{ ad.properties }}</p> -->
+            <Button
+              @click="
+                updateModal(
+                  true,
+                  state.documents.some((doc) => doc.housing === ad['@id'])
+                    ? 'edit'
+                    : 'add',
+                  state.documents.find((doc) => doc.housing === ad['@id']),
+                  ad
+                )
+              "
+              >{{
+                state.documents.find((doc) => doc.housing === ad["@id"])
+                  ? "Modifier document(s)"
+                  : "Ajouter document(s)"
+              }}</Button
+            >
+            <a-modal
+              v-model:visible="state.modal.visible"
+              :title="`${
+                state.modal.type === 'add' ? 'Ajouter' : 'Modifier'
+              } des documents`"
+              @ok="uploadDocuments(state.modal.type, state.modal.documents)"
+            >
+              <div
+                :style="
+                  state.modal.documents !== undefined
+                    ? 'height: 50vh; overflow-y: scroll'
+                    : ''
+                "
+              >
+                <div v-if="state.modal.documents !== undefined">
+                  <img
+                    v-for="img in state.modal.documents.documents"
+                    :src="img"
+                    alt="document"
+                    style="width: 100%"
+                  />
+                </div>
+                <br />
+                <a-form
+                  :model="formDocumentState"
+                  @finish="
+                    uploadDocuments(state.modal.type, state.modal.documents)
+                  "
+                >
+                  <a-form-item label="Documents" name="documents">
+                    <a-input
+                      type="file"
+                      multiple
+                      accept="image/png, image/gif, image/jpeg"
+                      @change="onFileChange($event)"
+                    />
+                  </a-form-item>
+                </a-form>
+              </div>
+            </a-modal>
           </a-card>
         </div>
       </div>

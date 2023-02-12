@@ -296,7 +296,6 @@ const onFileChange = async (e) => {
   Promise.all(
     Array.from(files).map(async (file) => {
       const base64 = await convertBase64(file);
-      // remove "data:image/png;base64," from base64 string
       base64Photos.push(base64.substring(22));
     })
   ).then(() => {
