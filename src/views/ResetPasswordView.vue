@@ -35,37 +35,40 @@
   </a-col>
 </template>
 <script>
+import { notification } from "ant-design-vue";
 import { defineComponent, reactive } from "vue";
 import router from "../router";
-import { client } from "../services";
+import { client, clientWithoutAuth } from "../services";
 
 export default defineComponent({
   setup() {
     const formState = reactive({
-      username: "",
-      password: "",
-      remember: true,
-      navToResetPassword: () => {
-        router.push("/reset-password");
-      },
+      email: "",
     });
 
     // log le router actuel
 
     const onFinish = (values) => {
-      client
-        .post("/auth", { email: values.username, password: values.password })
+      clientWithoutAuth
+        .post("/users/reset-password/email", {
+          email: formState.email,
+        })
         .then((res) => {
           if (res.status === 200) {
             //add user to localStorage
-            const token = res.data.token;
-            const user = JSON.parse(atob(token.split(".")[1]));
-            localStorage.setItem("user", JSON.stringify(user));
-
-            router.push("/");
+            notification["success"]({
+              message: "Succès",
+              description: "Un mail vous a été envoyé !",
+            });
+            router.push("/login");
           }
         })
         .catch((err) => {
+          notification["error"]({
+            message: "Oups",
+            description:
+              "Une erreur s'est produite lors de l'envoi de l'email !",
+          });
           const res = err.response;
           if (res.status === 401) {
           }
