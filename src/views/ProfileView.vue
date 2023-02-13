@@ -327,42 +327,38 @@ const getPayments = async () => {
   }
 };
 
-onMounted(() => {
-  getuser().then((res) => {
-    user = {
-      ...res.data,
-      birthdate: format(new Date(res.data.birthdate), "d MMMM yyyy", {
-        locale: fr,
-      }),
-    };
+onMounted(async () => {
+  const userFetched = await getuser();
+  user = {
+    ...res.data,
+    birthdate: format(new Date(userFetched.data.birthdate), "d MMMM yyyy", {
+      locale: fr,
+    }),
+  };
 
-    user.housings.map((housing) => {
-      getHousings(housing);
-    });
-
-    user.documents.map((document) => {
-      getDocuments(document);
-    });
-    getMessages().then((res) => {
-      // Get unique senders
-      messages = res.data;
-      senders = [
-        ...new Set(
-          res.data.receivedMessages.map((message) => message.sender.id)
-        ),
-      ];
-    });
-
-    getAppointments().then((res) => {
-      ownerAppointments = res.ownerAppointments;
-      visitorAppointments = res.visitorAppointments;
-    });
-
-    getPayments().then((res) => {
-      payments = res.data.payments;
-    });
-    isLoading.value = false;
+  user.housings.map((housing) => {
+    getHousings(housing);
   });
+
+  user.documents.map((document) => {
+    getDocuments(document);
+  });
+  isLoading.value = false;
+
+  const messagaesFetched = await getMessages();
+  messages = messagaesFetched.data;
+  senders = [
+    ...new Set(
+      messagaesFetched.data.receivedMessages.map((message) => message.sender.id)
+    ),
+  ];
+
+  const appointmentsFetched = await getAppointments();
+  ownerAppointments = appointmentsFetched.ownerAppointments;
+  visitorAppointments = appointmentsFetched.visitorAppointments;
+
+  const paymentsFetched = await getPayments();
+  payments = paymentsFetched.data.payments;
 });
 
 const openMessages = (senderId) => {
@@ -519,6 +515,7 @@ const getAppointments = async () => {
   }
 };
 
+getHousings();
 fetchMyUser();
 </script>
 
