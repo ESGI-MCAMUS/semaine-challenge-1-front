@@ -343,24 +343,25 @@ onMounted(() => {
     user.documents.map((document) => {
       getDocuments(document);
     });
+    getMessages().then((res) => {
+      // Get unique senders
+      messages = res.data;
+      senders = [
+        ...new Set(
+          res.data.receivedMessages.map((message) => message.sender.id)
+        ),
+      ];
+    });
+
+    getAppointments().then((res) => {
+      ownerAppointments = res.ownerAppointments;
+      visitorAppointments = res.visitorAppointments;
+    });
+
+    getPayments().then((res) => {
+      payments = res.data.payments;
+    });
     isLoading.value = false;
-  });
-
-  getMessages().then((res) => {
-    // Get unique senders
-    messages = res.data;
-    senders = [
-      ...new Set(res.data.receivedMessages.map((message) => message.sender.id)),
-    ];
-  });
-
-  getAppointments().then((res) => {
-    ownerAppointments = res.ownerAppointments;
-    visitorAppointments = res.visitorAppointments;
-  });
-
-  getPayments().then((res) => {
-    payments = res.data.payments;
   });
 });
 
@@ -509,9 +510,6 @@ const uploadDocuments = (type, documents) => {
     }
   }
 };
-getHousings();
-fetchMyUser();
-
 const getAppointments = async () => {
   try {
     const res = await client.post(`/appointments/get`);
@@ -520,6 +518,8 @@ const getAppointments = async () => {
     return undefined;
   }
 };
+
+fetchMyUser();
 </script>
 
 <template>
