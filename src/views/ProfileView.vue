@@ -525,12 +525,21 @@ const getAppointments = async () => {
 <template>
   <div
     v-if="isLoading"
-    class="w-[100%] h-[80vh] flex justify-center items-center"
+    :style="{
+      height: '100vh',
+      width: '100vw',
+      position: 'absolute',
+      zIndex: 9999,
+      backgroundColor: 'white',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }"
   >
     <Spinner />
   </div>
 
-  <div v-else>
+  <div>
     <div class="flex">
       <div
         class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm"
