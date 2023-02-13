@@ -330,7 +330,7 @@ const getPayments = async () => {
 onMounted(async () => {
   const userFetched = await getuser();
   user = {
-    ...res.data,
+    ...userFetched.data,
     birthdate: format(new Date(userFetched.data.birthdate), "d MMMM yyyy", {
       locale: fr,
     }),
